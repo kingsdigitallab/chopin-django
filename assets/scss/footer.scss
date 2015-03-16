@@ -1,0 +1,41 @@
+/* Footer */
+.footer {
+    background-color: $footerColor;
+    width: 100%;
+}
+
+.footer-logos {
+    float: left;
+    padding: 20px 0 0;
+}
+
+.footer-menus {
+    float: left;
+}
+
+.footer .logo img {
+    height: 30px;
+}
+
+.footer .svg img {
+    height: 60px;
+}
+
+.footer .footer-menu {
+    display: inline-block;
+    font-family: "Museo Sans", sans-serif;
+    list-style: none;
+    padding: 15px 0;
+}
+
+.ocve-link {
+    color: #7d0000 !important;
+}
+
+.cfeo-link {
+    color: #5b9fbd !important;
+}
+
+.annot-link {
+    color: #326e50 !important;
+}
