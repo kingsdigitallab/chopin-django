@@ -1,0 +1,21 @@
+{% load catalogue_tags wagtailcore_tags %}
+
+<ul class="breadcrumbs">
+    <li>
+        <a href="{% pageurl root %}">{{ root.title }}</a>
+    </li>
+
+    {% for page in pages %}
+    <li>
+        {% if forloop.last and not extra %}
+        {{ page.title|add_special_characters }}
+        {% else %}
+        <a href="{% pageurl page %}">{{ page.title|add_special_characters }}</a>
+        {% endif %}
+    </li>
+    {% endfor %}
+
+    {% if extra %}
+    <li>{{ extra.title|add_special_characters }}</li>
+    {% endif %}
+</ul>
