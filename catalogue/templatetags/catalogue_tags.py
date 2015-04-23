@@ -129,10 +129,15 @@ def pdfdisplay(html):
         script_include = '{{% include "catalogue/includes/pdf_script.html" with canvas_id="{}" pdf_url="{}" %}}'.format(canvas_id, pdf_url)
         soup.div.append(script_include)
 
-    return template.Template(unicode(soup.div)).render(template.Context())
+    html = unicode(soup.div)
+    html = re.sub(r'><\/embed>', ' />', html)
+
+    return template.Template(html).render(template.Context())
 
 @register.filter
 def add_special_characters(html):
+    html = html.encode('utf-8')
+
     patterns = {
         'start_tag': r'(?P<start_tag><[^>]*>)',
         'end_tag': r'(?P<end_tag></[^>]*>)',
@@ -143,22 +148,28 @@ def add_special_characters(html):
     code_pattern = r'\[\[{class}\]{start_tag}?{code}{end_tag}?\]'.format(
         **patterns)
 
-    return mark_safe(re.sub(code_pattern, _format_code, html.encode('utf-8')))
+    if not re.search(code_pattern, html):
+        return html
+
+    return mark_safe(re.sub(code_pattern, _format_code, html))
 
 def _format_code(match):
     try:
-        code = unichr(int(match.group('code')))
+        code_as_class = match.group('code')
+        code = unichr(int(code_as_class))
     except ValueError:
-        code = match.group('code') or ''
+        code_as_class = match.group('code') or ''
+        code = code_as_class
 
     parts = {
         'start_tag': match.group('start_tag') or '',
         'end_tag': match.group('end_tag') or '',
+        'code_as_class': code_as_class,
         'code': code,
         'class': match.group('class').lower(),
     }
 
-    repl = u'<span class="{class}">{start_tag}{code}{end_tag}</span>'.format(
+    repl = u'<span class="{class} c{code_as_class}">{start_tag}{code}{end_tag}</span>'.format(
         **parts)
 
     return repl.encode('utf-8')

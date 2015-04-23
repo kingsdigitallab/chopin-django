@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.conf import settings
 from django.conf.urls import url
 from django.db import models
@@ -18,6 +20,7 @@ from wagtail.wagtailcore.templatetags.wagtailcore_tags import pageurl
 from wagtail.wagtaildocs.models import Document
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
+from wagtail.wagtailimages.formats import Format, register_image_format
 from wagtail.wagtailimages.models import Image
 from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
@@ -31,6 +34,14 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+register_image_format(Format('left-100', 'Left-aligned 100px',
+                             'richtext-image left', 'width-100'))
+register_image_format(Format('left-200', 'Left-aligned 200px',
+                             'richtext-image left', 'width-200'))
+register_image_format(Format('left-300', 'Left-aligned 300px',
+                             'richtext-image left', 'width-300'))
+register_image_format(Format('left-400', 'Left-aligned 400px',
+                             'richtext-image left', 'width-400'))
 
 def _d(str):
     return str.decode(settings.AC_ENCODING)
@@ -189,9 +200,22 @@ class Library(Page):
 
     @property
     def impressions(self):
-        return sorted(Impression.objects.filter(copies__copy__library=self),
-                      key=lambda x: x.impression.work.work.sort_order +
-                      float(x.impression.sort_order/1000))
+        impressions =  sorted(Impression.objects.filter(
+            copies__copy__library=self),
+            key=lambda x: x.impression.work.work.sort_order +
+            float(x.impression.sort_order/1000))
+
+        works = OrderedDict()
+
+        for impression in impressions:
+            work = impression.work.work
+
+            if not work in works:
+                works[work] = []
+
+            works[work].append(impression)
+
+        return works
 
 Library.content_panels = [
     FieldPanel('title', classname='full title'),
