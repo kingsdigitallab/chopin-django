@@ -1,2 +1,2 @@
 ddhldap = https://scm.cch.kcl.ac.uk/hg/ddhldap_django
-ocve = [svn]https://subversion.cch.kcl.ac.uk/repositories/ocve/branches/django/ocve
+#ocve = [svn]https://subversion.cch.kcl.ac.uk/repositories/ocve/branches/django/ocve
