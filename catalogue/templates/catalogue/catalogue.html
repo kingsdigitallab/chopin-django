@@ -1,0 +1,37 @@
+{% extends "catalogue/base.html" %}
+{% load catalogue_tags wagtailcore_tags %}
+
+{% block breadcrumbs %}
+{% get_site_root as site_root %}
+{% if suburl %}
+{% breadcrumbs root=site_root current_page=self extra=subtitle %}
+{% else %}
+{% breadcrumbs root=site_root current_page=self %}
+{% endif %}
+{% endblock %}
+
+{% block local_menu %}
+{% include "catalogue/includes/catalogue_local_menu.html" with page=self %}
+{% endblock %}
+
+{% block title %}
+{{ self.title }}{% if subtitle %}: {{ subtitle|add_special_characters }}{% endif %}
+{% endblock %}
+
+{% block main %}
+
+{% block index_page_introduction %}
+{% include "catalogue/includes/introduction.html" with introduction=self.introduction only %}
+{% endblock %}
+
+{% block index_page_children %}
+<ul class="works search-results">
+    {% for work in works|order_by:'work__sort_order' %}
+    <li>
+    <a href="{% pageurl work %}">{{ work.title|add_special_characters  }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
+
+{% endblock %}
