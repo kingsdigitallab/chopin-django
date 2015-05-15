@@ -1,0 +1,10 @@
+{% extends "catalogue/base.html" %}
+{% load wagtailcore_tags catalogue_tags %}
+
+{% block title %}{% endblock %}
+
+{% block local_menu %}{% endblock %}
+
+{% block content %}
+{% block main %}{{ self.content|pdfdisplay|richtext }}{% endblock %}
+{% endblock %}
