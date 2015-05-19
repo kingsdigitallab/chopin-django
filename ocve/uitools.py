@@ -41,6 +41,15 @@ def getAvailableBarsByOpus(opus):
     return Bar.objects.filter(
         barregion__page__sourcecomponent__sourcecomponent_workcomponent__workcomponent__opus=opus).distinct()
 
+#Overwrite source component label with its work components if link exists
+def overwritesourcecomponentlabels(source):
+    for sc in SourceComponent.objects.filter(source=source):
+        wc=WorkComponent.objects.filter(sourcecomponent_workcomponent__sourcecomponent=sc)
+        if wc.count() > 0:
+            sc.label=wc[0].label
+            sc.save()
+
+
 def setPageImageTextLabel(source):
     pageimages=PageImage.objects.filter(page__sourcecomponent__source=source)
     for pi in pageimages:
@@ -117,7 +126,7 @@ class SourceSearchItem:
         #    self.work = source.getWork().id
         for g in Genre.objects.filter(work__id=int(row[4])).distinct():
                 genres.append(int(g.id))
-        achash=hashlib.md5(row[9].encode('UTF-8')).hexdigest()
+        achash=row[11]
         if get_impression_exists(achash):
             self.achash=achash
         else:
@@ -174,9 +183,11 @@ class SourceSearchItem:
             #Filter out non-musical pages like blanks, title pages etc.
             musicpage=PageType.objects.get(type='music')
             blank=PageType.objects.get(type='blank')
+            tp=PageType.objects.get(type='title page')
             nonmusic=SourceComponentType.objects.get(type="Non-music")
-            #.filter(Q(page__pagetype=musicpage)|Q(page__pagetype=tp))
-            pages = PageImage.objects.filter(page__sourcecomponent__source_id=self.id).exclude(page__sourcecomponent__sourcecomponenttype=nonmusic).exclude(page__sourcecomponent__sourcecomponenttype=blank).order_by("page")
+            #.exclude(page__sourcecomponent__sourcecomponenttype=blank)
+            #.exclude(page__sourcecomponent__sourcecomponenttype=nonmusic)
+            pages = PageImage.objects.filter(page__sourcecomponent__source_id=self.id).filter(Q(page__pagetype=musicpage)|Q(page__pagetype=tp)).order_by("page")
         else:
             pages = PageImage.objects.filter(page__sourcecomponent__source_id=self.id).order_by("page")
         for pi in pages:
@@ -270,7 +281,7 @@ def serializeSourceJson(sourcecomponents,filename,mode):
     else:
         modeSQL="s.ocve=1"
     cursor = connections['ocve_db'].cursor()
-    sql="select distinct s.id,s.sourcetype_id,s.label,s.cfeolabel,w.id,si.dedicatee_id,si.publisher_id,si.platenumber,si.sourcecode,ac.accode,si.id"
+    sql="select distinct s.id,s.sourcetype_id,s.label,s.cfeolabel,w.id,si.dedicatee_id,si.publisher_id,si.platenumber,si.sourcecode,ac.accode,si.id,ac.accode_hash"
     sql+=" from ocve_source as s,ocve_accode as ac,ocve_sourceinformation as si,ocve_sourcecomponent as sc,ocve_sourcecomponent_workcomponent as scwc, ocve_workcomponent as wc, ocve_work as w"
     sql+=" where "+modeSQL+" and si.accode_id=ac.id and s.id=sc.source_id and s.id=si.source_id and sc.id=scwc.sourcecomponent_id and scwc.workcomponent_id = wc.id and wc.work_id=w.id"
     sql+=" order by w.orderno,s.orderno"
@@ -304,7 +315,7 @@ def serializeAcCodeConnector():
                 if first > 0:
                     destination.write(',\n')
                 accode=s.getSourceInformation().accode.accode
-                acHash=hashlib.md5(accode.encode('UTF-8')).hexdigest()
+                acHash=s.getSourceInformation().accode.accode_hash
                 acjson =  "{'accode':"+json.dumps(accode)+",'achash':"+json.dumps(acHash)+",'id':"+json.dumps(s.id)
                 if s.cfeo == 1:
                     acjson  += ",'cfeo':1"
