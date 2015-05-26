@@ -182,6 +182,7 @@ type="text/css">
                         <div id="newNote">
                             <form id="newNoteForm" method="POST" action="/ocve/saveNote/">
                                 <table>
+                                {{ request.user }}
                                     {{ annotationForm }}
                                     <tr>
                                         <th><label for="type_id">Visibility:</label></th>
