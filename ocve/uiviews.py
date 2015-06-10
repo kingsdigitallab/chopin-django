@@ -168,6 +168,8 @@ def fixsourceinformation(request):
 
 def browse(request,mode="OCVE",defaultFilters=None):
 
+    bars=Bar.objects.all()
+
     #Filter Items
     for si in SourceInformation.objects.filter(contentssummary__startswith='<p></p>'):
         si.contentssummary=si.contentssummary.replace('<p></p>','')
@@ -630,4 +632,6 @@ def ajaxDeleteCollection(request):
         else:
                 status = 0
         return render_to_response('frontend/ajax/ajax-status.html', {"status" : status,}, context_instance=RequestContext(request))
+
+
 
