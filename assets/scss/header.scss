@@ -1,0 +1,36 @@
+.header-menu {
+    font-family: "Museo Sans", sans-serif;
+}
+
+.header h1 {
+    display: inline-block;
+    font-size: 3.2em;
+    margin: 0;
+    padding: 30px 20px 25px 0;
+}
+
+.header h2 {
+    display: inline-block;
+    font-size: 1.5em;
+    font-weight: 300;
+    margin: 0;
+    padding: 0;
+}
+
+.header h2 a {
+    color: #404041;
+}
+
+.user-box {
+    padding-top: 1em;
+}
+
+.user-box ul {
+    list-style: none;
+    font-size: 0.8em;
+    text-align: right;
+}
+
+.user-box span.label:hover {
+    background: #ccc;
+}

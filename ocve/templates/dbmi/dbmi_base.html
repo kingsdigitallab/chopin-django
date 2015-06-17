@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Title{% endblock %}</title>
+    {% block default_includes %}
+        <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/dist/jquery.min.js"></script>
+    {% endblock %}
+
+    {% block other_includes %}
+
+    {% endblock %}
+
+</head>
+<body>
+{% block header %}
+    <h1>{% block header_title %} {% endblock %}</h1>
+{% endblock %}
+
+{% block navbar %}
+
+{% endblock %}
+
+{% block sidebar %}
+
+{% endblock %}
+
+{% block main_content %}
+
+{% endblock %}
+
+
+{% block footer %}
+
+{% endblock %}
+</body>
+</html>
