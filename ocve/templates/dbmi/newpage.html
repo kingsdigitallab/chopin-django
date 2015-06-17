@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Uploaded Page</title>
+
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/dist/jquery.min.js"></script>
+
+    <script src="{{ STATIC_URL }}javascripts/jquery.dimensions.min.js"></script>
+
+    <script type="application/javascript">
+        $(document).ready(function () {
+            //Set div width/height as proprortion of available screen
+            var zoomify_width = {{np.width}};   // 3368;
+            var zoomify_height = {{np.height}};  //4210;
+            var docWidth = parseInt($('body').width());
+            var docHeight = parseInt($(window).height());
+            var fullWidth = docWidth - Math.round(docWidth * .30);
+            var fullHeight = docHeight - Math.round(docHeight * .40);
+            $("#image_one").css('width', fullWidth + "px").css("height", fullHeight + "px")
+            imgToOSD();
+        });
+    </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}javascripts/jquery.tmpl.js"></script>
+    <script src="{{ STATIC_URL }}vendor/openseadragon/openseadragon.js"></script>
+    <script src="{{ STATIC_URL }}javascripts/osd-iip-connector.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}javascripts/jquery.mousewheel.js"></script>
+
+</head>
+<body>
+<img src="/iip/iipsrv.fcgi?FIF={{ jp2Path }}&CVT=JPG" height="800" width="600" id="image_one"
+     class="osd-iip another_class">
+</body>
+</html>
