@@ -58,21 +58,26 @@ $(document).ready(function () {
         newNotes += "<p class=\"annotation-details\">";
     }
 
+    hideBarBoxes= function(){
+        vlayer.setVisibility(false);
+    }
     //select feature in alayer when mouseover selector, hide on mouseout
     noteBarHighlight = function (selector) {
         //Connect bar labels to features with hover highlight
-        $(selector).hover(function () {
+        $(selector).hover(function (event) {
             noteSelectFeature.unselectAll();
             var select = alayer.getFeaturesByAttribute(
-                'barid', $(this).find('span').data('barid'));
+                'barid', $(this).data('barid'));
             if (select.length > 0) {
-                noteSelectFeature.select(select[0]);
+                for (var r=0;r< select.length; r++) {
+                    noteSelectFeature.select(select[r]);
+                }
             }
         }, function () {
             //visibleNote
             noteSelectFeature.unselectAll();
             var select = alayer.getFeaturesByAttribute(
-                'barid', $(this).find('span').data('barid'))[0];
+                'barid', $(this).data('barid'))[0];
             select.renderIntent = "visibleNote";
             alayer.redraw();
         });
@@ -97,6 +102,43 @@ $(document).ready(function () {
         });
     }
 
+    attachDeleteNote = function (selector) {
+        $(selector).click(function () {
+            var sure = confirm('Delete This Note?');
+            if (sure == true) {
+                var noteid = $(this).data('noteid');
+                $.post('/ocve/deleteNote/' + noteid, function (data) {
+                    $('#comment-' + noteid).fadeOut();
+                    $('#comment-' + noteid).next('hr').fadeOut();
+                    $('#messages').html(data.messages);
+                    noteFeatures = alayer.getFeaturesByAttribute('noteid', noteid);
+                    alayer.removeFeatures(noteFeatures);
+                    incrementNoteCount(-1);
+                }, 'json');
+            }
+            return false;
+        });
+    }
+
+    attachUpdateNote = function (selector) {
+        $(selector).click(function() {
+            var noteid = $(this).data('noteid');
+            nTest = noteid;
+            var oldText = $('#comment-' + noteid + ' div.annotation p').html();
+            $('#id_notetext').val(oldText);
+            $('#annotation_id').val(noteid);
+            //Select current notes/regions
+            curFeatures = alayer.getFeaturesByAttribute('noteid', noteid);
+            for (var c = 0; c < curFeatures.length; c++) {
+
+                curFeatures[c].renderIntent = 'visibleNote';
+                noteSelectFeature.select(curFeatures[c]);
+            }
+            alayer.redraw();
+            showNewAnnotationWindow();
+
+        });
+    }
     //Change the user annotation count by inc
     incrementNoteCount = function (inc) {
         var count = parseInt($('#note_count').html())
@@ -156,9 +198,11 @@ $(document).ready(function () {
             }
         }
 
+        updatedCustomFeatures=[];
         if (alayer.selectedFeatures.length > 0) {
             for (var a in alayer.selectedFeatures) {
                 var feature = alayer.selectedFeatures[a];
+                updatedCustomFeatures.push(feature);
                 if (alayer.selectedFeatures[a].attributes.barid != undefined) {
                     //Serialize
                     if (barString.length > 0) {
@@ -199,9 +243,15 @@ $(document).ready(function () {
 
         $.post('/ocve/saveNote/', noteData, function (data) {
             //Add/update with new note
+            d=data;
             var noteid = data.noteid;
             // update alayer
             var newFeatures = [];
+            hideNewAnnotationWindow();
+
+            for (var f in updatedCustomFeatures) {
+                updatedCustomFeatures[f].attributes.noteid=noteid;
+            }
 
             for (var v in vlayer.selectedFeatures) {
                 //Clone bar regions with note attributes
@@ -211,6 +261,9 @@ $(document).ready(function () {
                     noteAttributes, vlayer.selectedFeatures[v].geometry);
                 newFeatures.push(newF);
             }
+            if ($('#featureid').val() != 0){
+                alayer.getFeatureById($('#featureid').val()).attributes.noteid=noteid;
+             }
 
             if ($('#comment-' + noteid).length > 0) {
                 $('#comment-' + noteid).replaceWith(data.notehtml);
@@ -218,12 +271,18 @@ $(document).ready(function () {
                 // update user notes
                 $('#notes div.collapseme').append(data.notehtml);
                 //Attach events
-                noteRegionHighlight('#comment-' + noteid+' .noteRegionHighlight');
-
+                noteRegionHighlight('#comment-' + noteid+' div.noteRegionHighlight');
+                noteRegionHighlight('#comment-' + noteid+' div.noteBarHighlight');
+                attachUpdateNote('#comment-' + noteid+' a.updateNote');
+                attachDeleteNote('#comment-' + noteid+' .deleteNote');
             }
 
             // Clear and hide new note form
-            hideNewAnnotationWindow();
+            hideBarBoxes();
+            if (!$('#notes div.collapseme').is(':visible')){
+             $('#notes h4').click()
+            }
+
 
             //Increment note count
             if ($('#annotation_id').val() == '0') {
@@ -287,52 +346,28 @@ $(document).ready(function () {
             {displayClass: "olControlEditingToolbar"});
         toolbarPanel.addControls(panelControls);
 
-
-        noteBarHighlight('.noteBarHighlight');
+        noteBarHighlight('.noteBarHighlight span.label');
         noteRegionHighlight('.noteRegionHighlight');
 
-
         //Update/Delete controls for any notes on page created by current user
-        $('a.updateNote').click(function () {
-            var noteid = $(this).data('noteid');
-            nTest = noteid;
-            var oldText = $('#comment-' + noteid + ' div.annotation p').html();
-            $('#id_notetext').val(oldText);
-            $('#annotation_id').val(noteid);
-            //Select current notes/regions
-            curFeatures = alayer.getFeaturesByAttribute('noteid', noteid);
-            for (var c = 0; c < curFeatures.length; c++) {
-                console.log(curFeatures[c].layer);
-                curFeatures[c].renderIntent = 'visibleNote';
-                noteSelectFeature.select(curFeatures[c]);
-            }
-            alayer.redraw();
-            showNewAnnotationWindow();
-
-        });
-
-        $('a.deleteNote').click(function () {
-            var sure = confirm('Delete This Note?');
-
-            if (sure == true) {
-                var noteid = $(this).data('noteid');
-                $.post('/ocve/deleteNote/' + noteid, function (data) {
-                    $('#comment-' + noteid).fadeOut();
-                    $('#messages').html(data.messages);
-                    noteFeatures = alayer.getFeaturesByAttribute('noteid', noteid);
-                    alayer.removeFeatures(noteFeatures);
-                    incrementNoteCount(-1);
-                }, 'json');
-            }
-
-            return false;
-        });
+        attachUpdateNote('a.updateNote');
+        attachDeleteNote('.deleteNote');
     }
 
     hideExistingNotes = function () {
         for (var f in alayer.features) {
             if (alayer.features[f].attributes.noteid > 0) {
                 alayer.features[f].renderIntent = "default";
+            }
+        }
+        alayer.redraw();
+    }
+
+    //Show all user notes, NOT commentary
+    showExistingNotes = function () {
+        for (var f in alayer.features) {
+            if (alayer.features[f].attributes.noteid > 0) {
+                alayer.features[f].renderIntent = "visibleNote";
             }
         }
         alayer.redraw();
@@ -406,7 +441,6 @@ $(document).ready(function () {
             toggleBarBoxes();
             hideExistingNotes();
             barSelectFeature.activate();
-
             return false;
         });
 
