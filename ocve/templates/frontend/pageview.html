@@ -118,7 +118,7 @@ $(window).load(function(){
                     <div id="annotationTools">
                         <p><strong>Annotation tools</strong></p>
                         <ul class="no-bullet">
-                            <li id="cinque"><a id="barAttachToggle" href="#"><i class="fa fa-link"></i> Attach Bars</a></li>
+                            <li id="cinque"><a id="barAttachToggle" href="#"><i class="fa fa-link"></i> Attach bars</a></li>
                             <li id="sei"><a id="newSquareNoteToggle" href="#"><i class="fa fa-square-o"></i> Create square annotation</a></li>
                             <li id="sette"><a id="newCircleNoteToggle" href="#"><i class="fa fa-circle-thin"></i> Create circle annotation</a></li>
                             <li id="otto"><a href="#" class="com"><i class="fa fa-eye"></i> Toggle commentary on the image</a></li>
@@ -131,6 +131,10 @@ $(window).load(function(){
                         {% include 'frontend/ajax/annotations.html' with without_wrapper=True %}
 
                         <div id="newNote">
+                            <ul class="noteModifyControls">
+                                <li><a href="#" id="moveNote">Move note</a> </li>
+                                <li><a href="#" id="changeNote">Change note shape</a> </li>
+                            </ul>
                             <form id="newNoteForm" method="POST" action="/ocve/saveNote/">
                                 <table>
                                     {{ annotationForm }}

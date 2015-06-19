@@ -51,6 +51,10 @@ class AnnotationForm(ModelForm):
     class Meta:
         model = Annotation
         fields = ['id','notetext','noteregions','pageimage','user']
+        labels = {
+            'notetext': ('Annotation'),
+        }
+
         widgets = { 'id':HiddenInput(),
                     'user':HiddenInput(),
                     'pageimage':HiddenInput(),
