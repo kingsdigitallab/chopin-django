@@ -3,6 +3,17 @@ $(document).ready(function () {
     //Show/hide for openlayers annotation controls
     aselector = '#annotations';
     allNotesVisible = false;
+    //Attach note modify events
+    $('#moveNote').click(function(){
+       dragFeature.activate();
+        //todo message here?
+    });
+$('#changeNote').click(function(){
+    if (dragFeature.active){
+        dragFeature.deactivate();
+    }
+       modifyFeature.activate();
+    });
 
     // Opens a new annotation window for drawn feature
     newDrawnAnnotation = function (feature) {
@@ -301,6 +312,14 @@ $(document).ready(function () {
     }
 
     initAnnotationPanel = function (alayer) {
+        dragFeature = new OpenLayers.Control.DragFeature(alayer,
+        {displayClass:"olControlDragFeature", title:'Drag'});
+
+        modifyFeature = new OpenLayers.Control.ModifyFeature(alayer,
+        {mode:OpenLayers.Control.ModifyFeature.RESIZE,
+            displayClass:"olControlModifyFeature",
+            title:'Modify'});
+
         squareFeature = new OpenLayers.Control.DrawFeature(
             alayer, OpenLayers.Handler.RegularPolygon,
             {displayClass: "olControlDrawFeaturePolygon",
@@ -344,7 +363,7 @@ $(document).ready(function () {
                 box: true
             });
 
-        var panelControls = [barSelectFeature, squareFeature, circleFeature, noteSelectFeature];
+        var panelControls = [barSelectFeature, squareFeature, circleFeature, noteSelectFeature,dragFeature,modifyFeature];
         toolbarPanel = new OpenLayers.Control.Panel(
             {displayClass: "olControlEditingToolbar"});
         toolbarPanel.addControls(panelControls);
