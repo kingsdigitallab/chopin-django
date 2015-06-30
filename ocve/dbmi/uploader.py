@@ -87,7 +87,7 @@ def convertimage(request):
         folderName=None
     except MultiValueDictKeyError:
         folderName=request.POST['folderName']
-        imageNames=os.listdir(settings.CONVERTED_UPLOAD_PATH+'/'+folderName)
+        imageNames=os.listdir(settings.CONVERTED_UPLOAD_PATH+'/'+folderName.encode('UTF-8'))
     s=None
     if source_key > 0:
         s=Source.objects.get(id=source_key)
@@ -101,10 +101,10 @@ def convertimage(request):
             newS.save()
         if folderName is not None:
             for image in imageNames:
-                image=folderName.encode('UTF-8')+'/'+image
+                image=folderName.encode('UTF-8')+'/'+image.encode('UTF-8')
                 copytonewpageimage(newS,image)
         elif imageNames is not None:
-           copytonewpageimage(newS,imageNames)
+           copytonewpageimage(newS,imageNames.encode('UTF-8'))
 
     return HttpResponseRedirect('/ocve/sourceeditor/' + str(s.id))
 

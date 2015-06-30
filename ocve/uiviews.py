@@ -81,21 +81,21 @@ def cfeoBrowse(request):
 
 @csrf_exempt
 def serializeFilter(request):
-    try:
-        filters=request.POST['OCVE_current_filters']
-        request.session['OCVE_current_filters'] = filters
-    except MultiValueDictKeyError:
-        pass
-    except KeyError:
-        pass
-    try:
-        filters=request.POST['CFEO_current_filters']
-        request.session['CFEO_current_filters'] = filters
-    except MultiValueDictKeyError:
-        pass
-    except KeyError:
-        pass
-    return HttpResponse()
+    ocve_filters = request.POST.get('OCVE_current_filters', [])
+    if ocve_filters:
+        request.session['OCVE_current_filters'] = ocve_filters
+
+    cfeo_filters = request.POST.get('CFEO_current_filters', [])
+    if cfeo_filters:
+        request.session['CFEO_current_filters'] = cfeo_filters
+
+    return HttpResponse(json.dumps(
+        {'status': 'ok',
+         # for debug return filters
+         # 'filters': {'ocve_filters': ocve_filters,
+         #             'cfeo_filters': cfeo_filters}
+         }),
+        content_type='application/json')
 
 
 def resetFilter(request):
@@ -192,7 +192,6 @@ def browse(request,mode="OCVE",defaultFilters=None):
         #dedicatees=Dedicatee.objects.filter(sourceinformation__source__ocve=True).filter(id__gt=2).distinct()
         publishers=Publisher.objects.filter(sourceinformation__source__ocve=True).filter(id__gt=2).distinct()
         years=Year.objects.filter(sourceinformation__source__ocve=True).distinct()
-        keyPitches=keyPitch.objects.filter(workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__ocve=True).distinct()
         genres=Genre.objects.filter(work__workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__ocve=True).filter(id__gt=2).distinct()
         instruments=Instrument.objects.filter(sourcecomponent_instrument__sourcecomponent__source__ocve=True).distinct()
     else:
@@ -206,7 +205,18 @@ def browse(request,mode="OCVE",defaultFilters=None):
         years=Year.objects.filter(sourceinformation__source__cfeo=True).distinct()
         genres=Genre.objects.filter(work__workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__cfeo=True).distinct()
         instruments=Instrument.objects.filter(sourcecomponent_instrument__sourcecomponent__source__cfeo=True).distinct()
-    return render_to_response('frontend/browse.html', {'defaultFilters':defaultFilters, 'mode':mode,'workinfos':workinfos,'sourceTypes':sourceTypes,'instruments':instruments,'years':years,'publishers':publishers,'genres':genres,'works':works, 'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL}, context_instance=RequestContext(request))
+    return render_to_response('frontend/browse.html',
+        {'defaultFilters':defaultFilters,
+         'mode':mode,
+         'workinfos':workinfos,
+         'sourceTypes':sourceTypes,
+         'instruments':instruments,
+         'years':years,
+         'publishers':publishers,
+         'genres':genres,
+         'works':works,
+         'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL},
+         context_instance=RequestContext(request))
 
 
 #Optimised for OCVE
@@ -248,7 +258,7 @@ def getPageImageWork(pi,source):
 
 #Annotation.objects.filter(type_id=1).delete()
 @csrf_exempt
-def ocvePageImageview(request, id):
+def ocvePageImageview(request, id,selectedregionid=0):
     mode = "OCVE"
     noteURL = "/ocve/getAnnotationRegions/" + id + "/"
     regionURL = "/ocve/getBarRegions/" + id + "/"
@@ -271,6 +281,7 @@ def ocvePageImageview(request, id):
     accode = source.getAcCodeObject()
     achash = None
 
+
     if accode:
         achash = accode.accode_hash
 
@@ -290,6 +301,11 @@ def ocvePageImageview(request, id):
     comments = Annotation.objects.filter(pageimage_id=id, type_id=2)
     [next_page, prev_page] = getNextPrevPages(p, pi)
     work=getPageImageWork(pi,source)
+    #Check if work has information so we don't display dead link
+    if len(work.workinformation.OCVE)> 0:
+        workinfoexists=True
+    else:
+        workinfoexists=False
     if pi.width == 0:
         #Resolution not set, add
         addImageDimensions(pi)
@@ -298,6 +314,8 @@ def ocvePageImageview(request, id):
     request.session['page_image'] = id
 
     return render_to_response('frontend/pageview.html', {
+        'workinfoexists':workinfoexists,
+        'selectedregionid':selectedregionid,
         'achash': achash, 'annotationForm': annotationForm, 'notes': notes,
         'comments': comments, 'allBars': cursor, 'work': work,
         'source': source, 'prev': prev_page, 'next': next_page,
@@ -327,7 +345,7 @@ def ocveViewInPage(request,id,barid):
     work=Work.objects.filter(workcomponent__sourcecomponent_workcomponent__sourcecomponent__page__pageimage=pi).distinct()[0]
     zoomifyURL=pi.getZoomifyPath()
     mode="OCVE"
-    return render_to_response('frontend/viewinpage.html', {'work':work,'source':source,'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL,'pageimages':pageimages,'mode':mode,'opus':opus,'zoomifyURL':zoomifyURL,'regionURL':regionURL,'page': p, 'pageimage': pi}, context_instance=RequestContext(request))
+    return render_to_response('frontend/pageview.html', {'work':work,'source':source,'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL,'pageimages':pageimages,'mode':mode,'opus':opus,'zoomifyURL':zoomifyURL,'regionURL':regionURL,'page': p, 'pageimage': pi}, context_instance=RequestContext(request))
 
 def cfeoPageImageview(request,id):
     mode="CFEO"
@@ -403,57 +421,76 @@ def workinformation(request, id, mode='OCVE'):
 def barview(request):
     opuses = Opus.objects.filter(opusno__gt=0)
     #The position in the work spine
-    orderno=0
-    workid=int(request.GET['workid'])
-    work=Work.objects.get(id=workid)
+    orderno = 0
+    workid = int(request.GET['workid'])
+    work = Work.objects.get(id=workid)
     regionThumbs = []
     sources = []
+
     try:
-        range=int(request.GET['range'])
+        range = int(request.GET['range'])
     except MultiValueDictKeyError:
-        range=1
+        range = 1
+
     try:
-        orderno=int(request.GET['orderNo'])
-        spine=BarSpine.objects.filter(source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work,orderNo=orderno)
+        pageimageid = int(request.GET['pageimageid'])
+    except:
+        pageimageid = 1
+
+    try:
+        orderno = int(request.GET['orderNo'])
+        spine = BarSpine.objects.filter(
+            source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work,
+            orderNo=orderno)
         if spine.count() > 0:
-            bar=spine[0].bar
+            bar = spine[0].bar
     except MultiValueDictKeyError:
         #Coming from page, find spine point with bar,pageimage
-        barid=int(request.GET['barid'])
-        pageimageid=int(request.GET['pageimageid'])
-        bar=Bar.objects.get(id=barid)
-        pageimage=PageImage.objects.get(id=pageimageid)
+        barid = int(request.GET['barid'])
+        bar = Bar.objects.get(id=barid)
+        pageimage = PageImage.objects.get(id=pageimageid)
         #source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work
-        spine=BarSpine.objects.filter(sourcecomponent__page__pageimage=pageimage,bar=bar)
+        spine = BarSpine.objects.filter(
+            sourcecomponent__page__pageimage=pageimage, bar=bar)
         if spine.count() > 0:
-            orderno=spine[0].orderNo
+            orderno = spine[0].orderNo
+
     if orderno > 0:
-        barSpines=getSpinesByWork(work, orderno,range)
+        barSpines = getSpinesByWork(work, orderno,range)
+
         #Arrange bar spines into groups based on source
-        barSpines=sorted(barSpines, key=lambda sp: sp.source.orderno)
+        barSpines = sorted(barSpines, key=lambda sp: sp.source.orderno)
         for sp in barSpines:
             if sources.__contains__(sp.source) is False:
                 sources.append(sp.source)
+
         regionThumbs=spinesToRegionThumbs(barSpines,range)
-    sortedsources=sorted(sources, key=lambda source: source.orderno)
-    sources=sortedsources
+
+    sortedsources = sorted(sources, key=lambda source: source.orderno)
+    sources = sortedsources
     mode = "OCVE"
     #barregions=getRegionsByBarOpus(bar,opus)
     # get next and previous, if available
     next = False
     prev = False
+
     if orderno > 0:
         try:
-            nextOrder=orderno+1
-            nextSpine=BarSpine.objects.filter(orderNo=nextOrder,source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).distinct()
-            if nextSpine.count() >0:
+            nextOrder = orderno+1
+            nextSpine = BarSpine.objects.filter(
+                orderNo=nextOrder,
+                source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).distinct()
+            if nextSpine.count() > 0:
                 next = nextSpine[0]
         except:
             next = False
+
         try:
-            prevOrder=orderno-1
-            prevSpine=BarSpine.objects.filter(orderNo=prevOrder,source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).distinct()
-            if prevSpine.count() >0:
+            prevOrder = orderno - 1
+            prevSpine = BarSpine.objects.filter(
+                orderNo=prevOrder,
+                source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).distinct()
+            if prevSpine.count() > 0:
                 prev = prevSpine[0]
         except:
             prev = False
@@ -461,9 +498,18 @@ def barview(request):
     # Quick and dirty way of setting a test template mode
     try:
         request.GET['template']
-        return render_to_response('frontend/bar-view-html-design.html', {}, context_instance=RequestContext(request))
+        return render_to_response('frontend/bar-view-html-design.html', {},
+                                  context_instance=RequestContext(request))
     except:
-            return render_to_response('frontend/bar-view.html', {'mode' : mode, 'next':next,'range':range,'prev':prev, 'opuses': opuses,'orderNo':orderno,'bar':bar,'barregions':regionThumbs,'sources': sources, 'work': work, 'IMAGE_SERVER_URL': IMAGE_SERVER_URL, }, context_instance=RequestContext(request))
+        return render_to_response(
+            'frontend/bar-view.html', {
+                'mode': mode, 'next': next, 'range': range, 'prev': prev,
+                'opuses': opuses, 'orderNo': orderno, 'bar': bar,
+                'opuses': opuses, 'orderNo': orderno, 'bar': bar,
+                'barregions': regionThumbs, 'sources': sources, 'work': work,
+                'pageimageid': pageimageid,
+                'IMAGE_SERVER_URL': IMAGE_SERVER_URL
+            }, context_instance=RequestContext(request))
 
 
 # Ajax call for inline collections display

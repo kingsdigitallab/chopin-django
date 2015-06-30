@@ -38,8 +38,8 @@ $(window).load(function(){
                         </li>
 
                         <li>
-                            <div class="menu-item opus-title" id="zero">
-                                <a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview">{{ work }}</a>,
+                            <div class="menu-item opus-title">
+                                {% if workinfoexists %}<a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview" id="zero">{{ work }}</a>{% else %}{{ work }}{% endif %},
                                 <a href="#" data-reveal-id="witness-info" data-reveal-ajax="/ocve/browse/sourceinformation/{{ source.id }}/" title="Witness overview">{{ source.getAcCode }}</a>,
                                 {{ pageimage.textlabel }}
                             </div>
@@ -251,12 +251,15 @@ var regionURL = "{{ regionURL }}";
 var noteURL = "{{ noteURL }}";
 
 var workid = {{ work.id }};
+{% if selectedregionid > 0 %}selectedregionid={{ selectedregionid }};
+    {% else %}selectedregionid=0; {% endif %}
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview_functions.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview_ol.js"></script>
 <script type="text/javascript">
 $(document).ready(function () {
+
     {% if view == 'annotations' %}
     showAnnotationTools();
     {% else %}

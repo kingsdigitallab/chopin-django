@@ -15,6 +15,13 @@ $('#changeNote').click(function(){
        modifyFeature.activate();
     });
 
+    $('#changeBars').click(function(){
+        //For each selected bar
+        //Remove from alayer
+        //Select on vlayer
+        //Show bar selection tool
+        toggleBarBoxes();
+    });
     // Opens a new annotation window for drawn feature
     newDrawnAnnotation = function (feature) {
         var noteid = 0;
@@ -447,6 +454,16 @@ $('#changeNote').click(function(){
         vlayer.redraw();
     }
 
+    //Start the page with a particular region highlighted
+    loadselectedregion=function(){
+        if (selectedregionid > 0) {
+            console.log(selectedregionid);
+            var f = vlayer.getFeaturesByAttribute('id', selectedregionid);
+            if (f.length > 0) {
+                highlightCtrl.select(f[0]);
+            }
+        }
+    }
     toggleBarNumbers = function () {
         if (vlayer.styleMap.styles.default.defaultStyle.label.length > 0) {
             vlayer.styleMap.styles.default.defaultStyle.label = '';
@@ -457,6 +474,7 @@ $('#changeNote').click(function(){
     }
 
     //To run in doc ready to init all annotation events
+
 
     annotationEvents = function () {
         //Init state
