@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+{% load catalogue_tags staticfiles %}
+
+{% block custom_stylesheets %}
+{{ block.super }}
+<link rel="stylesheet" href="{{ STATIC_URL }}vendor/OpenLayers/theme/default/style.css" type="text/css">
+<link rel="stylesheet" href="{{ STATIC_URL }}custom_css/bareditor.css" type="text/css">
+{% endblock custom_stylesheets %}
+
+{% block header_scripts %}
+<script type="text/javascript" src="{{ STATIC_URL }}vendor/garand-sticky/jquery.sticky.js"></script>
+<script>
+$(window).load(function(){
+  $(".fixed-image").sticky({ topSpacing: 0 });
+  $(".fixed-image").sticky({ bottomSpacing: 360 });
+});
+</script>
+
+<!-- Set cookie for Joyride (has to load before foundation.min.js) -->
+<script src="{{ STATIC_URL }}vendor/foundation/js/vendor/jquery.cookie.js"></script>
+{% endblock header_scripts %}
+
+{% block content %}
+<section class="main content-section page-view">
+    <div class="row">
+        <div class="large-12 columns">
+            <div id="messages">
+                {% include 'frontend/messages.html' %}
+            </div>
+
+            <nav class="tab-bar">
+                <section class=" tab-bar-section">
+                    <ul class="left inline-list contextual-menu">
+                        <li>
+                            <div class="menu-item">
+                                <a href="{% url 'ocve_browse' %}"><i class="fa fa-arrow-circle-left"></i> Back to results</a>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="menu-item opus-title">
+                                {% if workinfoexists %}<a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview" id="zero">{{ work }}</a>{% else %}{{ work }}{% endif %},
+                                <a href="#" data-reveal-id="witness-info" data-reveal-ajax="/ocve/browse/sourceinformation/{{ source.id }}/" title="Witness overview">{{ source.getAcCode }}</a>,
+                                {{ pageimage.textlabel }}
+                            </div>
+                        </li>
+
+                        {% get_impression_exists achash as impression_exists %}
+                        {% if  impression_exists %}
+                        <li>
+                            <div class="menu-item">
+                                <a href="/aco/catalogue/impression/{{ achash }}/">Catalogue</a>
+                            </div>
+                        </li>
+                        {% endif %}
+
+                        {% if prev %}
+                        <li id="uno">
+                            <div class="menu-item">
+                                <a href="/{{ mode|lower }}/browse/pageview/{{ prev.id }}/" class="ctrl prev"><span class="fa fa-caret-left"></span></a>
+                            </div>
+                        </li>
+                        {% endif %}
+
+                        {% if next %}
+                        <li id="due">
+                            <div class="menu-item">
+                                <a href="/{{ mode|lower }}/browse/pageview/{{ next.id }}/" class="ctrl next"><span class="fa fa-caret-right"></span></a>
+                            </div>
+                        </li>
+                        {% endif %}
+
+                        <li id="tre">
+                            <div class="menu-item">
+                                <a href="#" data-dropdown="available-pages">Jump to page <i class="fa fa-caret-down"></i></a>
+                                <ul id="available-pages" class="f-dropdown" data-dropdown-content="">
+                                    {% for pi in pageimages %}
+                                    <li>
+                                        <a href="/{{ mode|lower }}/browse/pageview/{{ pi.id }}/">{{ pi.textlabel }}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li id="quattro">
+                            <div class="menu-item">
+                                {% if view == 'annotations' %}
+                                <a href="?view=full">Hide annotations</a>
+                                {% else %}
+                                <a  href="?view=annotations">Annotations</a>
+                                {% endif %}
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+            </nav>
+
+            <div class="row">
+                {% if view != 'annotations' %}
+                <div class="large-12 columns">
+                    <div data-alert class="alert-box radius secondary">
+                        <i class="fa fa-info-circle"></i> <strong>User tip:</strong> Hover over the image to see bar numbers.
+                        <a href="#" class="close">&times;</a>
+                    </div>
+                </div>
+                {% endif %}
+                <div id="pageimage" class="large-{% if view == 'annotations' %}8{% else %}12{% endif %} columns {% if view == 'annotations' %}fixed-image{% endif %}">
+                    <div id="map"></div>
+                    <div id="copyright">
+                    {{ source.getSourceInformation.copyright|safe }}
+                    </div>
+                </div>
+
+                {% if view == 'annotations' %}
+                <div id="annotations" class="large-4 columns">
+                    {% if user.is_authenticated %}
+                    <div id="annotationTools">
+                        <p><strong>Annotation tools</strong></p>
+                        <ul class="no-bullet">
+                            <li id="cinque"><a id="barAttachToggle" href="#"><i class="fa fa-link"></i> Attach Bars</a></li>
+                            <li id="sei"><a id="newSquareNoteToggle" href="#"><i class="fa fa-square-o"></i> Create square annotation</a></li>
+                            <li id="sette"><a id="newCircleNoteToggle" href="#"><i class="fa fa-circle-thin"></i> Create circle annotation</a></li>
+                            <li id="otto"><a href="#" class="com"><i class="fa fa-eye"></i> Toggle commentary on the image</a></li>
+                            <li id="nove"><a href="#" class="not"><i class="fa fa-eye"></i> Toggle notes on the image</a></li>
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div class="page-comments">
+                        {% include 'frontend/ajax/annotations.html' with without_wrapper=True %}
+
+                        <div id="newNote">
+                            <form id="newNoteForm" method="POST" action="/ocve/saveNote/">
+                                <table>
+                                    {{ annotationForm }}
+                                    <tr>
+                                        <th><label for="type_id">Visibility:</label></th>
+                                        <td>
+                                            <select id="type" name="type_id">
+                                                <option value="3" selected="selected">Private</option>
+                                                <option value="4">Public</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <button id="createNote" type="submit" class="tiny radius">Save</button>
+                                <input type="hidden" id="annotation_id" name="annotation_id" value="0"/>
+                                <input type="hidden" id="featureid" name="featureid" value="0"/>
+                                <input type="hidden" id="noteBars" name="noteBars" value=""/>
+                                <button id="cancelNote" type="submit" class="tiny radius">Cancel</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="large-12 columns">
+            <div class="thumbnail-carousel">
+                <b class="divider"></b>
+                {% for p in pageimages %}
+                <div>
+                    <div class="carousel-image">
+                        {% with image_id=p.id %}
+                        <a class="pageView thumb" href="/{{ mode|lower }}/browse/pageview/{{ image_id }}/">
+                            <img border align="0" src="{% static 'thumbnails/' %}{{ image_id }}.jpg" class="lazy thumbnail"/>
+                        </a>
+                        {% endwith %}
+                        <span class="page-label">{{ p.textlabel }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+
+<div id="witness-info" class="reveal-modal" data-reveal>
+
+</div>
+
+<div id="opus-info" class="reveal-modal" data-reveal>
+
+</div>
+
+<!-- Joyride -->
+<ol class="joyride-list" data-joyride>
+  <li data-id="zero" data-text="Next" data-options="tip_location: top; prev_button: false">
+    <p>See more information about the work.</p>
+  </li>
+  <li data-id="uno" data-text="Next" data-prev-text="Prev" data-options="tip_location:top; tip_animation:fade">
+    <p>Navigate to the previous page.</p>
+  </li>
+  <li data-id="due" data-button="Next" data-prev-text="Prev" data-options="tip_location:top; tip_animation:fade">
+    <p>Navigate to the next page.</p>
+  </li>
+  <li data-id="tre" data-button="Next" data-prev-text="Prev" data-options="tip_location:top; tip_animation:fade">
+    <p>You might already know what page you're looking for. This dropdown will let you choose a specific page.</p>
+  </li>  <li data-id="quattro" {% if view == 'annotations' %}data-button="Next"{% else %} data-button="Start exploring!"{% endif %} data-prev-text="Prev" data-options="tip_location:top; tip_animation:fade">
+    <p>Show / Hide the annotation tools.</p>
+  </li>
+  {% if view == 'annotations' %}
+    {% if user.is_authenticated %}
+    <li data-id="cinque" data-button="Next" data-prev-text="Prev" data-options="tip_location:top; tip_animation:fade">
+        <p>Show / Hide bars and click on one to attach an annotation.</p>
+    </li>
+    <li data-id="sei" data-button="Next" data-prev-text="Prev" data-options="tip_location:top; tip_animation:fade">
+        <p>Draw a square shaped annotation on the image.</p>
+    </li>
+    <li data-id="sette" data-button="Next" data-prev-text="Prev" data-options="tip_location:top; tip_animation:fade">
+        <p>Or a circle one.</p>
+    </li>
+    <li data-id="otto" data-button="Next" data-prev-text="Prev" data-options="tip_location:top; tip_animation:fade">
+        <p>Show / Hide commentary on the image.</p>
+    </li>
+    <li data-id="nove" data-button="Start exploring!" data-options="tip_location:top; tip_animation:fade">
+        <p>Show / Hide notes on the image.</p>
+    </li>
+    {% endif %}
+  {% endif %}
+</ol>
+{% endblock %}
+
+{% block footer_scripts %}
+{{ block.super }}
+<script src="{{ STATIC_URL }}javascripts/slick.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="{{ STATIC_URL }}vendor/OpenLayers/OpenLayers.js"></script>
+<script type="text/javascript">
+var map, zoomify;
+var alayer, vlayer;
+
+var zoomify_width = {{ pageimage.width }};
+var zoomify_height = {{ pageimage.height }};
+
+var pageID = {{ pageimage.id }};
+var zoomify_url = "{{ zoomifyURL }}";
+
+var regionURL = "{{ regionURL }}";
+var noteURL = "{{ noteURL }}";
+
+var workid = {{ work.id }};
+{% if selectedregionid > 0 %}selectedregionid={{ selectedregionid }};
+    {% else %}selectedregionid=0; {% endif %}
+</script>
+<script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview_functions.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview_ol.js"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+
+    {% if view == 'annotations' %}
+    showAnnotationTools();
+    {% else %}
+    hideAnnotationTools();
+    {% endif %}
+});
+</script>
+
+<!-- Start Joyride -->
+<script>
+    $(document).foundation('joyride', 'start');
+</script>
+
+<script type="text/javascript">
+    $(document).foundation({
+        joyride: {
+            cookieMonster: true,
+            cookieName: 'joyride',
+            cookieDomain: true,
+            cookieExpires: 30,
+        };
+    });
+</script>
+
+{% endblock %}
