@@ -135,7 +135,9 @@ $(document).ready(function () {
         "default": new OpenLayers.Style({
             strokeOpacity: 1,
             fillOpacity: 0.0,
-            display: 'none'
+            strokeColor: 'orange',
+            display: 'block'
+            //display: 'none'
         }),
         "visibleNote": new OpenLayers.Style({
             strokeOpacity: 1,

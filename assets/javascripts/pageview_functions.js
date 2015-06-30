@@ -13,15 +13,30 @@ $('#changeNote').click(function(){
         dragFeature.deactivate();
     }
        modifyFeature.activate();
-    });
+    return false;
+ });
 
-    $('#changeBars').click(function(){
+    reassignBars=function(noteid){
+        select = alayer.getFeaturesByAttribute(
+                'noteid', noteid);
+        barSelectFeature.activate();
         //For each selected bar
-        //Remove from alayer
-        //Select on vlayer
+        for (var a in select) {
+            var afeature = select[a];
+            var barid=afeature.attributes['barid'];
+            //Remove from alayer
+            var vfeature=vlayer.getFeaturesByAttribute('barid', barid);
+            //Select on vlayer
+            barSelectFeature.select(vfeature[0]);
+        }
         //Show bar selection tool
         toggleBarBoxes();
-    });
+        return false;
+    }
+
+    /* Change bars that are attached to note*/
+    $('.changeBars').click();
+
     // Opens a new annotation window for drawn feature
     newDrawnAnnotation = function (feature) {
         var noteid = 0;
@@ -41,9 +56,12 @@ $('#changeNote').click(function(){
     }
 
     showNewAnnotationWindow = function () {
+
         $('#newNote').fadeIn();
         $('#notes').hide();
-        $('#commentary').hide()
+        $('#commentary').hide();
+
+
     };
 
     initSquareAnnotation = function () {
@@ -155,13 +173,21 @@ $('#changeNote').click(function(){
             $('#annotation_id').val(noteid);
             //Select current notes/regions
             curFeatures = alayer.getFeaturesByAttribute('noteid', noteid);
-            for (var c = 0; c < curFeatures.length; c++) {
-
-                curFeatures[c].renderIntent = 'visibleNote';
-                noteSelectFeature.select(curFeatures[c]);
+            //Is this note attached to regions or bars?
+            if (curFeatures && curFeatures[0].attributes['barid']){
+                //Bar
+             reassignBars(noteid);
+            }else {
+                $('.noteModifyControls').show();
+                //features
+                for (var c = 0; c < curFeatures.length; c++) {
+                    curFeatures[c].renderIntent = 'visibleNote';
+                    noteSelectFeature.select(curFeatures[c]);
+                }
+                alayer.redraw();
             }
-            alayer.redraw();
             showNewAnnotationWindow();
+            return false;
 
         });
     }
@@ -222,10 +248,7 @@ $('#changeNote').click(function(){
                 }
                 barString += vlayer.selectedFeatures[v].attributes.barid;
             }
-        }
-
-
-        if (alayer.selectedFeatures.length > 0) {
+        }else  if (alayer.selectedFeatures.length > 0) {
             for (var a in alayer.selectedFeatures) {
                 var feature = alayer.selectedFeatures[a];
                 if (alayer.selectedFeatures[a].attributes.barid != undefined) {
@@ -324,8 +347,13 @@ $('#changeNote').click(function(){
 
         modifyFeature = new OpenLayers.Control.ModifyFeature(alayer,
         {mode:OpenLayers.Control.ModifyFeature.RESIZE,
+            toggle:false,
             displayClass:"olControlModifyFeature",
-            title:'Modify'});
+            title:'Modify',
+            beforefeaturemodified:function(feature){
+                alert('done');
+            }
+        });
 
         squareFeature = new OpenLayers.Control.DrawFeature(
             alayer, OpenLayers.Handler.RegularPolygon,
@@ -349,7 +377,7 @@ $('#changeNote').click(function(){
             {
                 title: 'Select',
                 clickout: true,
-                toggle: false,
+                toggle: true,
                 displayClass: "olControlModifyFeature",
                 multiple: true,
                 hover: false,

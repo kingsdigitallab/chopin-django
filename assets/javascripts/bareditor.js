@@ -232,7 +232,7 @@ initControls = function (vlayer) {
     var dragFeature = new OpenLayers.Control.DragFeature(vlayer,
         {displayClass:"olControlDragFeature", title:'Drag'});
 
-    var modifyFeature = new OpenLayers.Control.ModifyFeature(vlayer,
+    modifyFeature = new OpenLayers.Control.ModifyFeature(vlayer,
         {sides:4, mode:OpenLayers.Control.ModifyFeature.RESHAPE,
             displayClass:"olControlModifyFeature",
             title:'Modify'});
