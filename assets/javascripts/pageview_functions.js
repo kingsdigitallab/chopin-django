@@ -350,9 +350,7 @@ $('#changeNote').click(function(){
             toggle:false,
             displayClass:"olControlModifyFeature",
             title:'Modify',
-            beforefeaturemodified:function(feature){
-                alert('done');
-            }
+            vertexRenderIntent: "vertex"
         });
 
         squareFeature = new OpenLayers.Control.DrawFeature(

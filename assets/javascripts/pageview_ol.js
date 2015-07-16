@@ -159,6 +159,12 @@ $(document).ready(function () {
             fillOpacity: 0.0,
             strokeColor: '#00BFFF',
             display: 'block'
+        }),
+        "vertex": new OpenLayers.Style({
+             fillColor: "black",
+             strokeColor: "red",
+             pointRadius: 50,
+             strokeWidth: 30
         })
     });
 
