@@ -186,13 +186,13 @@ class SourceSearchItem:
         sourcejson +=  "'Pages': ["
         if self.mode == 'OCVE':
             #Filter out non-musical pages like blanks, title pages etc.
-            musicpage=PageType.objects.get(type='music')
+            #musicpage=PageType.objects.get(type='music')
             blank=PageType.objects.get(type='blank')
-            tp=PageType.objects.get(type='title page')
-            nonmusic=SourceComponentType.objects.get(type="Non-music")
+            #tp=PageType.objects.get(type='title page')
+            #nonmusic=SourceComponentType.objects.get(type="Non-music")
             #.exclude(page__sourcecomponent__sourcecomponenttype=blank)
             #.exclude(page__sourcecomponent__sourcecomponenttype=nonmusic)
-            pages = PageImage.objects.filter(page__sourcecomponent__source_id=self.id).filter(Q(page__pagetype=musicpage)|Q(page__pagetype=tp)).order_by("page__sourcecomponent","page")
+            pages = PageImage.objects.filter(page__sourcecomponent__source_id=self.id).exclude(page__pagetype_id__lt=2).exclude(page__pagetype=blank).order_by("page__sourcecomponent","page")
         else:
             pages = PageImage.objects.filter(page__sourcecomponent__source_id=self.id).order_by("page__sourcecomponent","page")
         for pi in pages:
@@ -334,11 +334,11 @@ def serializeAcCodeConnector():
 
 
 #Get the pageimages from a source, filtered to include only music pages and the title page
+#filter(Q(page__pagetype=musicpage)|Q(page__pagetype=tp)).
 def getOCVEPageImages(source):
     try:
-        musicpage=PageType.objects.get(type='music')
-        tp=PageType.objects.get(type='title page')
-        pi=PageImage.objects.filter(page__sourcecomponent__source=source).filter(Q(page__pagetype=musicpage)|Q(page__pagetype=tp)).order_by('page__orderno')
+        blank=PageType.objects.get(type='blank')
+        pi=PageImage.objects.filter(page__sourcecomponent__source=source).exclude(page__pagetype_id__lt=2).exclude(page__pagetype=blank).order_by('page__orderno')
         return pi
     except IndexError:
         return []
