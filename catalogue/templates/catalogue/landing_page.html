@@ -32,7 +32,6 @@
 <meta name="msapplication-TileImage" content="{% static 'images/favicon/ms-icon-144x144.png' %}">
 <meta name="theme-color" content="#ffffff">
 
-<script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
 <script type="text/javascript" src="//use.typekit.net/caf1nkf.js"></script>
 <script type="text/javascript">try {
 Typekit.load();
@@ -55,15 +54,17 @@ Typekit.load();
     </div>
 </div>
 
-<div class="row">
+<div class="row" data-equalizer>
     {% for section in self.sections.all %}
     <div class="large-4 columns panel {{ section.css_class }}">
-        <div class="home-block-header">
-            <a href="{{ section.page.url }}"><h2>{{ section.abbreviation }}</h2></a>
-            <p>{{ section.title }}</p>
-        </div>
-        <div class="home-block-content">
-            <p>{{ section.introduction }}</p>
+        <div class="top-block" data-equalizer-watch>
+            <div class="home-block-header">
+                <a href="{{ section.page.url }}"><h2>{{ section.abbreviation }}</h2></a>
+                <p>{{ section.title }}</p>
+            </div>
+            <div class="home-block-content">
+                <p>{{ section.introduction }}</p>
+            </div>
         </div>
         <a href="{{ section.page.url }}">{% image section.image original %}</a>
         <a href="{{ section.page.url }}" class="button expand">Go to site <i class="fa fa-angle-double-right"></i></a>
@@ -78,10 +79,13 @@ Typekit.load();
 </footer>
 
 {% block footer_scripts %}
+<script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
+<script src="{% static 'vendor/foundation/js/vendor/fastclick.js' %}"></script>
 <script src="{% static 'vendor/foundation/js/foundation.min.js' %}"></script>
+<script type="text/javascript">
+    $(document).foundation('equalizer', 'reflow');
+</script>
 {% endblock %}
-
-{# wagtailuserbar #}
 
 </body>
 </html>

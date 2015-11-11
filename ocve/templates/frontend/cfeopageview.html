@@ -4,14 +4,23 @@
 {% block custom_stylesheets %}
 <link rel="stylesheet" href="{{ STATIC_URL }}vendor/OpenLayers/theme/default/style.css" type="text/css">
 <link rel="stylesheet" href="{{ STATIC_URL }}custom_css/bareditor.css" type="text/css">
-{% endblock custom_stylesheets %} 
+{% endblock custom_stylesheets %}
+
+{% block header_scripts %}
+<script type="text/javascript" src="{{ STATIC_URL }}vendor/garand-sticky/jquery.sticky.js"></script>
+<script>
+$(window).load(function(){
+  $(".tab-bar").sticky();
+});
+</script>
+{% endblock header_scripts %}
 
 {% block content %}
 <section class="main content-section page-view">
     <div class="row">
         <div class="large-12 columns">
             <nav class="tab-bar">
-                <section class=" tab-bar-section">
+                <section class="tab-bar-section">
                     <ul class="left inline-list contextual-menu">
 
                         <li>
