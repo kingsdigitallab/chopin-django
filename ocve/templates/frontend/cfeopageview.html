@@ -11,6 +11,7 @@
 <script>
 $(window).load(function(){
   $(".tab-bar").sticky();
+  // $(".add-to-compare-bar").sticky({ topSpacing: 30 });
 });
 </script>
 {% endblock header_scripts %}
@@ -88,22 +89,22 @@ $(window).load(function(){
                         </li>
                     </ul>
                 </section>
+
+                <div class="row add-to-compare-bar" data-page-id="{{pageimage.id}}">
+                    <div class="large-6 columns ">
+                        <a href="#" data-cookie="left" data-page-id="{{pageimage.id}}">Compare on left</a>
+                    </div>
+                    <div class="large-6 columns ">
+                        <a href="#" data-cookie="right" data-page-id="{{pageimage.id}}">Compare on right</a>
+                    </div>
+                </div>
+
+                <div class="row add-to-compare-notification">
+                    <div class="large-12 columns ">
+                        <span class="alert-box success">Added to comparison.</span>
+                    </div>
+                </div>
             </nav>
-
-            <div class="row add-to-compare-bar" data-page-id="{{pageimage.id}}">
-                <div class="large-6 columns ">
-                    <a href="#" data-cookie="left" data-page-id="{{pageimage.id}}">Compare on left</a>
-                </div>
-                <div class="large-6 columns ">
-                    <a href="#" data-cookie="right" data-page-id="{{pageimage.id}}">Compare on right</a>
-                </div>
-            </div>
-
-            <div class="row add-to-compare-notification">
-                <div class="large-12 columns ">
-                    <span class="alert-box success">Added to comparison.</span>
-                </div>
-            </div>
 
             <div class="row">
                 <div class="large-12 columns">
@@ -138,17 +139,17 @@ $(window).load(function(){
     <script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-    //Set div width/height as proprortion of available screen
-    var zoomify_width = {{pageimage.width}};
-    var zoomify_height = {{pageimage.height}};
-    var sf=zoomify_height/zoomify_width;
-    var docWidth = parseInt($('body').width());
-    var docHeight = parseInt($(window).height());
-    var fullWidth = parseInt($('#pageimage').width());
-    var fullHeight = fullWidth*sf;
-    $("#image_one").attr('width', fullWidth).attr("height", fullHeight);
-    imgToOSD();
-});
+            //Set div width/height as proprortion of available screen
+            var zoomify_width = {{pageimage.width}};
+            var zoomify_height = {{pageimage.height}};
+            var sf=zoomify_height/zoomify_width;
+            var docWidth = parseInt($('body').width());
+            var docHeight = parseInt($(window).height());
+            var fullWidth = parseInt($('#pageimage').width());
+            var fullHeight = fullWidth*sf;
+            $("#image_one").attr('width', fullWidth).attr("height", fullHeight);
+            imgToOSD();
+        });
     </script>
 
     <script src="{{ STATIC_URL }}vendor/openseadragon/openseadragon.js"></script>

@@ -964,10 +964,12 @@ b.top-spacing {
 
 .tab-bar {
     margin-bottom: 1em;
+    z-index: 999;
 }
 
 .tab-bar-section{
     width: 100%;
+    padding-left: 0;
 }
 
 .tab-bar .f-dropdown {
@@ -1009,13 +1011,13 @@ b.top-spacing {
         padding: 0 14px 0 10px;
     }
     .menu-item.opus-title a {
-        padding: 0;
+        padding: 14px 0;
+        display: inline-block;
     }
     .menu-item {
-        margin: rem-calc(12px) 0;
-
         a {
-            padding: rem-calc(20px);
+            padding: rem-calc(14px);
+            display: block;
         }
     }
     .menu-item.has-button {
@@ -1035,6 +1037,7 @@ b.top-spacing {
     }
     a.ctrl {
         font-size: rem-calc(14px);
+        display: block;
     }
     a:hover {
         background: #ccc;
