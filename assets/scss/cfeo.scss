@@ -4,6 +4,15 @@ $primary-color: #2a86ad;
 .add-to-compare-bar {
     display: none;
     padding: 20px 0;
+    z-index: 998;
+
+    .columns {
+        margin-top: 2rem;
+        z-index: 997;
+        a {
+            padding: 0 1rem !important;
+        }
+    }
 }
 
 .add-to-compare-bar a {
@@ -20,5 +29,14 @@ $primary-color: #2a86ad;
 
 .add-to-compare-notification {
     display: none;
-    padding: 20px 0 0 0;
+    
+    .columns {
+        margin-top: 3rem;
+        z-index: 996;
+    }
+
+    .alert-box {
+        padding: 0 1rem !important;
+    }
+
 }
