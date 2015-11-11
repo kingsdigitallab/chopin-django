@@ -105,7 +105,7 @@ def unlock():
 
 
 def set_srvr_vars():
-    env.path = os.path.join(env.root_path, env.srvr, 'django')
+    env.path = os.path.join(env.root_path, env.srvr, 'django', 'chopin')
     env.within_virtualenv = 'source {}'.format(
         os.path.join(env.envs_path, env.srvr, 'bin', 'activate'))
 
