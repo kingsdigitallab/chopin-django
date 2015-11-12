@@ -53,7 +53,6 @@ CACHES = {
 DATABASES = {
 }
 
-DATABASE_ROUTERS = ['chopin.dbrouter.ChopinOnlineRouter']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
