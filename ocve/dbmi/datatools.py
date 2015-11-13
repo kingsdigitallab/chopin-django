@@ -41,7 +41,7 @@ excKeys = "65"
 
 def importAnnotations():
     cType=AnnotationType.objects.get(id=2)
-    cuser=OCVEUser.objects.get(id=12)
+    cuser=User.objects.get(id=12)
     cursor = connections.cursor()
     cursor.execute("select a.annotationKey,a.text,a.timestamp from annotation as a where a.ocve=-1")
     Annotation.objects.all().delete()
