@@ -599,15 +599,6 @@ class AnnotationType(models.Model):
 
 
 
-class OCVEUser(models.Model):
-    id = models.PositiveIntegerField(primary_key=True)
-    username = models.CharField(max_length=256)
-    updated = models.DateTimeField(auto_now=True, auto_now_add=True)
-
-    def __unicode__(self):
-        return self.username
-
-
 class Annotation(models.Model):
     user = models.ForeignKey(User,default=11)
     notetext = models.TextField(null=False, default="", blank=True, )
