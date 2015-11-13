@@ -16,8 +16,7 @@ from dbmi.sourceeditor import cleanSourceInformationHTML
 
 
 #Takes pageimageid
-from models import keyPitch
-from models import BarCollection, OCVEUser
+from models import keyPitch,BarCollection
 import json
 import hashlib
 from django.db import connections
