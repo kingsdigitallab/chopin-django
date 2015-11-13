@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from models import *
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
@@ -608,7 +609,8 @@ class OCVEUser(models.Model):
 
 
 class Annotation(models.Model):
-    user = models.ForeignKey(OCVEUser,blank=False, null=False, default=1)
+    ocveuser_id = models.IntegerField(null=False,default=1)
+    user = models.ForeignKey(User,default=11)
     notetext = models.TextField(null=False, default="", blank=True, )
     noteregions = models.TextField(null=False, default="", blank=True, )
     pageimage = models.ForeignKey('PageImage', blank=False, null=False, default=1 )
@@ -627,7 +629,8 @@ class Annotation(models.Model):
     table_group = ''
 
 class BarCollection(models.Model):
-    user_id = models.IntegerField(OCVEUser,blank=False, null=False, default=-1)
+    ocveuser_id =  models.IntegerField(null=False,default=1)
+    user = models.ForeignKey(User,default=11)
     name = models.TextField(null=False, default="", blank=True, )
     xystring = models.TextField(null=False, default="", blank=True, )
     regions = models.ManyToManyField(BarRegion)
