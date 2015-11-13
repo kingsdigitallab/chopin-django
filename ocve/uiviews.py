@@ -273,7 +273,7 @@ def ocvePageImageview(request, id,selectedregionid=0):
     annotation = Annotation(pageimage=pi)
 
     if request.user and request.user.id:
-        ocve_user = OCVEUser.objects.get(id=request.user.id)
+        ocve_user = User.objects.get(id=request.user.id)
         annotation.user =  ocve_user
 
     annotationForm = AnnotationForm(instance=annotation)

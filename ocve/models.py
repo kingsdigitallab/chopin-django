@@ -609,7 +609,6 @@ class OCVEUser(models.Model):
 
 
 class Annotation(models.Model):
-    ocveuser_id = models.IntegerField(null=False,default=1)
     user = models.ForeignKey(User,default=11)
     notetext = models.TextField(null=False, default="", blank=True, )
     noteregions = models.TextField(null=False, default="", blank=True, )
@@ -629,7 +628,6 @@ class Annotation(models.Model):
     table_group = ''
 
 class BarCollection(models.Model):
-    ocveuser_id =  models.IntegerField(null=False,default=1)
     user = models.ForeignKey(User,default=11)
     name = models.TextField(null=False, default="", blank=True, )
     xystring = models.TextField(null=False, default="", blank=True, )
