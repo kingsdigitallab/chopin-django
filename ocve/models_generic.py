@@ -411,6 +411,7 @@ class PageImage(models.Model):
     corrected = models.IntegerField(null=True, blank=True, )
     page = models.ForeignKey('Page', blank=False, null=False, default=1, )
     barsequences = generic.GenericRelation(BarSequence, null=True, blank=True)
+    mei=models.TextField(null=False, default="", blank=True, )
 
     def getInstruments(self):
         return Instrument.objects.filter(sourcecomponent_instrument__sourcecomponent__page__pageimage=self).distinct()
