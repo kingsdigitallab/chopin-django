@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>MEI Editor Demo Page</title>
+
+        <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/meiEditor.css" />
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+        <script src="js/lib/require.js"></script>
+        <script src="js/local/meiEditorPreloader.js"></script>
+
+        <script>
+        var element = "#mei-editor";
+        var settings = 
+        {
+            'meiEditorLocation': './',
+            'validatorLink': 'validation/',
+            'xmllintLocation': 'js/lib/xmllint.js',
+            'xmllintServer': 'http://132.206.14.122:8008'
+        };
+        var plugins = [];
+
+        var meiEditor = new MeiEditor(element, settings, plugins);
+        $(window).on('meiEditorLoaded', function(){
+            meiEditor = $("#mei-editor").data('AceMeiEditor');
+            console.log(meiEditor);
+        });
+        </script>
+
+    </head>
+    <body>
+        <div id="mei-editor"></div>
+    </body>
+</html> 

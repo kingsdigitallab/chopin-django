@@ -1,5 +1,7 @@
 __author__ = 'Elliot'
 from dbmiviews import *
+from meiviews import meieditor,savemei
+
 from django.conf.urls import *
 from ocve.views import *
 from sourceeditor import *
@@ -9,6 +11,11 @@ from uploader import convertFolder,convertimage
 from spine import *
 
 urlpatterns = patterns('', (r'^source/(?P<id>\d+)/$', source),
+
+                       #MEI
+                       (r'^meieditor/(?P<id>\d+)/$', meieditor),
+                       (r'^savemei/(?P<id>\d+)/$', savemei),
+
                        #Source and source information
                        (r'^sourceviews/(?P<m>\d+)/$', sourceView),
                        (r'^sourceview/(?P<id>\d+)/$', uncorrectedSource),
