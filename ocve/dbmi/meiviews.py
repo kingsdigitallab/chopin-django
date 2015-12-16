@@ -5,7 +5,7 @@ from ocve.models import *
 
 #Populate the meieditor for editing
     #Non-prototype will have extra navigation objects
-def meieidtor(request,id=65054):
+def meieditor(request,id=65054):
     pi=PageImage.objects.get(id=id)
     return render_to_response('dbmi/meieditor.html', {'pi': pi}, context_instance=RequestContext(request))
 
@@ -17,4 +17,4 @@ def savemei(request,id):
         pi.save()
     except Exception, e:
         print e
-    return meieidtor(request,id)
+    return meieditor(request,id)

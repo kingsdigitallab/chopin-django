@@ -1,0 +1,207 @@
+/*needed for xml document parsing*/
+@namespace xml http://www.w3.org/XML/1998/namespace;
+
+html, body{
+    overflow:hidden;
+}
+#topbarContent > li > a{
+    cursor: pointer;
+}
+#pagesList > li > span{
+    margin-top:.15em;
+    margin-right:.35em;
+    width:.8em;
+    height:.8em;
+    display:inline-block;
+    background-size:100%;
+    background-repeat: no-repeat;
+}
+.aceEditorPane{
+    float:left;
+    width:100%;
+}
+#mei-editor{
+    width:100%;
+    height:100%;
+    display:inline-block;
+}
+#expandedTopbar{
+    margin-bottom:0em;
+}
+ul.dropdown-menu > li > a:hover{
+    cursor:pointer;
+    background-color:#EEEEEE;
+};
+.tabIcon{
+    vertical-align: center;
+    text-align: middle;
+    float: right;
+}
+.tabIcon:hover{
+    background-color:#DDDDDD;
+}
+a:focus{
+    outline:0; /*removes the dotted border*/
+}
+li:focus{
+    outline:0; /*removes the dotted border*/
+}
+input.input-ui-emulator{
+    float:left;
+    margin: 0.05em .8em 0em 0.1em;
+    padding: 0em 0em -0.1em 0em;
+    height: 2.2em;
+    display:inline-block;
+    font-family:inherit;
+    font-size:inherit;
+    line-height:inherit;
+}
+#newTabButton{
+    float:right;
+}
+#editorConsole{
+    height: 15em;
+    position: relative;
+    padding: .35em;
+    background-size:auto;
+}
+#consoleText{
+    position: absolute;
+    width:100%;
+    bottom: 0;
+    overflow-y: scroll;
+}
+#consoleText::-webkit-scrollbar{
+    background-color: transparent;
+    width:.6em;
+}
+#consoleText::-webkit-scrollbar-thumb{
+    background-color: #AAA;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+}
+.regularBorder{
+    background-color:rgba(255, 255, 255, 1);
+    border: .1em #AAAAAA solid;
+}
+.neutralBorder{
+    background-color:rgba(255, 255, 255, 1);
+    border: .1em #AAAAAA solid;
+}
+.errorBorder{
+    background-color:rgba(255, 0, 0, .3);
+    border: .1em #000000 solid;
+}
+.warnBorder{
+    background-color:rgba(255, 255, 0, .3);
+    border: .1em #000000 solid;
+}
+.logBorder{
+    background-color:rgba(0, 255, 0, .3);
+    border: .1em #000000 solid;
+}
+.gutterError{
+    background-color:#F00;
+}
+.gutterWarning{
+    background-color:#FF0;
+}
+#consoleResizeDiv{
+    z-index:10;
+    position:absolute;
+    width:100%;
+    top:-.3em;
+    height:.3em;
+    cursor:ns-resize;
+}
+#newFiles{
+    position:relative;
+}
+#newFiles > input{
+    padding:7px;
+}
+.fileInput{
+    opacity: 0;
+    z-index:100;
+    position:relative;
+}
+.fileInputFake{
+    position:absolute;
+}
+.fileInputFake > button{
+    border-radius:4px;
+    margin-right:8px;
+    background-color: #BBB;
+    border-bottom:1px #222 solid;
+    border-right:1px #222 solid;
+    border-top:1px #777 solid;
+    border-left:1px #777 solid;
+}
+.fileInputFakeActive > button{
+    background-color: #AAA;
+    border-top:1px #222 solid;
+    border-left:1px #222 solid;
+    border-bottom:1px #777 solid;
+    border-right:1px #777 solid;
+}
+
+
+
+/*Dropdown submenus*/
+.dropdown-submenu {
+    position:relative;
+}
+.dropdown-submenu>.dropdown-menu {
+    top:.5em;
+    left:100%;
+    margin-top:-6px;
+    margin-left:-1px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+    display:block;
+}
+.dropdown-submenu>a:after {
+    display:block;
+    content:" ";
+    float:right;
+    width:0;
+    height:0;
+    border-color:transparent;
+    border-style:solid;
+    border-width:5px 0 5px 5px;
+    border-left-color:#cccccc;
+    margin-top:5px;
+    margin-right:-10px;
+}
+.dropdown-submenu:hover>a:after {
+    border-left-color:#ffffff;
+}
+.dropdown-submenu.pull-left {
+    float:none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+    left:-100%;
+    margin-left:10px;
+    -webkit-border-radius:6px 0 6px 6px;
+    -moz-border-radius:6px 0 6px 6px;
+    border-radius:6px 0 6px 6px;
+}
+/*to get this to line up with the brand item that serves as a dropdown root in compact mode*/
+#brandLI > ul {
+    margin-left:-20px;
+    margin-top:-5px;
+    min-width:179px;
+}
+
+.editorSelected {
+    cursor: pointer;
+}
+.editorResizable {
+    z-index: 150;
+    background-color:rgba(255, 255, 0, 0.5);
+}
+
+label.checkbox {
+    padding: 0px;
+    margin: 0px;
+}

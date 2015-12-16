@@ -32,6 +32,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+
         //Verovio
         var vrvToolkit = new verovio.toolkit();
 
@@ -47,4 +48,14 @@
 <script src="http://www.verovio.org/javascript/latest/verovio-toolkit.js"></script>
 <script src="{{ STATIC_URL }}vendor/openseadragon/openseadragon.js"></script>
 <script src="{{ STATIC_URL }}javascripts/osd-iip-connector.js"></script>
+
+<script src="{{ STATIC_URL }}vendor/VerovioEditor/meix.js/js/lib/require.js"></script>
+<script src="{{ STATIC_URL }}vendor/VerovioEditor/meix.js/js/local/meiEditorPreloader.js"></script>
+<script src="{{ STATIC_URL }}vendor/VerovioEditor/vida.js/vida.js"></script>
+<script src="{{ STATIC_URL }}vendor/VerovioEditor/vida.js/mei.js"></script>
+
+<link rel="stylesheet" href="{{ STATIC_URL }}vendor/VerovioEditor/meix.js/css/meiEditor.css" />
+<link rel="stylesheet" href="{{ STATIC_URL }}vendor/VerovioEditor/verovioEditor.css" />
+<link rel="stylesheet" href="{{ STATIC_URL }}vendor/VerovioEditor/vida.js/vida.css" />
+
 {% endblock %}
