@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load staticfiles ocve_tags %}
 
+{% block meta_title %}View{% if mode == "OCVE" %} OCVE{% else %} CFEO{% endif %}{% endblock %}
+
 {% block header_scripts %}
     <!--PourOver from http://nytimes.github.io/pourover/ -->
 
