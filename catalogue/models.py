@@ -11,7 +11,7 @@ from model_utils.models import TimeStampedModel
 
 from modelcluster.fields import ParentalKey
 
-from wagtail.contrib.wagtailroutablepage.models import RoutablePageMixin
+from wagtail.contrib.wagtailroutablepage.models import RoutablePageMixin, route
 from wagtail.wagtailadmin.edit_handlers import (FieldPanel, InlinePanel,
                                                 PageChooserPanel)
 from wagtail.wagtailcore.fields import RichTextField
@@ -43,6 +43,7 @@ register_image_format(Format('left-300', 'Left-aligned 300px',
 register_image_format(Format('left-400', 'Left-aligned 400px',
                              'richtext-image left', 'width-400'))
 
+
 def _d(str):
     return str.decode(settings.AC_ENCODING)
 
@@ -50,7 +51,8 @@ def _d(str):
 def _e(str):
     return str.encode(settings.AC_ENCODING)
 
-def safe_slugify (text, model):
+
+def safe_slugify(text, model):
     """Return a slugified version of `text` that copes with the brain dead
     nature of Wagtail, which uses slugs as lookup keys and has a 50
     character limit on them."""
@@ -123,7 +125,7 @@ class LandingPage(Page, Introducable):
 LandingPage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('introduction', classname='full'),
-    InlinePanel(LandingPage, 'sections', label='Sections'),
+    InlinePanel('sections', label='Sections'),
 ]
 
 
@@ -201,10 +203,10 @@ class Library(Page):
 
     @property
     def impressions(self):
-        impressions =  sorted(Impression.objects.filter(
+        impressions = sorted(Impression.objects.filter(
             copies__copy__library=self),
             key=lambda x: x.impression.work.work.sort_order +
-            float(x.impression.sort_order)/1000)
+            float(x.impression.sort_order) / 1000)
 
         works = OrderedDict()
 
@@ -230,13 +232,6 @@ Library.content_panels = [
 class LibraryIndexPage(RoutablePageMixin, Page, Introducable):
 
     search_name = 'Library Index Page'
-    subpage_urls = (
-        url(r'^$', 'serve_all_libraries', name='all_libraries'),
-        url(r'^libraries-by-city/$', 'serve_libraries_by_city',
-            name='libraries_by_city'),
-        url(r'^libraries-by-country/$', 'serve_libraries_by_country',
-            name='libraries_by_country'),
-    )
 
     class Meta:
         verbose_name = 'Library Index Page'
@@ -245,16 +240,19 @@ class LibraryIndexPage(RoutablePageMixin, Page, Introducable):
     def libraries(self):
         return Library.objects.all()
 
+    @route(r'^$', name='all_libraries')
     def serve_all_libraries(self, request):
         """Renders all the libraries."""
         return render(request, self.get_template(request),
                       {'self': self, 'libraries': self.libraries})
 
+    @route(r'^libraries-by-city/$', name='libraries_by_city')
     def serve_libraries_by_city(self, request):
         """Renders libraries, grouped by city."""
         return render(request, self.get_template(request),
                       {'self': self, 'cities': City.objects.all()})
 
+    @route(r'^libraries-by-country/$', name='libraries_by_country')
     def serve_libraries_by_country(self, request):
         """Renders libraries, grouped by country."""
         return render(request, self.get_template(request),
@@ -286,7 +284,7 @@ class Publisher(Page):
     def sorted_impressions(self):
         return sorted(self.impressions.all(),
                       key=lambda x: x.impression.work.work.sort_order +
-                      float(x.impression.sort_order)/1000)
+                      float(x.impression.sort_order) / 1000)
 
     @property
     def works(self):
@@ -312,16 +310,7 @@ register_snippet(Publisher)
 
 class PublisherIndexPage(RoutablePageMixin, Page, Introducable):
 
-    subpage_urls = (
-        url(r'^$', 'serve_all_publishers', name='all_publishers'),
-        url(r'^publishers-by-city/$', 'serve_publishers_by_city',
-            name='publishers_by_city'),
-        url(r'^publishers-by-country/$', 'serve_publishers_by_country',
-            name='publishers_by_country'),
-        url(r'^(?P<p_slug>.*?)/(?P<w_slug>.*?)/$', 'serve_impressions',
-            name='impressions'),
-    )
-
+    @route(r'^$', name='all_publishers')
     def serve_all_publishers(self, request):
         """Renders all the publishers."""
         publishers = Publisher.objects.all()
@@ -329,17 +318,20 @@ class PublisherIndexPage(RoutablePageMixin, Page, Introducable):
         return render(request, self.get_template(request),
                       {'self': self, 'publishers': publishers})
 
+    @route(r'^publishers-by-city/$', name='publishers_by_city')
     def serve_publishers_by_city(self, request):
         """Renders publishers, grouped by city."""
         return render(request, self.get_template(request),
                       {'self': self, 'cities': City.objects.all(),
                        'suburl': 'publishers-by-city'})
 
+    @route(r'^publishers-by-country/$', name='publishers_by_country')
     def serve_publishers_by_country(self, request):
         """Renders publishers, grouped by country."""
         return render(request, self.get_template(request),
                       {'self': self, 'countries': Country.objects.all()})
 
+    @route(r'^(?P<p_slug>.*?)/(?P<w_slug>.*?)/$', name='impressions')
     def serve_impressions(self, request, p_slug, w_slug):
         """Renders impressions for the given publisher and work."""
         publisher = Publisher.objects.filter(slug=p_slug).first()
@@ -445,7 +437,7 @@ Impression.content_panels = [
     FieldPanel('comments', classname='full'),
     FieldPanel('sort_order'),
     DocumentChooserPanel('pdf'),
-    InlinePanel(Impression, 'copies', label='Copies'),
+    InlinePanel('copies', label='Copies'),
 ]
 
 
@@ -490,23 +482,6 @@ class Catalogue(RoutablePageMixin, Page, Introducable):
     search_name = 'Catalogue'
     subpage_types = ['Work']
 
-    subpage_urls = (
-        url(r'^$', 'serve_all_works', name='all_works'),
-        url(r'^works-with-opus/$', 'serve_works_with_opus',
-            name='works_with_opus'),
-        url(r'^posthumous-works-with-opus/$',
-            'serve_posthumous_works_with_opus',
-            name='posthumous_works_with_opus'),
-        url(r'^works-without-opus-numbers/$', 'serve_works_without_opus',
-            name='works_without_opus'),
-        url(r'^posthumous-works-without-opus/$',
-            'serve_posthumous_works_without_opus',
-            name='posthumous_works_without_opus'),
-        url(r'^impression/(?P<code_hash>.*?)/$',
-            'serve_impression_from_code_hash',
-            name='serve_impression_from_code_hash'),
-    )
-
     class Meta:
         verbose_name = 'Catalogue'
 
@@ -514,6 +489,7 @@ class Catalogue(RoutablePageMixin, Page, Introducable):
     def works(self):
         return self.get_children()
 
+    @route(r'^$', name='all_works')
     def serve_all_works(self, request):
         """Renders all the works."""
         works = self.works
@@ -521,6 +497,7 @@ class Catalogue(RoutablePageMixin, Page, Introducable):
         return render(request, self.get_template(request),
                       {'self': self, 'works': works})
 
+    @route(r'^works-with-opus/$', name='works_with_opus')
     def serve_works_with_opus(self, request):
         """Renders all the works that have opus number."""
         works = self.works.filter(work__has_opus=True,
@@ -531,6 +508,8 @@ class Catalogue(RoutablePageMixin, Page, Introducable):
                        'subtitle': 'Works with opus numbers',
                        'suburl': 'works-with-opus'})
 
+    @route(r'^posthumous-works-with-opus/$',
+           name='posthumous_works_with_opus')
     def serve_posthumous_works_with_opus(self, request):
         """Renders all the posthumous works with opus number."""
         works = self.works.filter(work__has_opus=True,
@@ -541,6 +520,7 @@ class Catalogue(RoutablePageMixin, Page, Introducable):
                        'subtitle': 'Posthumous works with opus numbers',
                        'suburl': 'posthumous-works-with-opus'})
 
+    @route(r'^works-without-opus-numbers/$', name='works_without_opus')
     def serve_works_without_opus(self, request):
         """Renders all the works that don't have opus number."""
         works = self.works.filter(work__has_opus=False,
@@ -551,6 +531,8 @@ class Catalogue(RoutablePageMixin, Page, Introducable):
                        'subtitle': 'Works without opus numbers',
                        'suburl': 'works-without-opus'})
 
+    @route(r'^posthumous-works-without-opus/$',
+           name='posthumous_works_without_opus')
     def serve_posthumous_works_without_opus(self, request):
         """Renders all the posthumous works without opus number."""
         works = self.works.filter(work__has_opus=False,
@@ -561,6 +543,8 @@ class Catalogue(RoutablePageMixin, Page, Introducable):
                        'subtitle': 'Posthumous works without opus numbers',
                        'suburl': 'posthumous-works-without-opus'})
 
+    @route(r'^impression/(?P<code_hash>.*?)/$',
+           name='serve_impression_from_code_hash')
     def serve_impression_from_code_hash(self, request, code_hash):
         """Displays an impression from the hash of an ac code. This is used to
         connect from CFEO/OCVE."""
@@ -620,16 +604,10 @@ class STPIndexPage(RoutablePageMixin, Page):
 
     search_name = 'STP Index Page'
 
-    subpage_urls = (
-        url(r'^$', 'serve_all_publishers', name='all_publishers'),
-        url(r'^(?P<pn_slug>.*?)/(?P<r_slug>.*?)/$', 'serve_rubric',
-            name='rubric'),
-        url(r'^(?P<slug>.*?)/$', 'serve_rubrics', name='rubrics'),
-    )
-
     class Meta:
         verbose_name = 'Series Title Page Index Page'
 
+    @route(r'^$', name='all_publishers')
     def serve_all_publishers(self, request):
         """Renders all the publishers."""
         publishers = STP.objects.values(
@@ -639,6 +617,7 @@ class STPIndexPage(RoutablePageMixin, Page):
         return render(request, self.get_template(request),
                       {'self': self, 'publishers': publishers})
 
+    @route(r'^(?P<slug>.*?)/$', name='rubrics')
     def serve_rubrics(self, request, slug):
         """Renders rubrics for publisher."""
         stps = STP.objects.filter(publisher_name_slug=slug)
@@ -646,6 +625,7 @@ class STPIndexPage(RoutablePageMixin, Page):
         return render(request, self.get_template(request),
                       {'self': self, 'stps': stps})
 
+    @route(r'^(?P<pn_slug>.*?)/(?P<r_slug>.*?)/$', name='rubric')
     def serve_rubric(self, request, pn_slug, r_slug):
         """Renders rubric."""
         stp = STP.objects.filter(publisher_name_slug=pn_slug,
@@ -702,16 +682,10 @@ register_snippet(Advert)
 
 class AdvertIndexPage(RoutablePageMixin, Page, Introducable):
 
-    subpage_urls = (
-        url(r'^$', 'serve_all_publishers', name='all_publishers'),
-        url(r'^(?P<pn_slug>.*?)/(?P<r_slug>.*?)/$', 'serve_rubric',
-            name='rubric'),
-        url(r'^(?P<slug>.*?)/$', 'serve_rubrics', name='rubrics'),
-    )
-
     class Meta:
         verbose_name = 'Publishers\' Advertisements Index Page'
 
+    @route(r'^$', name='all_publishers')
     def serve_all_publishers(self, request):
         """Renders all the publishers."""
         publishers = Advert.objects.values(
@@ -721,6 +695,7 @@ class AdvertIndexPage(RoutablePageMixin, Page, Introducable):
         return render(request, self.get_template(request),
                       {'self': self, 'publishers': publishers})
 
+    @route(r'^(?P<slug>.*?)/$', name='rubrics')
     def serve_rubrics(self, request, slug):
         """Renders rubrics for publisher."""
         adverts = Advert.objects.filter(publisher_name_slug=slug)
@@ -728,6 +703,7 @@ class AdvertIndexPage(RoutablePageMixin, Page, Introducable):
         return render(request, self.get_template(request),
                       {'self': self, 'adverts': adverts})
 
+    @route(r'^(?P<pn_slug>.*?)/(?P<r_slug>.*?)/$', name='rubric')
     def serve_rubric(self, request, pn_slug, r_slug):
         """Renders rubric."""
         advert = Advert.objects.filter(publisher_name_slug=pn_slug,
@@ -767,10 +743,7 @@ register_snippet(Abbreviation)
 
 class AbbreviationIndexPage(RoutablePageMixin, Page, Introducable):
 
-    subpage_urls = (
-        url(r'^$', 'serve_all_abbreviations', name='all_abbreviations'),
-    )
-
+    @route(r'^$', name='all_abbreviations')
     def serve_all_abbreviations(self, request):
         """Renders all the abbreviations."""
         abbreviations = Abbreviation.objects.all()
@@ -793,7 +766,7 @@ class GlossaryItem (TimeStampedModel):
     class Meta:
         ordering = ['title']
 
-    def save (self, *args, **kwargs):
+    def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
         super(GlossaryItem, self).save(*args, **kwargs)
 
@@ -807,11 +780,8 @@ register_snippet(GlossaryItem)
 
 class GlossaryIndexPage (RoutablePageMixin, Page, Introducable):
 
-    subpage_urls = (
-        url(r'^$', 'serve_all_glossary_items', name='all_glossary_items'),
-    )
-
-    def serve_all_glossary_items (self, request):
+    @route(r'^$', name='all_glossary_items')
+    def serve_all_glossary_items(self, request):
         '''Renders all glossary items.'''
         glossary_items = GlossaryItem.objects.all()
         return render(request, self.get_template(request),
