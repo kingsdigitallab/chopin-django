@@ -15,4 +15,4 @@ parsley
 --allow-unverified git+ssh://git@github.com/euske/pdfminer.git
 psycopg2
 pyparsing
-wagtail==1.3
+wagtail==1.3.1
