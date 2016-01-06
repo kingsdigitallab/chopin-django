@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load catalogue_tags staticfiles %}
 
+{% block meta_title %}Pageview OCVE{% endblock %}
+
 {% block custom_stylesheets %}
 {{ block.super }}
 <link rel="stylesheet" href="{{ STATIC_URL }}vendor/OpenLayers/theme/default/style.css" type="text/css">
