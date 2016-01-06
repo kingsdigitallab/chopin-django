@@ -208,9 +208,6 @@ from ddhldap.settings import *
 
 AUTH_LDAP_REQUIRE_GROUP = 'cn=ocve,' + LDAP_BASE_OU
 
-LOGIN_URL = 'wagtailadmin_login'
-LOGIN_REDIRECT_URL = 'wagtailadmin_home'
-
 
 #------------------------------------------------------------------------------
 # Static files (CSS, JavaScript, Images)
