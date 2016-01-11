@@ -80,7 +80,7 @@ def vagrant():
 
     # this is necessary because ssh will fail when known hosts keys vary
     # every time vagrant is destroyed, a new key will be generated
-    env.disable_known_hosts =True
+    env.disable_known_hosts = True
 
     env.within_virtualenv = 'source {}'.format(
         os.path.join('~', 'venv', 'bin', 'activate'))
@@ -107,14 +107,14 @@ def unlock():
 def set_srvr_vars():
     env.path = os.path.join(env.root_path, env.srvr, 'django', 'chopin')
     env.within_virtualenv = 'source {}'.format(
-        os.path.join(env.envs_path, env.srvr, 'bin', 'activate'))
+        os.path.join(env.envs_path, 'chopin_' + env.srvr, 'bin', 'activate'))
 
 
 @task
 def create_virtualenv():
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
     with quiet():
-        env_vpath = os.path.join(env.envs_path, env.srvr)
+        env_vpath = os.path.join(env.envs_path, 'chopin_' + env.srvr)
         if run('ls {}'.format(env_vpath)).succeeded:
             print(
                 green('virtual environment at [{}] exists'.format(env_vpath)))
