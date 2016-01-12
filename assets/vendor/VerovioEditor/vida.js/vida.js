@@ -6,11 +6,11 @@
             border: 50,
             clickedPage: undefined,
             currentPage: 0,
-            fileOnLoad: "",         //load a file in by default
-            fileOnLoadIsURL: false, //whether said file is a URL or is already-loaded data
+            fileOnLoad: "../MEI version of 28_20--1-C.mei",         //load a file in by default
+            fileOnLoadIsURL: true, //whether said file is a URL or is already-loaded data
             horizontallyOriented: 0,//1 or 0 (NOT boolean, but mimicing it) for whether the page will display horizontally or vertically
             ignoreLayout: 1,
-            mei: "",
+            mei: "true",
             pageHeight: 100,
             pageTops: [],
             pageWidth: 100,
