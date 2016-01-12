@@ -132,12 +132,13 @@ LandingPage.content_panels = [
 class RichTextPage(Page):
 
     content = RichTextField()
+    footnotes=RichTextField()
 
-    search_fields = Page.search_fields + (index.SearchField('content'),)
+    search_fields = Page.search_fields + (index.SearchField('content'),index.SearchField('footnotes'))
     search_name = 'Rich Text Page'
     subpage_types = []
 
-RichTextPage.content_panels += [FieldPanel('content', classname='full')]
+RichTextPage.content_panels += [FieldPanel('content', classname='full'),FieldPanel('footnotes', classname='footnotes')]
 
 
 class Country(TimeStampedModel):
