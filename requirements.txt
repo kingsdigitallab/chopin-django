@@ -1,6 +1,6 @@
 django<1.8
 -r ddhldap/requirements.txt
-django-compressor
+django-compressor==1.6
 django-grappelli
 django-haystack
 django-libsass
