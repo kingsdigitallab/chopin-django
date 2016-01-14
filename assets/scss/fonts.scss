@@ -1,14 +1,14 @@
 @font-face {
     font-family: Hero;
-    src: url('../fonts/Hero.otf');
+    src: url('/static/fonts/Hero.otf');
 }
 
 @font-face {
     font-family: ocve-composer;
-    src: url('../../composer-webfont.eot');
-    src: url('../../composer-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../composer-webfont.woff2') format('woff2'),
-         url('../../composer-webfont.woff') format('woff');
+    src: url('/static/fonts/composer-webfont.eot');
+    src: url('/static/fonts/composer-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/static/fonts/composer-webfont.woff2') format('woff2'),
+         url('/static/fonts/composer-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
@@ -19,10 +19,10 @@
 
 @font-face {
     font-family: ocve-debussy;
-    src: url('../../fonts/debussy_-webfont.eot');
-    src: url('../../fonts/debussy_-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../fonts/debussy_-webfont.woff2') format('woff2'),
-         url('../../fonts/debussy_-webfont.woff') format('woff');
+    src: url('/static/fonts/debussy_-webfont.eot');
+    src: url('/static/fonts/debussy_-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/static/fonts/debussy_-webfont.woff2') format('woff2'),
+         url('/static/fonts/debussy_-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
@@ -39,10 +39,10 @@
 
 @font-face {
     font-family: ocve-gesetz;
-    src: url('../../gesetz-webfont.eot');
-    src: url('../../gesetz-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../../gesetz-webfont.woff2') format('woff2'),
-         url('../../gesetz-webfont.woff') format('woff');
+    src: url('/static/fonts/gesetz-webfont.eot');
+    src: url('/static/fonts/gesetz-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/static/fonts/gesetz-webfont.woff2') format('woff2'),
+         url('/static/fonts/gesetz-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
@@ -53,7 +53,7 @@
 
 @font-face {
     font-family: ocve-lefti;
-    src: url('../../fonts/lefti.ttf');
+    src: url('/static/fonts/lefti.ttf');
 }
 
 .lefti {
@@ -62,7 +62,7 @@
 
 @font-face {
     font-family: ocve-new;
-    src: url('../../fonts/new.ttf');
+    src: url('/static/fonts/new.ttf');
 }
 
 .new {
@@ -71,7 +71,7 @@
 
 @font-face {
     font-family: ocve-symbol;
-    src: url('../../fonts/symbol.ttf');
+    src: url('/static/fonts/symbol.ttf');
 }
 
 .symbol {
@@ -81,7 +81,7 @@
 
 @font-face {
     font-family: ocve-symps__;
-    src: url('../../fonts/symps__.ttf');
+    src: url('/static/fonts/symps__.ttf');
 }
 
 .symps__ {
@@ -90,7 +90,7 @@
 
 @font-face {
     font-family: ocve-timesg;
-    src: url('../../fonts/timesg.ttf');
+    src: url('/static/fonts/timesg.ttf');
 }
 
 .timesg {
