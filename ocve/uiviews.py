@@ -248,8 +248,8 @@ def getNextPrevPages(p,pi):
 #Get relevant work for a pageimage object
 def getPageImageWork(pi,source):
     work=None
-    works = Work.objects.filter(
-        workcomponent__sourcecomponent_workcomponent__sourcecomponent__page__pageimage=pi).distinct()
+    works = Work.objects.filter(workcomponent__sourcecomponent_workcomponent__sourcecomponent__page__pageimage=pi).distinct()
+    Work.objects.filter(workcomponent__sourcecomponent_workcomponent__sourcecomponent__source).distinct()
     if works.count() ==0:
         #This is Front Matter, use the work from the whole source
         works = Work.objects.filter(
@@ -304,9 +304,12 @@ def ocvePageImageview(request, id,selectedregionid=0):
     [next_page, prev_page] = getNextPrevPages(p, pi)
     work=getPageImageWork(pi,source)
     #Check if work has information so we don't display dead link
-    if len(work.workinformation.OCVE)> 0:
-        workinfoexists=True
-    else:
+    try:
+        if len(work.workinformation.OCVE)> 0:
+            workinfoexists=True
+        else:
+            workinfoexists=False
+    except AttributeError:
         workinfoexists=False
     if pi.width == 0:
         #Resolution not set, add
