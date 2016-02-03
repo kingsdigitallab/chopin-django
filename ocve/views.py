@@ -19,7 +19,7 @@ errorPage = 'error.html'
 
 
 def uploadOCVE(request):
-    log = upload(request)
+    #log = upload(request)
     return HttpResponse(log)
 
 @csrf_exempt
