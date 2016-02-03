@@ -221,41 +221,7 @@ def uploadCFEO():
     #importCFEOWorkComponents()
 
 
-def resetTables():
-    Archive.objects.all().delete()
-    cursor = connections['ocve_db'].cursor()
-    #cursor.execute("INSERT INTO ocve_country (country,countryabbrev) SELECT country,countryAbbrev FROM country")
-    cursor.execute("DELETE FROM ocve_sourcecomponent_instrument")
-    cursor.execute("DELETE FROM ocve_sourcecomponent_workcomponent")
-    cursor.execute("DELETE FROM ocve_genre_work")
-    cursor.execute("DELETE FROM ocve3.ocve_workcomponent")
-    cursor.execute("DELETE FROM ocve3.ocve_work")
-    cursor.execute("DELETE FROM ocve3.ocve_workinformation")
-    cursor.execute("DELETE FROM ocve3.ocve_pagelegacy")
-    cursor.execute("DELETE FROM ocve3.ocve_pageimage")
-    cursor.execute("DELETE FROM ocve3.ocve_page")
-    cursor.execute("DELETE FROM ocve3.ocve_sourcecomponent")
-    cursor.execute("DELETE FROM ocve3.ocve_sourcelegacy")
-    cursor.execute("DELETE FROM ocve3.ocve_source")
-    cursor.execute("DELETE FROM ocve3.ocve_sourceinformation")
-    cursor.execute("DELETE FROM ocve3.ocve_barregion")
-    cursor.execute("DELETE FROM ocve3.ocve_accode")
-    cursor.execute("DELETE FROM ocve3.ocve_keypitch")
-    transaction.commit_unless_managed()
-    Publisher.objects.all().delete()
-    #Authority Lists
-    Genre.objects.all().delete()
-    Instrument.objects.all().delete()
-    Dedicatee.objects.all().delete()
-    City.objects.all().delete()
-    Country.objects.all().delete()
-    Opus.objects.all().delete()
-    CollectionType.objects.all().delete()
-    WorkCollection.objects.all().delete()
-    SourceComponentType.objects.all().delete()
-    #SourceComponent.objects.all().delete()
-    PageType.objects.all().delete()
-    #Intersection Sets
+
 
 
 #Set up default values for all authority lists
