@@ -32,7 +32,6 @@ urlpatterns = patterns('',
                         getAnnotations),
 
                        (r'^data/verifyImages/', verifyImages),
-                       (r'^data/uploadOCVE/', uploadOCVE),
 
                        (r'^getBarRegions/(?P<id>\d+)/$', getBarRegions),
                        (r'^getBarRegions/(?P<id>\d+)/(?P<barid>\d+)/$',
