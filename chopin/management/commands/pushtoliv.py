@@ -35,7 +35,7 @@ class Command(BaseCommand):
             #Revert scripts
             self.cpscript('OCVEsourceJSON.js',dump_scripts,liv_scripts)
             self.cpscript('CFEOsourceJSON.js',dump_scripts,liv_scripts)
-            revertstat = ['mysql','-u root',liv_db,'<',' /vol/ocve3/dumps/liv_dump.sql']
+            revertstat = ['mysql','-u','root',liv_db,'<',' /vol/ocve3/dumps/liv_dump.sql']
             proc = subprocess.Popen(revertstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             err = proc.communicate()[1]
             if err:
@@ -45,7 +45,7 @@ class Command(BaseCommand):
                 logger.info('stg dump generated')
 
         else:
-            pushstat = ['mysqldump','-u root',stg_db,'>',' /vol/ocve3/dumps/stg_dump.sql']
+            pushstat = ['mysqldump','-u','root',stg_db,'>','/vol/ocve3/dumps/stg_dump.sql']
             proc = subprocess.Popen(pushstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             err = proc.communicate()[1]
             if err:
@@ -54,7 +54,7 @@ class Command(BaseCommand):
             else:
                 logger.info('stg dump generated')
                 #backup live
-                pushstat = ['mysqldump','-u root',stg_db,'>',' /vol/ocve3/dumps/liv_dump.sql']
+                pushstat = ['mysqldump','-u','root',stg_db,'>','/vol/ocve3/dumps/liv_dump.sql']
                 proc = subprocess.Popen(pushstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 err = proc.communicate()[1]
                 if err:
