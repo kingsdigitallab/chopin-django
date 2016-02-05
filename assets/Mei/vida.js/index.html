@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Verovio Image Display Assistant</title>
+
+        <link rel="stylesheet" href="vida.css">
+
+        <!--foreign libraries -->
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+
+        <script src="verovio-toolkit-0.9.1.js"></script>
+        <script src="vida.js"></script>
+
+        <style>    
+        html, body{
+            padding:0em;
+            margin:0em;
+        }  
+        #verovio-wrapper{
+            width:100%;
+            height:100%;
+            position: relative;
+        }
+
+        </style>
+
+    </head>
+    <body>
+        <div id="verovio-wrapper">
+        </div>
+    </body>
+
+    <script>
+    $(window).on('resize', function()
+    {
+        $("#verovio-wrapper").height(window.innerHeight);
+    });
+    $(window).trigger('resize');
+    $("#verovio-wrapper").vida({
+        fileOnLoad: "Guami_Canzona_24.mei",
+        fileOnLoadIsURL: true
+    });
+    </script>
+</html> 

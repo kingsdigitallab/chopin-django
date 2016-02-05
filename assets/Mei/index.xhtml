@@ -1,0 +1,142 @@
+<html lang="en" xml:lang="en" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8" />
+        <title>MEI Editor - Verovio Demo</title>
+
+        <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="meix.js/css/meiEditor.css" />
+        <link rel="stylesheet" href="verovioEditor.css" />
+        <link rel="stylesheet" href="vida.js/vida.css" />
+
+        <!--foreign libraries -->
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="vida.js/verovio-toolkit.js"></script>
+        
+        <script src="meix.js/js/lib/require.js"></script>
+        <script src="meix.js/js/local/meiEditorPreloader.js"></script>
+        <script src="vida.js/vida.js"></script>
+        <script src="vida.js/mei.js"></script>
+        <style>
+        #verovio-wrapper{
+            position:absolute;
+            display:block;
+            padding:0em;
+            margin:0em;
+            top:0em;
+            margin-left: 48%;
+            width:50%;
+            height:98%;
+        }
+        #svg{
+            position:absolute;
+            display:block;
+            padding:0em;
+            margin:0em;
+            top:0em;
+            margin-left: 48%;
+            width:50%;
+            height:98%;
+        }
+        #imgsvg {
+            max-width: 100%;
+        }
+            .hidden{
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+    <div id="controls">
+        <a href="#" id="ToggleLeft">Show SVG</a>
+    </div>
+    <div id="pageimage" style="width:47%;height:98%">
+        <img src="/iip/iipsrv.fcgi?FIF=jp2/cfeojp2-proc/28-1-BH/28-1-BH_PLWtfc_p32_no20-21.jp2&amp;CVT=JPG" height="800" width="600" id="image_one" class="osd-iip"/>
+                    </div>
+        <div id="mei-editor"></div>
+
+    <div id="svg" class="hidden">
+    <img src="28_20--1-C.svg" id="imgsvg" />
+    </div>
+        <div id="verovio-wrapper">  </div>
+        <script type="text/javascript">
+        $(document).ready(function () {
+            $('#ToggleLeft').click(function(event){
+                if ($('#svg').is(':hidden') ){
+                    $("#verovio-wrapper").hide();
+                    $('#svg').removeClass('hidden');
+                    $(this).html('show MEI');
+                }else{
+                    $('#svg').addClass('hidden');
+                    $("#verovio-wrapper").show();
+                    $(this).html('show SVG');
+                }
+               event.preventDefault();
+            });
+
+            //Set div width/height as proprortion of available screen
+            var zoomify_width = 4415;
+            var zoomify_height = 5115;
+            var sf=zoomify_height/zoomify_width;
+            var docWidth = parseInt($('body').width());
+            var docHeight = parseInt($(window).height());
+            var fullWidth = parseInt($('#pageimage').width());
+            var fullHeight = fullWidth*sf;
+            $("#image_one").attr('width', fullWidth).attr("height", fullHeight);
+            imgToOSD();
+        });
+    </script>
+
+    <script src="/static/vendor/openseadragon/openseadragon.js"></script>
+    <script src="/static/javascripts/osd-iip-connector.js"></script>
+
+<script type="text/javascript">
+
+  /* Create the Vevorio toolkit instance */
+  vrvToolkit = new verovio.toolkit();
+  /* Render the data and insert it as content of the #output div */
+  $.ajax({
+                url: '/static/vendor/VerovioEditor/Chopin_mazurka_mei.mei'
+                , dataType: "text"
+                , success: function(data) {
+                    //vrvToolkit.loadData(data);
+                $("#verovio-wrapper").html( vrvToolkit.renderData(data, JSON.stringify({
+                    inputFormat: 'mei',scale: 50 }) ));
+                }
+            });
+
+
+  /*document.getElementById("verovio-wrapper").innerHTML = vrvToolkit.renderData(
+      data,
+      JSON.stringify({ inputFormat: 'mei' })
+  );*/
+</script>
+ <script>
+       /* $("#verovio-wrapper").vida({});
+        var verovioInstance = $("#verovio-wrapper").data('vida');
+
+        var element = "#mei-editor";
+        var options =
+        {
+            'meiEditorLocation': 'meix.js/',
+            'validatorLink': 'meix.js/validation/',
+            'xmllintServer': 'http://cantus.simssa.ca/nodeLint/',
+            'verovioInstance': verovioInstance,
+            'pageTitle': 'Verovio Editor',
+            'initializeWithFile': 'MEI version of 28_20--1-C.mei'
+        };
+        var plugins = ["meiEditorVerovio.js"];
+
+        var meiEditor = new MeiEditor(element, options, plugins);
+
+        $(window).on('meiEditorLoaded', function(){
+            meiEditor = $("#mei-editor").data('AceMeiEditor');
+            $('#updateVerovioModal-primary').click();
+        });*/
+
+    </script>
+
+</body>
+</html> 
