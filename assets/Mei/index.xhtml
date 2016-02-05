@@ -19,6 +19,9 @@
         <script src="meix.js/js/local/meiEditorPreloader.js"></script>
         <script src="vida.js/vida.js"></script>
         <script src="vida.js/mei.js"></script>
+        <script src="meitovexflow/vexflow-min.js"></script>
+        <script src="meitovexflow/meitovexflow.js"></script>
+        <script src="meitovexflow/Interface.js"></script>
         <style>
         #verovio-wrapper{
             position:absolute;
@@ -30,7 +33,7 @@
             width:50%;
             height:98%;
         }
-        #svg{
+        #svg,#vexflow-wrapper{
             position:absolute;
             display:block;
             padding:0em;
@@ -43,9 +46,13 @@
         #imgsvg {
             max-width: 100%;
         }
+        #vexflow{
+            width: 100%;
+        }
             .hidden{
                 display: none;
             }
+
         </style>
     </head>
     <body>
@@ -60,9 +67,21 @@
     <div id="svg" class="hidden">
     <img src="28_20--1-C.svg" id="imgsvg" />
     </div>
-        <div id="verovio-wrapper">  </div>
+        <div id="verovio-wrapper" class="hidden">  </div>
+    <div id="vexflow-wrapper" ><canvas id="vexflow"></canvas></div>
+
+
         <script type="text/javascript">
         $(document).ready(function () {
+            //Vexflow
+            $.post('/static/mei/Chopin_mazurka_mei.mei',function(data){
+                canvas=$('#vexflow')[0];
+                meiraw=data;
+                xmlDoc = $.parseXML( meiraw );
+                MEI2VF.render_notation(xmlDoc,canvas);
+            })
+
+            $()
             $('#ToggleLeft').click(function(event){
                 if ($('#svg').is(':hidden') ){
                     $("#verovio-wrapper").hide();
@@ -98,7 +117,7 @@
   vrvToolkit = new verovio.toolkit();
   /* Render the data and insert it as content of the #output div */
   $.ajax({
-                url: '/static/vendor/VerovioEditor/Chopin_mazurka_mei.mei'
+                url: '/static/mei/Chopin_mazurka_mei.mei'
                 , dataType: "text"
                 , success: function(data) {
                     //vrvToolkit.loadData(data);
