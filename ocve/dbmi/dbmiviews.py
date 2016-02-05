@@ -11,6 +11,7 @@ from django.db.models import *
 from sourceeditor import *
 from ocve.uitools import generateThumbnails
 import shutil
+from django.core import management
 
 from django import template
 IMAGE_SERVER_URL = settings.IMAGE_SERVER_URL
@@ -509,6 +510,10 @@ def generateSourceThumbnails(request,id):
     sources=Source.objects.filter(id=id)
     log=generateThumbnails(sources)
     return HttpResponse(log)
+
+def pushtoliv(request):
+    management.call_command('pushtoliv')
+    return HttpResponse("Live updated")
 
 
 

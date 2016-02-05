@@ -55,6 +55,7 @@ urlpatterns = patterns('', (r'^source/(?P<id>\d+)/$', source),
                        (r'^findunverified/$', findUnverifiedImages),
                        (r'^sourcesbywork/$', sourcesbywork),
                        (r'^generatethumbnails/$', generateAllThumbnails),
+                       (r'^pushtoliv/$', pushtoliv),
 
                        #upload
                        (r'^upload/selectsource/', selectSource),
