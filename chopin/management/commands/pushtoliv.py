@@ -46,7 +46,8 @@ class Command(BaseCommand):
 
         else:
             pushstat = ['mysqldump','-u','root','ocve2real','>','/vol/ocve3/dumps/stg_dump.sql']
-            proc = subprocess.Popen(pushstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
+            #' '.join(pushstat)
+            proc = subprocess.Popen(pushstat,stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
             err = proc.communicate()[1]
             if err:
                 logger.error('Dump from stg failed with error:'+str(err))
