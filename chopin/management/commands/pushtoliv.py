@@ -46,15 +46,19 @@ class Command(BaseCommand):
                 logger.info('stg dump generated')
 
         else:
-            pushstat = ['mysqldump','-u','root','ocve2real','>','/vol/ocve3/dumps/stg_dump.sql']
+            mysqlstgdumpcmd = ['mysqldump','-u','root',stg_db,'>','/vol/ocve3/dumps/stg_dump.sql']
             #' '.join(pushstat)
-            proc = subprocess.Popen(' '.join(pushstat),stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
+            proc = subprocess.Popen(' '.join(mysqlstgdumpcmd),stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
+            err = proc.communicate()[1]
+            psqlstgdumpcmd = ['mysqldump','-u','root',stg_db,'>','/vol/ocve3/dumps/stg_dump.sql']
+            #' '.join(pushstat)
+            proc = subprocess.Popen(' '.join(psqlstgdumpcmd),stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
             err = proc.communicate()[1]
             if err:
                 logger.error('Dump from stg failed with error:'+str(err))
                 return False
             else:
-                logger.info('stg dump generated')
+                logger.info('stg dumps generated')
                 #backup live
                 pushstat = ['mysqldump','-u','root',liv_db,'>','/vol/ocve3/dumps/liv_dump.sql']
                 proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
@@ -69,15 +73,13 @@ class Command(BaseCommand):
                     #Copy rebuilt stg JSON to live.
                     self.cpscript('OCVEsourceJSON.js',stg_scripts,liv_scripts)
                     self.cpscript('CFEOsourceJSON.js',stg_scripts,liv_scripts)
-                    #Push stg mysql to
-                    # pushstat = ['mysqldump','-u root',stg_db,'>',' /vol/ocve3/dumps/stg_dump.sql']
-                    # proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    # err = proc.communicate()[1]
-                    # if err:
-                    #     logger.error('Push to live failed with error:'+str(err))
-                    #     return False
-                    # else:
-                    #     logger.info('stg data pushed to live')
+                    #Push stg mysql to live
+                    pushstat = ['mysqldump','-u root',liv_db,'>',' /vol/ocve3/dumps/stg_dump.sql']
+                    proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    err = proc.communicate()[1]
+                    if err:
+                        logger.error('Push to live failed with error:'+str(err))
+                        return False
+                     else:
+                        logger.info('stg data pushed to live')
                     #TODO add touch?
-
-
