@@ -54,8 +54,8 @@ class Command(BaseCommand):
             else:
                 logger.info('stg dump generated')
                 #backup live
-                pushstat = ['mysqldump','-u','root',stg_db,'>','/vol/ocve3/dumps/liv_dump.sql']
-                proc = subprocess.Popen(pushstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                pushstat = ['mysqldump','-u','root',liv_db,'>','/vol/ocve3/dumps/liv_dump.sql']
+                proc = subprocess.Popen(pushstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
                 err = proc.communicate()[1]
                 if err:
                     logger.error('Dump from liv failed with error:'+str(err))
