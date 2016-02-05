@@ -22,7 +22,7 @@ class Command(BaseCommand):
         cpcmd=['cp',source+script,dest+script]
         subprocess.Popen(cpcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    def handle_noargs(self, *args, **options):
+    def handle(self, *args, **options):
         stg_db='ocve2real'
         liv_db='chopin_liv'
         stg_scripts='/vol/ocve3/webroot/stg/django/chopin/static/javascripts/'
