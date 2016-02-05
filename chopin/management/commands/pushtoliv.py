@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         stg_db='ocve2real'
-        liv_db='chopin_liv'
+        liv_db='chopin'
         stg_scripts='/vol/ocve3/webroot/stg/django/chopin/static/javascripts/'
         liv_scripts='/vol/ocve3/webroot/liv/django/chopin/static/javascripts/'
         dump_scripts='/vol/ocve3/dumps/javascript/'
@@ -39,6 +39,7 @@ class Command(BaseCommand):
             proc = subprocess.Popen(revertstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             err = proc.communicate()[1]
             if err:
+		print err
                 logger.error('Dump from stg failed with error:'+str(err))
                 return False
             else:
@@ -47,7 +48,7 @@ class Command(BaseCommand):
         else:
             pushstat = ['mysqldump','-u','root','ocve2real','>','/vol/ocve3/dumps/stg_dump.sql']
             #' '.join(pushstat)
-            proc = subprocess.Popen(pushstat,stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
+            proc = subprocess.Popen(' '.join(pushstat),stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
             err = proc.communicate()[1]
             if err:
                 logger.error('Dump from stg failed with error:'+str(err))
@@ -55,8 +56,8 @@ class Command(BaseCommand):
             else:
                 logger.info('stg dump generated')
                 #backup live
-                pushstat = ['mysqldump','-u','root','chopin_liv','>','/vol/ocve3/dumps/liv_dump.sql']
-                proc = subprocess.Popen(pushstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
+                pushstat = ['mysqldump','-u','root',liv_db,'>','/vol/ocve3/dumps/liv_dump.sql']
+                proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
                 err = proc.communicate()[1]
                 if err:
                     logger.error('Dump from liv failed with error:'+str(err))
@@ -70,7 +71,7 @@ class Command(BaseCommand):
                     self.cpscript('CFEOsourceJSON.js',stg_scripts,liv_scripts)
                     #Push stg mysql to
                     # pushstat = ['mysqldump','-u root',stg_db,'>',' /vol/ocve3/dumps/stg_dump.sql']
-                    # proc = subprocess.Popen(pushstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    # proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     # err = proc.communicate()[1]
                     # if err:
                     #     logger.error('Push to live failed with error:'+str(err))
