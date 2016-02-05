@@ -19,7 +19,7 @@ apt-get -y install python-dev python-setuptools
 sudo easy_install pip
 sudo pip install virtualenv
 
-apt-get -y install openjdk-7-jdk
+apt-get -y install g++ openjdk-7-jdk
 curl -L -O https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.0.deb
 dpkg -i elasticsearch-1.4.0.deb
 sudo service elasticsearch start
