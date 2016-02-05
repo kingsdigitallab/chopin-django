@@ -45,7 +45,7 @@ class Command(BaseCommand):
                 logger.info('stg dump generated')
 
         else:
-            pushstat = ['mysqldump','-u','root',stg_db,'>','/vol/ocve3/dumps/stg_dump.sql']
+            pushstat = ['mysqldump','-u','root','ocve2real','>','/vol/ocve3/dumps/stg_dump.sql']
             proc = subprocess.Popen(pushstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
             err = proc.communicate()[1]
             if err:
@@ -54,7 +54,7 @@ class Command(BaseCommand):
             else:
                 logger.info('stg dump generated')
                 #backup live
-                pushstat = ['mysqldump','-u','root',liv_db,'>','/vol/ocve3/dumps/liv_dump.sql']
+                pushstat = ['mysqldump','-u','root','chopin_liv','>','/vol/ocve3/dumps/liv_dump.sql']
                 proc = subprocess.Popen(pushstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
                 err = proc.communicate()[1]
                 if err:
