@@ -315,7 +315,7 @@ def ocvePageImageview(request, id,selectedregionid=0):
 
     request.session['page_image'] = id
 
-    return render_to_response('frontend/pageview.html', {
+    return render_to_response('frontend/ol3-pageview.html', {
         'workinfoexists':workinfoexists,
         'selectedregionid':selectedregionid,
         'achash': achash, 'annotationForm': annotationForm, 'notes': notes,
