@@ -1,0 +1,31 @@
+{# This template uses single quotes, instead of double quotes, in the html attributes because it is a json response.#}
+{
+    {% if note %}
+    "noteid": {{ note.id }},
+    "notehtml": "{% spaceless %}<div id='comment-{{ note.id }}' class='annotation-box'>
+    <p class='annotation-details {% if note.noteregions|length > 0 %}noteRegionHighlight{% else %}noteBarHighlight{% endif %}'>
+        {% for br in note.getBarRegions %}{% for b in br.bar.all %}<span class='label radius secondary' data-barid='{{ b.barlabel }}'>Bar {{ b.barlabel }}</span>{% endfor %}{% if forloop.last == False %},{% endif %}{% endfor %}
+    </p>
+    {% if note.noteregions|length > 0 %}
+    <div class='annotation noteRegionHighlight' data-noteid='{{ note.id }}'>
+        <p>{{ note.notetext }}</p>
+    </div>
+    {% endif %}
+    <p class='annotation-posted'>
+        <span>By {{ note.user }}, {{ note.timestamp }}</span>
+        {% if note.user.id == request.user.id %}
+        <span>&#160;</span>
+        <a href='#' class='updateNote' data-noteid='{{ note.id }}'>Update</a>
+        <span>&#160;</span>
+        <a href='#' class='deleteNote' data-noteid='{{ note.id }}'>Delete</a>
+        {% endif %}
+    </p>
+    {% if not note.noteregions %}
+    <div class='annotation'>
+        <p>{{ note.notetext }}</p>
+    </div>
+    {% endif %}
+    </div>{% endspaceless %}",
+    {% endif %}
+    "messages": "{% spaceless %}{{ messages|safe }}{% endspaceless %}"
+}
