@@ -11,16 +11,17 @@
  */
 
 define(["jquery", "ol3"], function ($, ol) {
-
+    var map;
     //Load the map(page of music)
     initMap = function (ol) {
         var imgWidth = pageimage.zoomify_width;
         var imgHeight = pageimage.zoomify_height;
         var url = pageimage.zoomify_url;
-        console.log(url);
+        var scaleLineControl = new ol.control.ScaleLine();
+
         var crossOrigin = 'anonymous';
 
-        var imgCenter = [imgWidth / 2, -imgHeight/2];
+        var imgCenter = [imgWidth / 2, -imgHeight/4];
 
         var proj = new ol.proj.Projection({
             code: 'ZOOMIFY',
@@ -34,7 +35,7 @@ define(["jquery", "ol3"], function ($, ol) {
             crossOrigin: crossOrigin
         });
 
-        var map = new ol.Map({
+        map = new ol.Map({
             controls: ol.control.defaults({
                 attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
                     collapsible: false
@@ -56,8 +57,8 @@ define(["jquery", "ol3"], function ($, ol) {
             })
         });
         return map;
-
     }
+	return initMap(ol);
 });
 
 
