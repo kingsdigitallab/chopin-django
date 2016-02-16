@@ -234,15 +234,13 @@ $(window).load(function(){
     var map, zoomify;
     var alayer, vlayer;
 
-    var zoomify_width = {{ pageimage.width }};
-    var zoomify_height = {{ pageimage.height }};
+    pageimage= {pageID:{{ pageimage.id }},zoomify_width:{{ pageimage.width }}, zoomify_height:{{ pageimage.height }}
+        ,zoomify_url:"{{ zoomifyURL }}"
+    };
 
-    var pageID = {{ pageimage.id }};
-    var zoomify_url = "{{ zoomifyURL }}";
 
     var regionURL = "{{ regionURL }}";
     var noteURL = "{{ noteURL }}";
-
     var workid = {{ work.id }};
     {% if selectedregionid > 0 %}selectedregionid={{ selectedregionid }};
     {% else %}selectedregionid=0; {% endif %}

@@ -10,11 +10,48 @@
  *
  */
 
-//Load the map(page of music)
-initMap = function (ol) {
+define(["jquery","ol3"], function ($,ol) {
 
+    //Load the map(page of music)
+    initMap = function (ol) {
+        var imgWidth = pageimage.zoomify_width;
+        var imgHeight = pageimage.zoomify_height;
+        var url = pageimage.zoomify_url;
+        console.log(url);
+        var crossOrigin = 'anonymous';
 
-}
+        var imgCenter = [imgWidth / 2, -imgHeight];
+
+        var proj = new ol.proj.Projection({
+            code: 'ZOOMIFY',
+            units: 'pixels',
+            extent: [0, 0, imgWidth, imgHeight]
+        });
+
+        var source = new ol.source.Zoomify({
+            url: url,
+            size: [imgWidth, imgHeight],
+            crossOrigin: crossOrigin
+        });
+
+        var map = new ol.Map({
+            layers: [
+                new ol.layer.Tile({
+                    source: source
+                })
+            ],
+
+            target: 'map',
+            view: new ol.View({
+                projection: proj,
+                center: imgCenter,
+                zoom: 0
+            })
+        });
+
+    }
+});
+
 
 //load the bar coordinates as an ol3 vector layer
 initBarLayer = function () {
