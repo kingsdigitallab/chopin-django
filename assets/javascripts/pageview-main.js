@@ -12,19 +12,23 @@ requirejs.config({
     //the paths config could be for a directory.
     paths: {
         vendor: '../vendor',
-        ol3: '../vendor/ol v3.13.1',
+        ol3: '../vendor/ol v3.13.1/build/ol',
         jquery: '../vendor/jquery/dist/jquery'
     }
 });
 
-requirejs(["jquery","ol3/build/ol","pageview-ol3"], function($,ol,pageview) {
+requirejs(["jquery","ol3","pageview-ol3"], function($,ol,pageview) {
     //This function is called when scripts/helper/util.js is loaded.
     //If util.js calls define(), then this function is not fired until
     //util's dependencies have loaded, and the util argument will hold
     //the module value for "helper/util".
-    $(document).ready(function () {
-       pageview.initMap(ol);
-    });
+    'use strict';
+
+  $(document).ready(function() {
+    // load map
+    initMap(ol);
+  });
+
 
 });
 
