@@ -55,6 +55,7 @@ define(["jquery", "ol3"], function ($, ol) {
                 zoom: 2
             })
         });
+        return map;
 
     }
 });
