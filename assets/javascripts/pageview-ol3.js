@@ -10,7 +10,7 @@
  *
  */
 
-define(["jquery","ol3"], function ($,ol) {
+define(["jquery", "ol3"], function ($, ol) {
 
     //Load the map(page of music)
     initMap = function (ol) {
@@ -20,7 +20,7 @@ define(["jquery","ol3"], function ($,ol) {
         console.log(url);
         var crossOrigin = 'anonymous';
 
-        var imgCenter = [imgWidth / 2, -imgHeight];
+        var imgCenter = [imgWidth / 2, -imgHeight/2];
 
         var proj = new ol.proj.Projection({
             code: 'ZOOMIFY',
@@ -35,6 +35,13 @@ define(["jquery","ol3"], function ($,ol) {
         });
 
         var map = new ol.Map({
+            controls: ol.control.defaults({
+                attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+                    collapsible: false
+                })
+            }).extend([
+                scaleLineControl
+            ]),
             layers: [
                 new ol.layer.Tile({
                     source: source
@@ -45,7 +52,7 @@ define(["jquery","ol3"], function ($,ol) {
             view: new ol.View({
                 projection: proj,
                 center: imgCenter,
-                zoom: 0
+                zoom: 2
             })
         });
 
