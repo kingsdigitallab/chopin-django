@@ -12,8 +12,89 @@
 
 define(["jquery", "ol3"], function ($, ol) {
     var map;
+
+    var barStyles = new OpenLayers.StyleMap({
+        "default": new OpenLayers.Style({
+            strokeOpacity: 0,
+            fillOpacity: 0.0,
+            labelAlign: labelAlign
+        }),
+        "barSelector": new OpenLayers.Style({
+            strokeOpacity: 0,
+            fillOpacity: 0.0
+        }),
+        "Initial": new OpenLayers.Style({
+            strokeOpacity: 0,
+            fillOpacity: 0.0,
+            labelAlign: labelAlign
+        }),
+        "annotation": new OpenLayers.Style({
+            strokeOpacity: 1,
+            fillOpacity: 0.0,
+            strokeColor: 'green',
+            label: "${label}",
+            labelAlign: labelAlign,
+            labelOutlineColor: "white",
+            labelOutlineWidth: 3,
+            fontColor: "black",
+            fontSize: fontSize,
+            fontFamily: "Courier New, monospace",
+            fontWeight: "bold"
+        }),
+        "select": new OpenLayers.Style({
+            strokeOpacity: 1,
+            strokeWidth: 1,
+            fillColor: "${fillColor}",
+            fillOpacity: 0.3,
+            pointRadius: 6,
+            pointerEvents: "visiblePainted",
+            // label with \n linebreaks
+            label: "${label}",
+            fontColor: "black",
+            fontSize: fontSize,
+            fontFamily: "Courier New, monospace",
+            fontWeight: "bold",
+            labelAlign: labelAlign,
+            labelOutlineColor: "white",
+            labelOutlineWidth: 3
+        }),
+        "temporary": new OpenLayers.Style({
+            strokeOpacity: 1,
+            strokeWidth: 1,
+            strokeColor: 'red',
+            pointRadius: 6,
+            pointerEvents: "visiblePainted",
+            // label with \n linebreaks
+            label: "${label}",
+            labelAlign: labelAlign,
+            labelOutlineColor: "white",
+            labelOutlineWidth: 3,
+            fontColor: "red",
+            fontSize: "12px",
+            fontFamily: "Courier New, monospace",
+            fontWeight: "bold"
+        })
+    });
+
+
+    //Query the server for the bar boxes in a GeoJSON format
+    initBarLayer=function(pageimage){
+      var vectorSource= new ol.source.Vector({
+          url: 'data/geojson/countries.geojson',
+          format: new ol.format.GeoJSON()
+        });
+
+      var vectorLayer = new ol.layer.Vector({
+        source: vectorSource,
+        style: styleFunction
+      });
+
+      return vectorLayer;
+    }
+
+
     //Load the map(page of music)
-    initMap = function (ol) {
+    initMap = function (pageimage) {
         var imgWidth = pageimage.zoomify_width;
         var imgHeight = pageimage.zoomify_height;
         var url = pageimage.zoomify_url;
@@ -29,11 +110,13 @@ define(["jquery", "ol3"], function ($, ol) {
             extent: [0, 0, imgWidth, imgHeight]
         });
 
-        var source = new ol.source.Zoomify({
+        var pageimagesource = new ol.source.Zoomify({
             url: url,
             size: [imgWidth, imgHeight],
             crossOrigin: crossOrigin
         });
+        //Get the bar boxes
+        var barLayer=initBarLayer(ol);
 
         map = new ol.Map({
             controls: ol.control.defaults({
@@ -43,10 +126,12 @@ define(["jquery", "ol3"], function ($, ol) {
             }).extend([
                 scaleLineControl
             ]),
+
             layers: [
                 new ol.layer.Tile({
-                    source: source
+                    source: pageimagesource
                 })
+                ,barLayer
             ],
 
             target: 'map',
@@ -58,7 +143,11 @@ define(["jquery", "ol3"], function ($, ol) {
         });
         return map;
     }
-	return initMap(ol);
+
+
+
+
+	//return initMap(ol);
 });
 
 
