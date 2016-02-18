@@ -8,12 +8,8 @@
  * drawn on top.  Boxes are clickable to link to single bar view.
  * Used in OCVE part of Chopin only.
  *
- */
-
-define(["jquery", "ol3"], function ($, ol) {
-    var map;
-
-    var barStyles = new ol.StyleMap({
+ *
+ * var barStyles = new ol.StyleMap({
         "default": new ol.Style({
             strokeOpacity: 0,
             fillOpacity: 0.0,
@@ -75,10 +71,18 @@ define(["jquery", "ol3"], function ($, ol) {
             fontWeight: "bold"
         })
     });
+    style: styleFunction
+ */
+
+define(["jquery", "ol3"], function ($, ol) {
+    var map;
+ol3=ol;
+    var fontSize = '12px';
+    var labelAlign = 'cb';    
 
 
     //Query the server for the bar boxes in a GeoJSON format
-    initBarLayer=function(pageimage){
+    initBarLayer=function(){
       var vectorSource= new ol.source.Vector({
           url: pageimage.regionURL,
           format: new ol.format.GeoJSON()
@@ -86,15 +90,26 @@ define(["jquery", "ol3"], function ($, ol) {
 
       var vectorLayer = new ol.layer.Vector({
         source: vectorSource,
-        style: styleFunction
+        
       });
 
       return vectorLayer;
     }
 
+    //Bar
+    initInteractions=function(){
+        var select = new ol.interaction.Select({
+        wrapX: false
+      });
+        var modify = new ol.interaction.Modify({
+        features: select.getFeatures()
+      });
+
+       return ol.interaction.defaults().extend([select, modify])
+    }
 
     //Load the map(page of music)
-    initMap = function (pageimage) {
+    initMap = function () {
         var imgWidth = pageimage.zoomify_width;
         var imgHeight = pageimage.zoomify_height;
         var url = pageimage.zoomify_url;
@@ -115,16 +130,15 @@ define(["jquery", "ol3"], function ($, ol) {
             crossOrigin: crossOrigin
         });
         //Get the bar boxes
-        var barLayer=initBarLayer(ol);
-
-        map = new ol.Map({
+        barLayer=initBarLayer();
+        interactions=initInteractions();
+        olpage = new ol.Map({
+            interactions: interactions,
             controls: ol.control.defaults({
                 attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
                     collapsible: false
                 })
-            }).extend([
-                scaleLineControl
-            ]),
+            }),
 
             layers: [
                 new ol.layer.Tile({
@@ -140,13 +154,15 @@ define(["jquery", "ol3"], function ($, ol) {
                 zoom: 2
             })
         });
-        return map;
+        olpage.addControl(new ol.control.ZoomSlider());
+        olpage.addControl(new ol.control.MousePosition());
+        return olpage;
     }
 
 
 
 
-	//return initMap(ol);
+	return initMap(ol);
 });
 
 
