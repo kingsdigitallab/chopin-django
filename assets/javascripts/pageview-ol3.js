@@ -1,10 +1,10 @@
 /********
  *
  * Chopin project single page vew
- * Openlayers 3 version
+ * ol 3 version
  * Elliott Hall 15/2/2016
  *
- * This script uses the openlayers 3 library to display a single jp2 page of music, with a vector layer representing the bar boxes
+ * This script uses the ol 3 library to display a single jp2 page of music, with a vector layer representing the bar boxes
  * drawn on top.  Boxes are clickable to link to single bar view.
  * Used in OCVE part of Chopin only.
  *
@@ -13,22 +13,22 @@
 define(["jquery", "ol3"], function ($, ol) {
     var map;
 
-    var barStyles = new OpenLayers.StyleMap({
-        "default": new OpenLayers.Style({
+    var barStyles = new ol.StyleMap({
+        "default": new ol.Style({
             strokeOpacity: 0,
             fillOpacity: 0.0,
             labelAlign: labelAlign
         }),
-        "barSelector": new OpenLayers.Style({
+        "barSelector": new ol.Style({
             strokeOpacity: 0,
             fillOpacity: 0.0
         }),
-        "Initial": new OpenLayers.Style({
+        "Initial": new ol.Style({
             strokeOpacity: 0,
             fillOpacity: 0.0,
             labelAlign: labelAlign
         }),
-        "annotation": new OpenLayers.Style({
+        "annotation": new ol.Style({
             strokeOpacity: 1,
             fillOpacity: 0.0,
             strokeColor: 'green',
@@ -41,7 +41,7 @@ define(["jquery", "ol3"], function ($, ol) {
             fontFamily: "Courier New, monospace",
             fontWeight: "bold"
         }),
-        "select": new OpenLayers.Style({
+        "select": new ol.Style({
             strokeOpacity: 1,
             strokeWidth: 1,
             fillColor: "${fillColor}",
@@ -58,7 +58,7 @@ define(["jquery", "ol3"], function ($, ol) {
             labelOutlineColor: "white",
             labelOutlineWidth: 3
         }),
-        "temporary": new OpenLayers.Style({
+        "temporary": new ol.Style({
             strokeOpacity: 1,
             strokeWidth: 1,
             strokeColor: 'red',
@@ -80,7 +80,7 @@ define(["jquery", "ol3"], function ($, ol) {
     //Query the server for the bar boxes in a GeoJSON format
     initBarLayer=function(pageimage){
       var vectorSource= new ol.source.Vector({
-          url: 'data/geojson/countries.geojson',
+          url: pageimage.regionURL,
           format: new ol.format.GeoJSON()
         });
 
@@ -99,7 +99,6 @@ define(["jquery", "ol3"], function ($, ol) {
         var imgHeight = pageimage.zoomify_height;
         var url = pageimage.zoomify_url;
         var scaleLineControl = new ol.control.ScaleLine();
-
         var crossOrigin = 'anonymous';
 
         var imgCenter = [imgWidth / 2, -imgHeight/4];
