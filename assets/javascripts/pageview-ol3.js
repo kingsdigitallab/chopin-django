@@ -111,7 +111,6 @@ define(["jquery", "ol3"], function($, ol) {
         var imgWidth = pageimage.zoomify_width;
         var imgHeight = pageimage.zoomify_height;
         var url = pageimage.zoomify_url;
-        var scaleLineControl = new ol.control.ScaleLine();
         var crossOrigin = 'anonymous';
 
         var imgCenter = [imgWidth / 2, -imgHeight / 4];
@@ -151,7 +150,8 @@ define(["jquery", "ol3"], function($, ol) {
             })
         });
         olpage.addControl(new ol.control.ZoomSlider());
-        olpage.addControl(new ol.control.MousePosition());
+        //For debug only
+        //olpage.addControl(new ol.control.MousePosition());
         olpage.addInteraction(interactions);
 
         //Extra click event for clickthrough to bars
