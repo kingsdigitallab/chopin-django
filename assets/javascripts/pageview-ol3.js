@@ -8,78 +8,13 @@
  * drawn on top.  Boxes are clickable to link to single bar view.
  * Used in OCVE part of Chopin only.
  *
- *
-  var barStyles = new ol.StyleMap({
-        "default": new ol.Style({
-            strokeOpacity: 0,
-            fillOpacity: 0.0,
-            labelAlign: labelAlign
-        }),
-        "barSelector": new ol.Style({
-            strokeOpacity: 0,
-            fillOpacity: 0.0
-        }),
-        "Initial": new ol.Style({
-            strokeOpacity: 0,
-            fillOpacity: 0.0,
-            labelAlign: labelAlign
-        }),
-        "annotation": new ol.Style({
-            strokeOpacity: 1,
-            fillOpacity: 0.0,
-            strokeColor: 'green',
-            label: "${label}",
-            labelAlign: labelAlign,
-            labelOutlineColor: "white",
-            labelOutlineWidth: 3,
-            fontColor: "black",
-            fontSize: fontSize,
-            fontFamily: "Courier New, monospace",
-            fontWeight: "bold"
-        }),
-        "select": new ol.Style({
-            strokeOpacity: 1,
-            strokeWidth: 1,
-            fillColor: "${fillColor}",
-            fillOpacity: 0.3,
-            pointRadius: 6,
-            pointerEvents: "visiblePainted",
-            // label with \n linebreaks
-            label: "${label}",
-            fontColor: "black",
-            fontSize: fontSize,
-            fontFamily: "Courier New, monospace",
-            fontWeight: "bold",
-            labelAlign: labelAlign,
-            labelOutlineColor: "white",
-            labelOutlineWidth: 3
-        }),
-        "temporary": new ol.Style({
-            strokeOpacity: 1,
-            strokeWidth: 1,
-            strokeColor: 'red',
-            pointRadius: 6,
-            pointerEvents: "visiblePainted",
-            // label with \n linebreaks
-            label: "${label}",
-            labelAlign: labelAlign,
-            labelOutlineColor: "white",
-            labelOutlineWidth: 3,
-            fontColor: "red",
-            fontSize: "12px",
-            fontFamily: "Courier New, monospace",
-            fontWeight: "bold"
-        })
-    });
-    style: styleFunction
+ *todo: Annotations
+
  */
 
-define(["jquery", "ol3"], function($, ol) {
-    var map;
+define(["jquery", "ol3"], function($, ol) {    
     ol3 = ol;
-    var fontSize = '12px';
-    var labelAlign = 'cb';
-
+    var hover;
 
     //Query the server for the bar boxes in a GeoJSON format
     initBarLayer = function() {
@@ -87,57 +22,87 @@ define(["jquery", "ol3"], function($, ol) {
             url: pageimage.regionURL,
             format: new ol.format.GeoJSON()
         });
-
-
-
+        //All bar boxes drawn invisible by default
         var vectorLayer = new ol.layer.Vector({
             source: vectorSource,
-            style: function(feature, resolution) {
-                var width=feature.getGeometry().getExtent()[2]-feature.getGeometry().getExtent()[0];                
-                var factor=1/resolution;
-                var offsetX=(width*factor)/2*-1;
-                var height=feature.getGeometry().getExtent()[3]-feature.getGeometry().getExtent()[1];
-                var offsetY=height/factor*-1;
-                res=resolution;
-                return new ol.style.Style({
-                    stroke: new ol.style.Stroke({
-                        color: 'red',
-                        width: 1
-                    }),
-                    text: new ol.style.Text({
-                        font: '14px Courier New, monospace',                        
-                        text: feature.get('label'),
-                        offsetX: offsetX,
-                        offsetY: offsetY,
-                        textAlign:'center',
-                        fill: new ol.style.Fill({color: 'red'}),
+            style:new ol.style.Style({
                         stroke: new ol.style.Stroke({
-                            color: 'red',
+                            color: 'rgba(0,0,0,0)',
                             width: 1
-   }                    )
+                        })
                     })
-                });
-            }
-
-        });
+            
+        });         
 
         return vectorLayer;
     }
 
-    //Bar
+    //A hover interaction ol.interaction.Select
+    //This makes the bar box visible on hover and position bar number
+    //Clickthrough in JQuery uses this select's selected features
     initInteractions = function() {
-        var select = new ol.interaction.Select({
-            condition: ol.events.condition.click,            
-            wrapX: false
-        });
-        var hover = new ol.interaction.Select({
-  condition: ol.events.condition.mouseMove,
-  select:function(event){
-    console.log('DONE')
-  }
-});
 
-        return ol.interaction.defaults().extend([hover])
+        hover = new ol.interaction.Select({
+            addCondition: ol.events.condition.click,
+            condition: ol.events.condition.pointerMove,
+            layers: [barLayer],
+            style: function(feature, resolution) {
+                if (resolution < 10) {
+                    //Show numbers
+                    if (resolution > 5) {
+                        //Too small, show centred
+                        var offsetX = 0;
+                        var offsetY = 0;
+                    } else {
+                        //Move number to top left so it doesn't obscure bar
+                        var width = feature.getGeometry().getExtent()[2] - feature.getGeometry().getExtent()[0];
+                        var factor = 1 / resolution;
+                        var paddingX = 25;
+                        var paddingY = 30;
+                        var offsetX = Math.round((width * factor) / 2) * -1 + (paddingX * factor);
+                        var height = feature.getGeometry().getExtent()[3] - feature.getGeometry().getExtent()[1];
+                        var offsetY = Math.round((height * factor) / 2) * -1 + (paddingY * factor);
+                        
+                    }
+
+                    var style = new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: 'red',
+                            width: 1
+                        }),
+                        text: new ol.style.Text({
+                            font: '18px Courier New, monospace',
+                            text: feature.get('label'),
+                            offsetX: offsetX,
+                            offsetY: offsetY,
+                            textAlign: 'center',
+                            fill: new ol.style.Fill({
+                                color: 'red'
+                            }),
+                            stroke: new ol.style.Stroke({
+                                color: 'red',
+                                width: 1
+                            })
+                        })
+                    });
+
+                } else {
+                    //Don't show numbers, resolution too small
+                    var style = new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: 'red',
+                            width: 1
+                        })
+                    });
+
+
+                }
+                return style   
+            }            
+        });
+
+
+        return hover
     }
 
     //Load the map(page of music)
@@ -162,10 +127,9 @@ define(["jquery", "ol3"], function($, ol) {
             crossOrigin: crossOrigin
         });
         //Get the bar boxes
-        barLayer = initBarLayer();
-        interactions = initInteractions();
-        olpage = new ol.Map({
-            interactions: interactions,
+        var barLayer = initBarLayer();
+        var interactions = initInteractions();
+        var olpage = new ol.Map({
             controls: ol.control.defaults({
                 attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
                     collapsible: false
@@ -187,6 +151,17 @@ define(["jquery", "ol3"], function($, ol) {
         });
         olpage.addControl(new ol.control.ZoomSlider());
         olpage.addControl(new ol.control.MousePosition());
+        olpage.addInteraction(interactions);
+
+        //Extra click event for clickthrough to bars
+        jQuery('#map').click(function(){
+            var features = hover.getFeatures().getArray();
+            if (features.length > 0){
+                var feature=features[0];
+                console.log(feature.get('label'));
+                window.location = '/ocve/browse/barview?workid=' + pageimage.workid + '&pageimageid=' + pageimage.pageID + '&barid=' + feature.get("barid");
+            }
+        });      
         return olpage;
     }
 
@@ -194,23 +169,3 @@ define(["jquery", "ol3"], function($, ol) {
 
     return initMap(ol);
 });
-
-
-//load the bar coordinates as an ol3 vector layer
-initBarLayer = function() {
-
-}
-
-function onFeatureSelect(feature) {
-
-}
-
-function onFeatureUnselect(feature) {}
-
-function showBar(feature) {
-
-}
-
-function hideBar(feature) {
-
-}

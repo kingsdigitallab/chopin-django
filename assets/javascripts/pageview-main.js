@@ -26,7 +26,7 @@ requirejs(["jquery","ol3","pageview-ol3"], function($,ol,pageview) {
 
   $(document).ready(function() {
     // load map
-    pageview.initMap(ol);
+    //pageview.initMap(ol);
   });
 
 
