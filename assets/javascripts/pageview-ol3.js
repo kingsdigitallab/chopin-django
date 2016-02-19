@@ -9,7 +9,7 @@
  * Used in OCVE part of Chopin only.
  *
  *
- * var barStyles = new ol.StyleMap({
+  var barStyles = new ol.StyleMap({
         "default": new ol.Style({
             strokeOpacity: 0,
             fillOpacity: 0.0,
@@ -74,49 +74,81 @@
     style: styleFunction
  */
 
-define(["jquery", "ol3"], function ($, ol) {
+define(["jquery", "ol3"], function($, ol) {
     var map;
-ol3=ol;
+    ol3 = ol;
     var fontSize = '12px';
-    var labelAlign = 'cb';    
+    var labelAlign = 'cb';
 
 
     //Query the server for the bar boxes in a GeoJSON format
-    initBarLayer=function(){
-      var vectorSource= new ol.source.Vector({
-          url: pageimage.regionURL,
-          format: new ol.format.GeoJSON()
+    initBarLayer = function() {
+        var vectorSource = new ol.source.Vector({
+            url: pageimage.regionURL,
+            format: new ol.format.GeoJSON()
         });
 
-      var vectorLayer = new ol.layer.Vector({
-        source: vectorSource,
-        
-      });
 
-      return vectorLayer;
+
+        var vectorLayer = new ol.layer.Vector({
+            source: vectorSource,
+            style: function(feature, resolution) {
+                var width=feature.getGeometry().getExtent()[2]-feature.getGeometry().getExtent()[0];                
+                var factor=1/resolution;
+                var offsetX=(width*factor)/2*-1;
+                var height=feature.getGeometry().getExtent()[3]-feature.getGeometry().getExtent()[1];
+                var offsetY=height/factor*-1;
+                res=resolution;
+                return new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: 'red',
+                        width: 1
+                    }),
+                    text: new ol.style.Text({
+                        font: '14px Courier New, monospace',                        
+                        text: feature.get('label'),
+                        offsetX: offsetX,
+                        offsetY: offsetY,
+                        textAlign:'center',
+                        fill: new ol.style.Fill({color: 'red'}),
+                        stroke: new ol.style.Stroke({
+                            color: 'red',
+                            width: 1
+   }                    )
+                    })
+                });
+            }
+
+        });
+
+        return vectorLayer;
     }
 
     //Bar
-    initInteractions=function(){
+    initInteractions = function() {
         var select = new ol.interaction.Select({
-        wrapX: false
-      });
-        var modify = new ol.interaction.Modify({
-        features: select.getFeatures()
-      });
+            condition: ol.events.condition.click,            
+            wrapX: false
+        });
+        var hover = new ol.interaction.Select({
+  condition: ol.events.condition.mouseMove,
+  select:function(event){
+    console.log('DONE')
+  }
+});
 
-       return ol.interaction.defaults().extend([select, modify])
+        return ol.interaction.defaults().extend([hover])
     }
 
     //Load the map(page of music)
-    initMap = function () {
+    initMap = function() {
         var imgWidth = pageimage.zoomify_width;
         var imgHeight = pageimage.zoomify_height;
         var url = pageimage.zoomify_url;
         var scaleLineControl = new ol.control.ScaleLine();
         var crossOrigin = 'anonymous';
 
-        var imgCenter = [imgWidth / 2, -imgHeight/4];
+        var imgCenter = [imgWidth / 2, -imgHeight / 4];
 
         var proj = new ol.proj.Projection({
             code: 'ZOOMIFY',
@@ -130,8 +162,8 @@ ol3=ol;
             crossOrigin: crossOrigin
         });
         //Get the bar boxes
-        barLayer=initBarLayer();
-        interactions=initInteractions();
+        barLayer = initBarLayer();
+        interactions = initInteractions();
         olpage = new ol.Map({
             interactions: interactions,
             controls: ol.control.defaults({
@@ -143,8 +175,7 @@ ol3=ol;
             layers: [
                 new ol.layer.Tile({
                     source: pageimagesource
-                })
-                ,barLayer
+                }), barLayer
             ],
 
             target: 'map',
@@ -161,13 +192,12 @@ ol3=ol;
 
 
 
-
-	return initMap(ol);
+    return initMap(ol);
 });
 
 
 //load the bar coordinates as an ol3 vector layer
-initBarLayer = function () {
+initBarLayer = function() {
 
 }
 
@@ -175,8 +205,7 @@ function onFeatureSelect(feature) {
 
 }
 
-function onFeatureUnselect(feature) {
-}
+function onFeatureUnselect(feature) {}
 
 function showBar(feature) {
 
