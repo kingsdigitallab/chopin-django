@@ -232,14 +232,10 @@ $(window).load(function(){
 <!--<script src="{{ STATIC_URL }}vendor/OpenLayers/OpenLayers.js"></script>-->
 <script type="text/javascript">
 
-    pageimage= {pageID:{{ pageimage.id }},zoomify_width:{{ pageimage.width }}, zoomify_height:{{ pageimage.height }}
-        ,zoomify_url:"{{ zoomifyURL }}",regionURL:"{{ regionURL }}"
+    pageimage= {workid:{{ work.id }},pageID:{{ pageimage.id }},zoomify_width:{{ pageimage.width }}, zoomify_height:{{ pageimage.height }}
+        ,zoomify_url:"{{ zoomifyURL }}",regionURL:"{{ regionURL }}",noteURL :"{{ noteURL }}"
     };
 
-
-    var regionURL = "{{ regionURL }}";
-    var noteURL = "{{ noteURL }}";
-    var workid = {{ work.id }};
     {% if selectedregionid > 0 %}selectedregionid={{ selectedregionid }};
     {% else %}selectedregionid=0; {% endif %}
 </script>
