@@ -15,6 +15,7 @@
 define(["jquery", "ol3"], function($, ol) {    
     ol3 = ol;
     var hover;
+    var barLayer
 
     //Query the server for the bar boxes in a GeoJSON format
     initBarLayer = function() {
@@ -127,7 +128,7 @@ define(["jquery", "ol3"], function($, ol) {
             crossOrigin: crossOrigin
         });
         //Get the bar boxes
-        var barLayer = initBarLayer();
+        barLayer = initBarLayer();
         var interactions = initInteractions();
         var olpage = new ol.Map({
             controls: ol.control.defaults({
