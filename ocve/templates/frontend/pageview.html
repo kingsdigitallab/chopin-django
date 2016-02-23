@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load catalogue_tags staticfiles %}
 
-{% block meta_title %}Pageview OCVE{% endblock %}
+{% block meta_title %}{{ source.getAcCode }} {{ pageimage.textlabel }}{% endblock %}
 
 {% block custom_stylesheets %}
 {{ block.super }}
