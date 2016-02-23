@@ -78,8 +78,6 @@ class Command(BaseCommand):
                     proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     err = proc.communicate()[1]
                     if err:
-                        logger.error('Push to live failed with error:'+str(err))
+                        logger.error('Json backup failed with error:'+str(err))
                         return False
-                     else:
-                        logger.info('stg data pushed to live')
-                    #TODO add touch?
+
