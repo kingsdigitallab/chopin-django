@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
-{% block meta_title %}Pageview CFEO{% endblock %}
+{% block meta_title %}{{ source.getAcCode }} {{ pageimage.textlabel }}{% endblock %}
 
 {% block custom_stylesheets %}
 <link rel="stylesheet" href="{{ STATIC_URL }}vendor/OpenLayers/theme/default/style.css" type="text/css">
