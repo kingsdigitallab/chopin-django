@@ -4,7 +4,7 @@ __author__ = 'Elliot'
 #Views for the user interface
 import re
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response,HttpResponseRedirect
 from django.template.context import RequestContext
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -315,7 +315,7 @@ def ocvePageImageview(request, id,selectedregionid=0):
 
     request.session['page_image'] = id
 
-    return render_to_response('frontend/pageview.html', {
+    return render_to_response('frontend/ol3-pageview.html', {
         'workinfoexists':workinfoexists,
         'selectedregionid':selectedregionid,
         'achash': achash, 'annotationForm': annotationForm, 'notes': notes,
@@ -668,6 +668,10 @@ def ajaxDeleteCollection(request):
         else:
                 status = 0
         return render_to_response('frontend/ajax/ajax-status.html', {"status" : status,}, context_instance=RequestContext(request))
+
+def iipredirect(request,path):
+    newurl=u'http://ocve3-images.dighum.kcl.ac.uk:6081/iip/'+path+'?'+request.GET.urlencode()
+    return HttpResponseRedirect(newurl)
 
 
 

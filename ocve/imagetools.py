@@ -69,7 +69,7 @@ def verifyImageDimensions(pi, oldPath):
 
 #Request image information from the iip serv
 #to verify images paths are correct
-#http://ocve2-stg.cch.kcl.ac.uk/iip/iipsrv.fcgi?FIF=jp2/ocvejp2-proc/20/1/01TP/20-1-BH_GBLbl_p01TP.jp2&obj=IIP,1.0&obj=Max-size&obj=Tile-size&obj=Resolution-number
+#http://ocve2-stg.cch.kcl.ac.uk/iip/iipsrv.fcgi?FIF=jp2/oc  vejp2-proc/20/1/01TP/20-1-BH_GBLbl_p01TP.jp2&obj=IIP,1.0&obj=Max-size&obj=Tile-size&obj=Resolution-number
 #iipsrv.fcgi?FIF=jp2/ocvejp2-proc/20/1/01TP/20-1-BH_GBLbl_p01TP.jp2&obj=IIP,1.0&obj=Max-size&obj=Tile-size&obj=Resolution-number
 #jp2/ocvejp2-proc/20/1/02B/20-1-BH_GBLbl_p02B.jp2
 def verifyImagesViaIIP():
