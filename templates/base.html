@@ -8,11 +8,11 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    {% compress css %}
+{#    {% compress css %}#}
     {# SCSS compilation relies on django compressor #}
-    <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main-'|add:BASE_URL|add:'.scss' %}" />
-    {% endcompress %}
-
+{#    <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main-'|add:BASE_URL|add:'.scss' %}" />#}
+{#    {% endcompress %}#}
+<link rel="stylesheet" href="/static/CACHE/css/main-ocve.737763e2d222.css" type="text/css" />
     {% block custom_stylesheets %}
 
     {% endblock custom_stylesheets %}
