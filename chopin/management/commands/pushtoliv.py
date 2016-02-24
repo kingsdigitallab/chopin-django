@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand, NoArgsCommand
 import logging
 import subprocess
 from optparse import make_option
+import os
 
 logging.basicConfig(format='%(asctime)-15s %(message)s')
 logger = logging.getLogger('Main logger')
@@ -23,7 +24,8 @@ class Command(BaseCommand):
 
     def cpscript(self, script, source, dest):
         cpcmd = ['cp', source + script, dest + script]
-        subprocess.Popen(cpcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print 'Copying'+' '.join(cpcmd)
+	subprocess.Popen(cpcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     # Copy rebuilt stg JSON to live.
     def backupJSON(self, stg_scripts, liv_scripts, dump_scripts):
@@ -78,9 +80,11 @@ class Command(BaseCommand):
                     return False
                 else:           
                     #Push stg mysql to live    
-                    pushstat = ['mysql','-u','root',mysql_liv_db,'<',' /vol/ocve3/dumps/'+mysql_stg_dump]
-                    proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    err = proc.communicate()[1]
+                    pushstat = ['mysql','-u','root',mysql_liv_db,'<','/vol/ocve3/dumps/mysql_stg_dump.sql']
+                    print ' '.join(pushstat)
+		    os.system(' '.join(pushstat))
+		    #proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    err = None #proc.communicate()[1]
                     if err:
                         logger.error('Push to live failed with error:'+str(err))
                         return False
