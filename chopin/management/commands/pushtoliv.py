@@ -78,7 +78,7 @@ class Command(BaseCommand):
                     return False
                 else:           
                     #Push stg mysql to live    
-                    pushstat = ['mysql','-u root',mysql_liv_db,'<',' /vol/ocve3/dumps/'+mysql_stg_dump]
+                    pushstat = ['mysql','-u','root',mysql_liv_db,'<',' /vol/ocve3/dumps/'+mysql_stg_dump]
                     proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     err = proc.communicate()[1]
                     if err:
