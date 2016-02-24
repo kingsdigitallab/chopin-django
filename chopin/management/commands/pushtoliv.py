@@ -55,10 +55,11 @@ class Command(BaseCommand):
                 logger.error('Dump from stg failed with error:'+str(err))
                 return False
             else:
-                psqlstgdumpcmd = ['pg_dump','-u','root',psql_stg_db,'>','/vol/ocve3/dumps/pg_stg_dump.sql']
+                psqlstgdumpcmd = ['pg_dump','-U','root',psql_stg_db,'>','/vol/ocve3/dumps/pg_stg_dump.sql']
                 proc = subprocess.Popen(' '.join(psqlstgdumpcmd),stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
                 err = proc.communicate()[1]
                 if err:
+                    print str(err)
                     logger.error('Dump from stg failed with error:'+str(err))
                     return False
                 else:
@@ -68,14 +69,16 @@ class Command(BaseCommand):
                     proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
                     err = proc.communicate()[1]
                     if err:
+                        print str(err)
                         logger.error('Dump from liv failed with error:'+str(err))
                         return False
                     else:
 
-                        psqllivdumpcmd = ['pg_dump','-u','root',psql_liv_db,'>','/vol/ocve3/dumps/pg_liv_dump.sql']
+                        psqllivdumpcmd = ['pg_dump','-U','root',psql_liv_db,'>','/vol/ocve3/dumps/pg_liv_dump.sql']
                         proc = subprocess.Popen(' '.join(psqllivdumpcmd),stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
                         err = proc.communicate()[1]
                         if err:
+                            print str(err)
                             logger.error('Dump from stg failed with error:'+str(err))
                             return False
                         else:
