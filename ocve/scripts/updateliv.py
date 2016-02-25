@@ -26,7 +26,7 @@ def backupJSON(stg_scripts, liv_scripts, dump_scripts):
     cpscript('CFEOsourceJSON.js', stg_scripts, liv_scripts)
 
 
-def updateliv(options):
+def updateliv(revert):
     mysql_stg_db = 'ocve2real'
     mysql_stg_dump = 'mysql_stg_dump.sql'
     psql_stg_db = 'app_ocve_stg'
@@ -36,7 +36,7 @@ def updateliv(options):
     liv_scripts = '/vol/ocve3/webroot/liv/django/chopin/static/javascripts/'
     dump_scripts = '/vol/ocve3/dumps/javascript/'
     # ' | ','mysql','-u root',liv_db,' < ',' mydb2' shell=True
-    if options['revert']:
+    if revert==1:
         # Revert scripts
         # todo review
         cpscript('OCVEsourceJSON.js', dump_scripts, liv_scripts)

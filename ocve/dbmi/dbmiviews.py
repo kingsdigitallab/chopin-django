@@ -514,7 +514,7 @@ def generateSourceThumbnails(request,id):
 
 def pushtoliv(request):
     #management.call_command('pushtoliv')
-    updateliv()
+    updateliv(0)
     return HttpResponse("Live updated")
 
 
