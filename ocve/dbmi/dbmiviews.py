@@ -11,6 +11,7 @@ from django.db.models import *
 from sourceeditor import *
 from ocve.uitools import generateThumbnails
 import shutil
+import os
 from django.core import management
 from ocve.scripts.updateliv import updateliv
 
@@ -514,7 +515,8 @@ def generateSourceThumbnails(request,id):
 
 def pushtoliv(request):
     #management.call_command('pushtoliv')
-    updateliv(0)
+    #updateliv(0)
+    os.system('python manage.py pushtoliv')
     return HttpResponse("Live updated")
 
 
