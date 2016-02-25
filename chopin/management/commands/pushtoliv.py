@@ -12,7 +12,6 @@ logger = logging.getLogger('Main logger')
 class Command(BaseCommand):
     help = """Dumps data from stg and pushes to live, along with static JSON.  NOTE: Works only on VM"""
 
-
     option_list = BaseCommand.option_list + (
         make_option('--revert',
                     action='store_true',
@@ -24,21 +23,21 @@ class Command(BaseCommand):
 
     def cpscript(self, script, source, dest):
         cpcmd = ['cp', source + script, dest + script]
-        print 'Copying'+' '.join(cpcmd)
-	subprocess.Popen(cpcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print 'Copying' + ' '.join(cpcmd)
+        subprocess.Popen(cpcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     # Copy rebuilt stg JSON to live.
     def backupJSON(self, stg_scripts, liv_scripts, dump_scripts):
         # Backup live JSON
         self.cpscript('OCVEsourceJSON.js', liv_scripts, dump_scripts)
         self.cpscript('CFEOsourceJSON.js', liv_scripts, dump_scripts)
-        #Copy
+        # Copy
         self.cpscript('OCVEsourceJSON.js', stg_scripts, liv_scripts)
         self.cpscript('CFEOsourceJSON.js', stg_scripts, liv_scripts)
 
     def handle(self, *args, **options):
         mysql_stg_db = 'ocve2real'
-        mysql_stg_dump='mysql_stg_dump.sql'
+        mysql_stg_dump = 'mysql_stg_dump.sql'
         psql_stg_db = 'app_ocve_stg'
         mysql_liv_db = 'chopin'
         psql_liv_db = 'app_chopin_liv'
@@ -47,7 +46,7 @@ class Command(BaseCommand):
         dump_scripts = '/vol/ocve3/dumps/javascript/'
         # ' | ','mysql','-u root',liv_db,' < ',' mydb2' shell=True
         if options['revert']:
-            #Revert scripts
+            # Revert scripts
             #todo review
             self.cpscript('OCVEsourceJSON.js', dump_scripts, liv_scripts)
             self.cpscript('CFEOsourceJSON.js', dump_scripts, liv_scripts)
@@ -61,7 +60,7 @@ class Command(BaseCommand):
                 logger.info('stg dump generated')
 
         else:
-            mysqlstgdumpcmd = ['mysqldump', '-u', 'root', mysql_stg_db, '>', '/vol/ocve3/dumps/'+mysql_stg_dump]
+            mysqlstgdumpcmd = ['mysqldump', '-u', 'root', mysql_stg_db, '>', '/vol/ocve3/dumps/' + mysql_stg_dump]
             proc = subprocess.Popen(' '.join(mysqlstgdumpcmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                     shell=True)
             err = proc.communicate()[1]
@@ -69,7 +68,7 @@ class Command(BaseCommand):
                 logger.error('Dump from stg failed with error:' + str(err))
                 return False
             else:
-                #backup live
+                # backup live
                 pushstat = ['mysqldump', '-u', 'root', mysql_liv_db, '>', '/vol/ocve3/dumps/mysql_liv_dump.sql']
                 proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                         shell=True)
@@ -78,16 +77,16 @@ class Command(BaseCommand):
                     print str(err)
                     logger.error('Dump from liv failed with error:' + str(err))
                     return False
-                else:           
+                else:
                     #Push stg mysql to live    
-                    pushstat = ['mysql','-u','root',mysql_liv_db,'<','/vol/ocve3/dumps/mysql_stg_dump.sql']
+                    pushstat = ['mysql', '-u', 'root', mysql_liv_db, '<', '/vol/ocve3/dumps/mysql_stg_dump.sql']
                     print ' '.join(pushstat)
-		    os.system(' '.join(pushstat))
-		    #proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    err = None #proc.communicate()[1]
-                    if err:
-                        logger.error('Push to live failed with error:'+str(err))
-                        return False
-                    else:
-                        self.backupJSON(stg_scripts,liv_scripts,dump_scripts)
+                    os.system(' '.join(pushstat))
+                    #proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                err = None  #proc.communicate()[1]
+                if err:
+                    logger.error('Push to live failed with error:' + str(err))
+                    return False
+                else:
+                    self.backupJSON(stg_scripts, liv_scripts, dump_scripts)
 
