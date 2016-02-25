@@ -6,7 +6,7 @@ import os
 
 
 logging.basicConfig(format='%(asctime)-15s %(message)s')
-logger = logging.getLogger('Main logger')
+logger = logging.getLogger('chopin')
 
 
 def cpscript(script, source, dest):
@@ -36,6 +36,7 @@ def updateliv(revert):
     liv_scripts = '/vol/ocve3/webroot/liv/django/chopin/static/javascripts/'
     dump_scripts = '/vol/ocve3/dumps/javascript/'
     # ' | ','mysql','-u root',liv_db,' < ',' mydb2' shell=True
+    logger.debug('BEGIN LIVE UPDATE')
     if revert==1:
         # Revert scripts
         # todo review
