@@ -4,7 +4,7 @@ __author__ = 'Elliot'
 #Views for the user interface
 import re
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response,HttpResponseRedirect
 from django.template.context import RequestContext
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -230,18 +230,18 @@ def sourcejs(request):
     serializeAcCodeConnector()
     return HttpResponse("<html><head><title>UI JSONs rebuilt</title></head><body><a href='/ocve/dbmi/'>Return to DBMI</a></body></html>")
 
-def getNextPrevPages(p,pi):
+#Run through a set of passed pageimages to find the next/prev for page p
+def getNextPrevPages(pi,pageimages):
     next=None
     prev=None
-    norder=p.orderno+1
-    porder=p.orderno-1
-    npi=PageImage.objects.filter(page__sourcecomponent__source=p.sourcecomponent.source,page__pagetype_id=3,page__orderno=norder)
-    if npi.count() > 0:
-        next=npi[0]
-    if porder > 0:
-        ppi=PageImage.objects.filter(page__sourcecomponent__source=p.sourcecomponent.source,page__pagetype_id=3,page__orderno=porder)
-        if ppi.count() > 0:
-            prev=ppi[0]
+    lpi=list(pageimages)
+    idx=lpi.index(pi)
+    if idx > 0:
+        p=idx-1
+        prev=lpi[p]
+    if idx+1 < len(lpi):
+        n=idx+1
+        next=lpi[n]
     return [next,prev]
 
 #Get relevant work for a pageimage object
@@ -300,7 +300,7 @@ def ocvePageImageview(request, id,selectedregionid=0):
 
     notes = Annotation.objects.filter(pageimage_id=id, type_id=1)
     comments = Annotation.objects.filter(pageimage_id=id, type_id=2)
-    [next_page, prev_page] = getNextPrevPages(p, pi)
+    [next_page, prev_page] = getNextPrevPages(pi, pageimages)
     work=getPageImageWork(pi,source)
     #Check if work has information so we don't display dead link
     if len(work.workinformation.OCVE)> 0:
@@ -358,7 +358,7 @@ def cfeoPageImageview(request,id):
     source=pi.page.sourcecomponent.source
     ac=source.getAcCode()
     achash=hashlib.md5(ac.encode('UTF-8')).hexdigest()
-    [next,prev]=getNextPrevPages(p,pageimages)
+    [next,prev]=getNextPrevPages(pi,pageimages)
     work=getPageImageWork(pi,source)
     seaDragonURL=pi.getZoomifyPath()
     return render_to_response('frontend/cfeopageview.html', {'achash':achash,'work':work,'source':source,'prev':prev,'next':next,'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL,'pageimages':pageimages,'mode':mode,'seaDragonURL':seaDragonURL,'page': p, 'pageimage': pi}, context_instance=RequestContext(request))
@@ -667,6 +667,10 @@ def ajaxDeleteCollection(request):
         else:
                 status = 0
         return render_to_response('frontend/ajax/ajax-status.html', {"status" : status,}, context_instance=RequestContext(request))
+
+def iipredirect(request,path):
+    newurl=u'http://ocve3-images.dighum.kcl.ac.uk:6081/iip/'+path+'?'+request.GET.urlencode()
+    return HttpResponseRedirect(newurl)
 
 
 

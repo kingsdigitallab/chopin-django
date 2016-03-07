@@ -408,47 +408,8 @@ def saveSourceInformation(request,id):
         sourceInformation=cleanSourceInformationHTML(sourceInformation)
         sourceInformation.save()
     source=sourceInformation.source
-    #try:
-    #    newsource=NewSource.objects.get(sourcecreated=source.id)
-    #    sourcenewid=newsource.pk
-    #    return HttpResponseRedirect('/ocve/sourceeditor/new/' + str(newsource.pk) + '/#sourceInformationMetadata')
-    #except ObjectDoesNotExist:
     return HttpResponseRedirect('/ocve/sourceeditor/' + str(source.id) + '/#sourceInformationMetadata')
 
-
-
-# def createSourceComponent(request,id):
-#     componentlabel = nbsp(request.POST['componentlabel'])
-#     instrument_number=request.POST['instrumentnumber']
-#     id_sourcecomponenttype=request.POST['id_sourcecomponenttype']
-#     s = Source.objects.get(id=id)
-#     count =SourceComponent.objects.filter(source=s).count()
-#     id_workcomponent=request.POST['id_workcomponent']
-#     c = SourceComponentType.objects.get(id=id_sourcecomponenttype)
-#     newsourcecomponent = SourceComponent(source=s, orderno=count+1, label=componentlabel, instrumentnumber=instrument_number, sourcecomponenttype=c)
-#     newsourcecomponent.save()
-#     instrument_id=request.POST['instrument']
-#     if instrument_id <> 'None':
-#         i = Instrument.objects.get(id=instrument_id)
-#         ic =instrumentComponent(instrument=i, sourcecomponent = newsourcecomponent)
-#         ic.save()
-#     if id_workcomponent <> '0' :
-#         w = WorkComponent.objects.get(id=id_workcomponent)
-#         wcsc =SourceComponent_WorkComponent(workcomponent=w, sourcecomponent = newsourcecomponent)
-#         wcsc.save()
-#     msg = 'created '
-#     return HttpResponseRedirect("/ocve/sourceeditor/"+str(s.id)+"/")
-
-#Create or update a source component
-@csrf_exempt
-def saveSourceComponent(request,id):
-    msg = ''
-    #If id is 0, create new, else instantiate
-    #Front or end matter presets
-        #else Populate/overwrite with form
-    #Get all attached pages in order
-    #Save pages with new order
-    return HttpResponse(msg)
 
 @csrf_exempt
 def updateComponentOrder(request):
@@ -620,6 +581,41 @@ def deletesource(request,id):
    #return HttpResponseRedirect('/ocve/dbmi/')
     return render_to_response('dbmi/sourcedelete.html',{'log':log})
 
+
+#Clone a page, usually for pages that span source components
+#NOTE: Clones page,pageimage,pagelegacy ONLY, not bar informtation
+@csrf_exempt
+def clonepage(request,id):
+    try:
+        #Get pageimage to clone
+        sourcepageimage=PageImage.objects.get(id=id)
+        sourcedict=model_to_dict(sourcepageimage)
+        newpageimage=PageImage(**sourcedict)
+
+        #Clone page
+        sourcepage=sourcepageimage.page
+        sourcepagedict=model_to_dict(sourcepage)
+        newpage=Page(**sourcepagedict)
+        newpage.id=None
+        newpage.save()
+
+        newpageimage.id=None
+        newpageimage.page=newpage
+        newpageimage.save()
+
+        #Clone Pagelegacy
+        legacies=PageLegacy.objects.filter(pageimage=sourcepageimage)
+        if legacies.count() > 0:
+            legacydict=model_to_dict(legacies[0])
+            newpl=PageLegacy(**legacydict)
+            newpl.id=None
+            newpl.pageimage=newpageimage
+            newpl.save()
+
+        return HttpResponseRedirect('/ocve/sourceeditor/' + str(newpage.sourcecomponent.source.id))
+
+    except ObjectDoesNotExist:
+        return HttpResponse("PAGEIMAGE DOES NOT EXIST")
 
 #Clone a source
 @csrf_exempt

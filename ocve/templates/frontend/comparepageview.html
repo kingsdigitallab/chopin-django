@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block meta_title %}Page Comparison{% endblock %}
 
 {% block title %}Page Comparison{% endblock %}
 
@@ -14,7 +15,7 @@
         {% if pi_left %}
         <header>
             <h3>
-                {{ pi_left.page.sourcecomponent.source.getWork }},<a href="/{{ mode|lower }}/browse/pageview/{{ pi_left.page.sourcecomponent.source.id }}/" title="Witness overview">{{ pi_left.page.sourcecomponent.source.getAcCode }} {{ pi_left.textlabel }}</a>
+                {{ pi_left.page.sourcecomponent.source.getWork }},<a href="/{{ mode|lower }}/browse/pageview/{{ pi_left.id }}/" title="Witness overview">{{ pi_left.page.sourcecomponent.source.getAcCode }} {{ pi_left.textlabel }}</a>
             </h3>
         </header>
         <img src="/iip/iipsrv.fcgi?FIF={{ pi_left.getJP2Path }}&CVT=JPG" height="800" width="500" id="image_one" class="osd-iip">
@@ -31,7 +32,7 @@
         {% if pi_right %}
         <header>
             <h3>
-                {{ pi_right.page.sourcecomponent.source.getWork }},<a href="/{{ mode|lower }}/browse/pageview/{{ pi_right.page.sourcecomponent.source.id }}/" title="Witness overview">{{ pi_right.page.sourcecomponent.source.getAcCode }} {{ pi_right.textlabel }}</a>
+                {{ pi_right.page.sourcecomponent.source.getWork }},<a href="/{{ mode|lower }}/browse/pageview/{{ pi_right.id }}/" title="Witness overview">{{ pi_right.page.sourcecomponent.source.getAcCode }} {{ pi_right.textlabel }}</a>
             </h3>
         </header>
         <img src="/iip/iipsrv.fcgi?FIF={{ pi_right.getJP2Path }}&CVT=JPG" height="800" width="500" id="image_two" class="osd-iip">
