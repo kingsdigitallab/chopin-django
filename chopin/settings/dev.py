@@ -10,17 +10,10 @@ INTERNAL_IPS = ('ocve3-dev.dighum.kcl.ac.uk', )
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'app_ocve_aco_dev',
+         'NAME': 'app_ocve_merged_test',
         'USER': 'app_ocve',
-        'PASSWORD': '',
+        'PASSWORD': 'rabbit390Hole',
         'HOST': 'db-pg-1.cch.kcl.ac.uk'
-    },
-    'ocve_db': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ocve2real_dev',
-        'USER': 'app_ocve2',
-        'PASSWORD': '',
-        'HOST': 'my-dev-1.cch.kcl.ac.uk',
     }
 }
 
