@@ -5,7 +5,7 @@
 
 {% block custom_stylesheets %}
 {{ block.super }}
-<link rel="stylesheet" href="{{ STATIC_URL }}vendor/OpenLayers/theme/default/style.css" type="text/css">
+<link rel="stylesheet" href="{{ STATIC_URL }}vendor/ol v3.13.1/css/ol.css" type="text/css">
 <link rel="stylesheet" href="{{ STATIC_URL }}custom_css/bareditor.css" type="text/css">
 {% endblock custom_stylesheets %}
 
@@ -229,39 +229,32 @@ $(window).load(function(){
 {% block footer_scripts %}
 {{ block.super }}
 <script src="{{ STATIC_URL }}javascripts/slick.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="{{ STATIC_URL }}vendor/OpenLayers/OpenLayers.js"></script>
-
+<!--<script src="{{ STATIC_URL }}vendor/OpenLayers/OpenLayers.js"></script>-->
 <script type="text/javascript">
-    var map, zoomify;
-    var alayer, vlayer;
 
-    var zoomify_width = {{ pageimage.width }};
-    var zoomify_height = {{ pageimage.height }};
+    pageimage= {workid:{{ work.id }},pageID:{{ pageimage.id }},zoomify_width:{{ pageimage.width }}, zoomify_height:{{ pageimage.height }}
+        ,zoomify_url:"{{ zoomifyURL }}",regionURL:"{{ regionURL }}",noteURL :"{{ noteURL }}"
+    };
 
-    var pageID = {{ pageimage.id }};
-    var zoomify_url = "{{ zoomifyURL }}";
-
-    var regionURL = "{{ regionURL }}";
-    var noteURL = "{{ noteURL }}";
-
-    var workid = {{ work.id }};
     {% if selectedregionid > 0 %}selectedregionid={{ selectedregionid }};
     {% else %}selectedregionid=0; {% endif %}
 </script>
-<script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview_functions.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview_ol.js"></script>
+<script data-main="{{ STATIC_URL }}javascripts/pageview-main.js" type="text/javascript" src="{{ STATIC_URL }}javascripts/require.min.js"></script>
+
+ <script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview.js"></script>
+
 <script type="text/javascript">
     $(document).ready(function () {
-
+        //Removed until ol3 decision made
         {% if view == 'annotations' %}
-        showAnnotationTools();
+        //showAnnotationTools();
         {% else %}
-        hideAnnotationTools();
+        //hideAnnotationTools();
         {% endif %}
     });
 </script>
 
+    <!--
 <script src="{{ STATIC_URL }}vendor/foundation/js/vendor/jquery.cookie.js"></script>
 
 <script type="text/javascript">
@@ -272,6 +265,6 @@ $(window).load(function(){
 
         cookie_set('joyride', 'ridden', 30);
     });
-</script>
+</script>-->
 
 {% endblock %}

@@ -18,6 +18,7 @@ urlpatterns = patterns('', #(r'^source/(?P<id>\d+)/$', source),
                        (r'^saveSource/(?P<id>\d+)/$', saveSource),
                        (r'^saveSourceInformation/(?P<id>\d+)/$', saveSourceInformation),
                        (r'^clonesource/(?P<id>\d+)/$', clonesource),
+                       (r'^clonepage/(?P<id>\d+)/$', clonepage),
                        (r'^generatesourcethumbnails/(?P<id>\d+)/$', generateSourceThumbnails),
 
                        #Source/work components
@@ -54,6 +55,7 @@ urlpatterns = patterns('', #(r'^source/(?P<id>\d+)/$', source),
                        (r'^findunverified/$', findUnverifiedImages),
                        (r'^sourcesbywork/$', sourcesbywork),
                        (r'^generatethumbnails/$', generateAllThumbnails),
+                       (r'^pushtoliv/$', pushtoliv),
 
                        #upload
                        (r'^upload/selectsource/', selectSource),

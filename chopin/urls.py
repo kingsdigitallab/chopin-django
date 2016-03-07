@@ -41,7 +41,7 @@ urlpatterns += patterns('',
                         url(r'^aco/', include('catalogue.urls')),
                         url(r'^ocve/', include('ocve.urls')),
                         url(r'^cfeo/', include('ocve.cfeourls')),
-
+                        (r'^iip/(?P<path>.*$)', 'ocve.uiviews.iipredirect'),
                         url(r'^tinymce/', include('tinymce.urls')),
 
                         url(r'^frontend/search/',

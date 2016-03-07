@@ -11,6 +11,9 @@ from django.db.models import *
 from sourceeditor import *
 from ocve.uitools import generateThumbnails
 import shutil
+import os
+from django.core import management
+from ocve.scripts.updateliv import updateliv
 
 from django import template
 IMAGE_SERVER_URL = settings.IMAGE_SERVER_URL
@@ -476,6 +479,12 @@ def generateSourceThumbnails(request,id):
     sources=Source.objects.filter(id=id)
     log=generateThumbnails(sources)
     return HttpResponse(log)
+
+def pushtoliv(request):
+    #management.call_command('pushtoliv')
+    updateliv(0)
+    #os.system('python manage.py pushtoliv')
+    return HttpResponse("Live updated")
 
 
 

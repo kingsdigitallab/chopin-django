@@ -111,6 +111,8 @@ class BarRegionGeo:
         self.x2 = ((br.x + br.width) * rx)
         self.y1 = h - ((br.y + br.height) * ry)
         self.y2 = h - (br.y * ry)
+        # self.y1 = ((br.y + br.height) * ry) * -1
+        # self.y2 = (br.y * ry) * -1
         self.id = br.id
         self.anomaly = br.anomaly
         barid=''

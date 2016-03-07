@@ -10,7 +10,7 @@ from django.conf import settings
 import subprocess
 from django.views.decorators.csrf import csrf_exempt
 
-logger = logging.getLogger('ocve.uploader')
+logger = logging.getLogger('chopin')
 
 def fix(request):
     np=NewPageImage.objects.filter(id__gt=5079)
