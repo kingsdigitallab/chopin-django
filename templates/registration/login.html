@@ -6,7 +6,7 @@
             <input id="id_username" name="username" type="text" placeholder="Username">
             <input id="id_password" name="password" type="password" placeholder="Password">
             <button type="submit" class="tiny button radius expand">Log in</button>
-            <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
         </form>
         <p><em><a href="/ocve/accounts/password/reset">Forgot your password?</a></em></p>
 
@@ -17,5 +17,5 @@
 </div>
 
 <script type="text/javascript">
-    document.getElementById('id_username').focus();
+    document.getElementById('id_username');
 </script>
