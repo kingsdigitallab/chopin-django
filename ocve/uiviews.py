@@ -19,7 +19,7 @@ from dbmi.sourceeditor import cleanSourceInformationHTML
 from models import keyPitch,BarCollection
 import json
 import hashlib
-from django.db import connections
+from django.db import connection
 from forms import AnnotationForm
 from dbmi.datatools import convertEntities
 from imagetools import verifyImageDimensions
@@ -114,7 +114,7 @@ def cleanXML(xml):
     return xml
 
 def fixsourceinformation(request):
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     #sql='select sl.source_id,si.id,sl.sourceDesc,sl.witnessKey from ocve_source as s,ocve_sourceinformation as si,ocve_sourcelegacy as sl where (s.ocve=1 or s.cfeo=1) and s.id=sl.source_id and s.id=si.source_id'
     sql='select sl.source_id,si.id,sl.sourceDesc,sl.witnessKey,E.locationSimilarCopies,E.printingmethod from ocve_source as s,ocve_sourceinformation as si,ocve_sourcelegacy as sl,edition as E where (s.ocve=1 or s.cfeo=1) and E.editionKey=sl.cfeoKey and s.id=sl.source_id and s.id=si.source_id'
     sql+=' and length(si.locationsimilarcopies) = 0'
@@ -288,7 +288,8 @@ def ocvePageImageview(request, id,selectedregionid=0):
 
     pageimages = getOCVEPageImages(source)
 
-    cursor = connections.cursor()
+    cursor = connection.cursor()
+
     cursor.execute(
         """select bar.barlabel, pi.id from ocve_bar as bar,
         ocve_bar_barregion as brr, ocve_barregion as barregion,
