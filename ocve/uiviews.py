@@ -3,7 +3,8 @@ __author__ = 'Elliot'
 
 #Views for the user interface
 import re
-
+from django.core import serializers
+from ocve.serialize import serializeSource
 from django.shortcuts import render_to_response,HttpResponseRedirect
 from django.template.context import RequestContext
 from django.http import HttpResponse
@@ -16,7 +17,7 @@ from dbmi.sourceeditor import cleanSourceInformationHTML
 
 
 #Takes pageimageid
-from models import keyPitch,BarCollection
+from models import BarCollection
 import json
 import hashlib
 from django.db import connection
@@ -168,8 +169,9 @@ def fixsourceinformation(request):
 
 
 def browse(request,mode="OCVE",defaultFilters=None):
-
+    serializeSource(Source.objects.filter(id=18170))
     bars=Bar.objects.all()
+
 
     #Filter Items
     for si in SourceInformation.objects.filter(contentssummary__startswith='<p></p>'):
