@@ -24,12 +24,16 @@ class TestModels(TestCase):
         self.expected_sourceinformation=SourceInformation.objects.get(id=17522)
         self.expected_primarypageimages=PageImage.objects.filter(versionnumber=1)
         self.expected_pages=Page.objects.filter(sourcecomponent__source=self.expected_sources[0])
-        # self.expected_firstbarregion
-        # self.default_sourcecomponent=
-        # self.expected_sourcecomponent_pages
-        # self.expected_instruments
-        # self.expected_primarypageimages
-        # self.expected_workcomponent
+        self.expected_firstbarregion=BarRegion.objects.get(id=183)
+        self.default_sourcecomponent=SourceComponent.objects.get(id=36496)
+        self.expected_sourcecomponent_pages=Page.objects.filter(sourcecomponent=self.default_sourcecomponent)
+        i=Instrument(id=1,instrument="")
+        i.save()
+        SourceComponent_Instrument.create(instrument=i,sourcecomponent=self.default_sourcecomponent)
+        self.expected_instruments=Instrument.objects.get(id=1)
+        self.default_page=Page.objects.get(id=61533)
+        self.expected_page_primarypageimage=PageImage.objects.filter(page=self.default_page)
+        self.expected_workcomponent=WorkComponent.objects.get(id=9303)
 
 
     # Work
@@ -92,19 +96,21 @@ class TestModels(TestCase):
 
     def test_source_getFirstBarRegion(self):
         source=self.expected_sources[0]
-        self.assertEqual(source.getAcCodeObject(),self.expected_accode)
+        self.assertEqual(source.getFirstBarRegion(),self.expected_firstbarregion)
 
 
     def test_sourcecomponent_getPages(self):
-        pass
+        sc=self.default_sourcecomponent
+        self.assertEqual(sc.getPages(),self.expected_sourcecomponent_pages)
+
 
     def test_pageimage_getInstruments(self):
-        pass
+        self.assertEqual(self.default_page.pageimage.getInstruments(),self.expected_instruments)
 
 
     def test_page_getPrimaryPageImage(self):
-        pass
+        self.assertEqual(self.default_page.getPrimaryPageImage(),self.expected_page_primarypageimage)
 
 
     def test_page_getWorkComponent(self):
-        pass
+        self.assertEqual(self.default_page.getWork(),self.expected_work)
