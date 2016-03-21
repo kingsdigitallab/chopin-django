@@ -59,7 +59,7 @@ class LibraryIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     document = indexes.FacetCharField(default='Library')
     title = indexes.CharField()
-    url = indexes.CharField(model_attr='url', indexed=False)
+    url = indexes.CharField(model_attr='url', indexed=False, null=True)
 
     def get_model(self):
         return Library
