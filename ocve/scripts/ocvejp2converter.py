@@ -23,7 +23,7 @@ import shlex
 import subprocess
 import types
 import re
-from shutil import move
+from shutil import move,copy
 
 import progressbar as pb
 
@@ -156,7 +156,9 @@ class ArchiveJP2Converter (object):
                                    sys.exit(1)
                             src = in_file
                             dst=os.path.join(archive_full_path,name)
-                            move(src,dst)
+                            #todo: Restore when permissions fixed.
+                            #move(src,dst)
+                            copy(src,dst)
                             logger.info('Image archived at [%s]' % dst)
                 #If folder is now empty, remove it.
                 if len(os.listdir(root)) == 0:
