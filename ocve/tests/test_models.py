@@ -2,10 +2,8 @@
 __author__ = 'Elliott Hall'
 
 from django.test import TestCase
-from ocve.models import *
-from ocve.uitools import *
+
 from ocve.uiviews import *
-from django.core import management
 
 
 class TestModels(TestCase):
