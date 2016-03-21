@@ -36,7 +36,7 @@ class ImpressionIndex(indexes.SearchIndex, indexes.Indexable):
     document = indexes.FacetCharField(default='Impression')
     title = indexes.CharField(boost=100)
     sort_order = indexes.FloatField()
-    url = indexes.CharField(model_attr='url', indexed=False)
+    url = indexes.CharField(model_attr='url', indexed=False, null=True)
 
     def get_model(self):
         return Impression
@@ -100,7 +100,7 @@ class PublisherIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     document = indexes.FacetCharField(default='Publisher')
     title = indexes.CharField()
-    url = indexes.CharField(model_attr='url', indexed=False)
+    url = indexes.CharField(model_attr='url', indexed=False, null=True)
 
     def get_model(self):
         return Publisher
@@ -137,7 +137,7 @@ class WorkIndex(indexes.SearchIndex, indexes.Indexable):
     document = indexes.FacetCharField(default='General information')
     title = indexes.CharField(model_attr='title')
     sort_order = indexes.FloatField(model_attr='sort_order')
-    url = indexes.CharField(model_attr='url', indexed=False)
+    url = indexes.CharField(model_attr='url', indexed=False, null=True)
 
     def get_model(self):
         return Work
