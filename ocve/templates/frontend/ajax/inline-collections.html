@@ -48,10 +48,10 @@
                     <span class="thumb-title">{{ thumbnail.getSource.label }}</span>
 
                     <div class="thumb-options">
-                        <a  title="View all bars" href="/ocve/browse/barview?pageimageid={{ thumbnail.pi.id }}&amp;workid={{region.pageimage.page.sourcecomponent.source.getWork.id}}&amp;barid={{region.bar.all.0.id}}" >
+                        <a title="View all bars" href="/ocve/browse/barview?pageimageid={{ thumbnail.pi.id }}&amp;workid={{region.pageimage.page.sourcecomponent.source.getWork.id}}&amp;barid={{region.bar.all.0.id}}">
                             <span class="fa fa-th"></span>
                         </a>
-                        <a title="View bar in page context" href="/ocve/browse/pageview/{{thumbnail.pi.id}}/{{region.id}}/" >
+                        <a title="View bar in page context" href="/ocve/browse/pageview/{{thumbnail.pi.id}}/{{region.id}}/">
                             <span class="fa fa-file-text"></span>
                         </a>
                         {% for fif in thumbnail.getLargeURL %}
