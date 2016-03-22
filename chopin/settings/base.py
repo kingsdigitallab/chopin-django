@@ -7,8 +7,16 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 For production settings see
 https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 """
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import getpass
+import logging
 import os
+
+import django.utils.text
+from celery.schedules import crontab
+from ddhldap.settings import *  # noqa
+from django.conf import global_settings
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 PROJECT_NAME = 'chopin'
@@ -93,8 +101,6 @@ INSTALLED_APPS += (
 
 INTERNAL_IPS = ('127.0.0.1', )
 
-# https://docs.djangoproject.com/en/1.6/topics/logging/
-import logging
 
 LOGGING_ROOT = os.path.join(BASE_DIR, 'logs')
 LOGGING_LEVEL = logging.WARN
@@ -174,7 +180,6 @@ ROOT_URLCONF = PROJECT_NAME + '.urls'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ''
 
-from django.conf import global_settings
 TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
     'catalogue.context_processors.settings',
@@ -204,7 +209,6 @@ WSGI_APPLICATION = PROJECT_NAME + '.wsgi.application'
 # https://scm.cch.kcl.ac.uk/hg/ddhldap-django
 # -----------------------------------------------------------------------------
 
-from ddhldap.settings import *  # noqa
 
 AUTH_LDAP_REQUIRE_GROUP = 'cn=ocve,' + LDAP_BASE_OU
 
@@ -271,6 +275,13 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
+CELERYBEAT_SCHEDULE = {
+    'haystack-update-index-every-day': {
+        'task': 'tasks.haystack_update_index',
+        'schedule': crontab(hour=2),
+    },
+}
+
 # -----------------------------------------------------------------------------
 # CMS
 # -----------------------------------------------------------------------------
@@ -317,7 +328,6 @@ HAYSTACK_LIMIT_TO_REGISTERED_MODELS = False
 # FABRIC
 # -----------------------------------------------------------------------------
 
-import getpass
 FABRIC_USER = getpass.getuser()
 
 # -----------------------------------------------------------------------------
@@ -387,5 +397,4 @@ def get_valid_filename(s):
     from django.utils.encoding import force_text
     return force_text(s).strip().replace(' ', '_')
 
-import django.utils.text
 django.utils.text.get_valid_filename = get_valid_filename
