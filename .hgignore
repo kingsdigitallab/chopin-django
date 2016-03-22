@@ -6,6 +6,7 @@ syntax: glob
 *.log
 *.pyc
 .DS_Store
+celerybeat*
 db.*
 dumpdata.sh
 loaddata.sh
