@@ -1,8 +1,6 @@
-import datetime
-
 from django.contrib.contenttypes.models import ContentType
 from haystack import indexes
-from models import STP, Advert, Impression, Library, Publisher, Work
+from models import Impression, Library, Publisher, Work
 from wagtail.wagtailcore.models import Page
 
 
