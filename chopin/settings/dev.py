@@ -1,4 +1,4 @@
-from base import *
+from base import *  # noqa
 
 DEBUG = True
 
@@ -34,25 +34,25 @@ HAYSTACK_CONNECTIONS['default']['INDEX_NAME'] = PROJECT_NAME + '_dev'
 
 TEMPLATE_DEBUG = True
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Django Extensions
 # http://django-extensions.readthedocs.org/en/latest/
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 try:
-    import django_extensions
+    import django_extensions  # noqa
 
     INSTALLED_APPS = INSTALLED_APPS + ('django_extensions',)
 except ImportError:
     pass
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Django Debug Toolbar
 # http://django-debug-toolbar.readthedocs.org/en/latest/
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 try:
-    import debug_toolbar
+    import debug_toolbar  # noqa
 
     INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
     MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + (
@@ -61,12 +61,12 @@ try:
 except ImportError:
     pass
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Local settings
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 try:
-    from local import *
+    from local import *  # noqa
 except ImportError:
     print('failed to import local settings')
     raise ImportError('Error importing local settings')
