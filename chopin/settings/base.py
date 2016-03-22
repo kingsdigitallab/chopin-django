@@ -20,10 +20,10 @@ SITE_TITLE = {
     'ocve': 'Online Chopin Variorum Edition'
 }
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Core Settings
 # https://docs.djangoproject.com/en/1.6/ref/settings/#id6
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 ADMINS = (
     ('Miguel Vieira', 'jose.m.vieira@kcl.ac.uk'),
@@ -198,22 +198,22 @@ USE_TZ = True
 WSGI_APPLICATION = PROJECT_NAME + '.wsgi.application'
 
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Authentication
 # https://docs.djangoproject.com/en/1.6/ref/settings/#auth
 # https://scm.cch.kcl.ac.uk/hg/ddhldap-django
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-from ddhldap.settings import *
+from ddhldap.settings import *  # noqa
 
 AUTH_LDAP_REQUIRE_GROUP = 'cn=ocve,' + LDAP_BASE_OU
 
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 # https://docs.djangoproject.com/en/1.6/ref/settings/#static-files
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, STATIC_URL.strip('/'))
@@ -236,13 +236,13 @@ if not os.path.exists(MEDIA_ROOT):
     os.makedirs(MEDIA_ROOT)
 
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Installed Applications Settings
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Catalogue
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 AC_ENCODING = 'UTF-8'
 
@@ -257,34 +257,48 @@ POSTHUMOUS_WORKS_WITHOUT_OPUS = ['MazC', 'MazG&Bflat', 'Mazd,Bflat,G,Lento',
                                  'WaltzEm']
 ALL_WORKS_WITHOUT_OPUS = WORKS_WITHOUT_OPUS + POSTHUMOUS_WORKS_WITHOUT_OPUS
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# Celery
+# http://docs.celeryproject.org/en/latest/
+# -----------------------------------------------------------------------------
+
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379:' + CACHE_REDIS_DATABASE
+BROKER_URL = 'redis://127.0.0.1:6379:' + CACHE_REDIS_DATABASE
+
+#: Only add pickle to this list if your broker is secured
+#: from unwanted access (see userguide/security.html)
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+# -----------------------------------------------------------------------------
 # CMS
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 ITEMS_PER_PAGE = 10
 ALLOW_COMMENTS = True
 DISQUS_SHORTNAME = None
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Django Compressor
 # http://django-compressor.readthedocs.org/en/latest/
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'django_libsass.SassCompiler'),
 )
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Django Grappelli
 # http://django-grappelli.readthedocs.org/en/latest/
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 GRAPPELLI_ADMIN_TITLE = PROJECT_TITLE
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Django Haystack
 # http://django-haystack.readthedocs.org/en/latest/
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 HAYSTACK_CONNECTIONS = {
     'default': {
@@ -312,7 +326,7 @@ FABRIC_USER = getpass.getuser()
 
 IIP_URL = '/iip/iipsrv.fcgi'
 IMAGE_SERVER_URL = 'https://ocve3-images.dighum.kcl.ac.uk/iip/iipsrv.fcgi'
-#Absolute server path to physical repository of jp2 images
+# Absolute server path to physical repository of jp2 images
 IMAGEFOLDER = '/vol/ocve3/images/'
 
 # -----------------------------------------------------------------------------
@@ -329,11 +343,11 @@ UPLOAD_EXTENSION = '.tif'
 # The width of the image when extracting bar region thumbnails in iip
 THUMBNAIL_WIDTH = 500
 
-#Height of images in bar-view template
-BAR_IMAGE_HEIGHT=200
+# Height of images in bar-view template
+BAR_IMAGE_HEIGHT = 200
 
-#Folder where thumbnails generated from iip reside
-THUMBNAIL_DIR ='/vol/ocve3/images/thumbnails/'
+# Folder where thumbnails generated from iip reside
+THUMBNAIL_DIR = '/vol/ocve3/images/thumbnails/'
 
 # -----------------------------------------------------------------------------
 # Registration
@@ -359,16 +373,17 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme_advanced_resizing': True,
 }
 
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Wagtail
 # http://wagtail.readthedocs.org/en/latest/
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 WAGTAIL_SITE_NAME = PROJECT_TITLE
 
+
 # Allow all manner of non-alphanumeric characters in filenames, since
 # the PDF files for Works/Impressions use them meaningfully.
-def get_valid_filename (s):
+def get_valid_filename(s):
     from django.utils.encoding import force_text
     return force_text(s).strip().replace(' ', '_')
 
