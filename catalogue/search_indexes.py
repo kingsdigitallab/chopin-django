@@ -1,34 +1,9 @@
-from django.contrib.contenttypes.models import ContentType
-
-from haystack import indexes
-
-from models import (Advert, Impression, Library, Publisher, STP,
-                    Work)
-
-from wagtail.wagtailcore.models import Page
-
-
 import datetime
 
-
-#class AdvertIndex(indexes.SearchIndex, indexes.Indexable):
-    #text = indexes.CharField(document=True, use_template=True)
-    #document = indexes.FacetCharField(default='Advertisement')
-    #title = indexes.CharField()
-    #url = indexes.CharField(indexed=False)
-
-    #def get_model(self):
-        #return Advert
-
-    #def index_queryset(self, using=None):
-        #return self.get_model().objects.filter(
-            #modified__lte=datetime.datetime.now())
-
-    #def prepare_title(self, advert):
-        #return advert.__unicode__()
-
-    #def prepare_url(self, stp):
-        #return stp.url
+from django.contrib.contenttypes.models import ContentType
+from haystack import indexes
+from models import STP, Advert, Impression, Library, Publisher, Work
+from wagtail.wagtailcore.models import Page
 
 
 class ImpressionIndex(indexes.SearchIndex, indexes.Indexable):
@@ -110,26 +85,6 @@ class PublisherIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_title(self, publisher):
         return publisher.__unicode__()
-
-
-#class STPIndex(indexes.SearchIndex, indexes.Indexable):
-    #text = indexes.CharField(document=True, use_template=True)
-    #document = indexes.FacetCharField(default='Series title page')
-    #title = indexes.CharField()
-    #url = indexes.CharField(indexed=False)
-
-    #def get_model(self):
-        #return STP
-
-    #def index_queryset(self, using=None):
-        #return self.get_model().objects.filter(
-            #modified__lte=datetime.datetime.now())
-
-    #def prepare_title(self, stp):
-        #return stp.__unicode__()
-
-    #def prepare_url(self, stp):
-        #return stp.url
 
 
 class WorkIndex(indexes.SearchIndex, indexes.Indexable):
