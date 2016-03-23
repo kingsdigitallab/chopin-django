@@ -1,0 +1,25 @@
+syntax: glob
+.svn
+.vagrant
+*~
+*.db
+*.log
+*.pyc
+.DS_Store
+celery_local.conf
+celerybeat*
+db.*
+dumpdata.sh
+loaddata.sh
+local.py
+logs
+import.sh
+node_modules
+static
+import_pdf
+pdfs
+.idea/*
+testupload/*
+@material
+bower_components
+thumbnails/*
