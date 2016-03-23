@@ -150,6 +150,7 @@ def deploy(branch=None):
     install_requirements()
     migrate()
     own_django_log()
+    add_supervisor_conf()
     collect_static()
     update_index()
     touch_wsgi()
