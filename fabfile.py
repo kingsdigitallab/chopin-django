@@ -265,11 +265,17 @@ def own_django_log():
 def add_supervisor_conf():
     require('srvr', 'path', provided_by=env.servers)
 
+    sudo('service supervisor stop')
+
     sudo('ln -f -s {} /etc/supervisor/conf.d'.format(
         os.path.join(env.path,
                      'chopin/supervisor/celery_{}.conf'.format(env.srvr)),
         env.srvr))
-    sudo('service supervisor restart')
+
+    with cd(env.path):
+        run('rm -f celerybeat-schedule')
+
+    sudo('service supervisor start')
 
 
 @task
