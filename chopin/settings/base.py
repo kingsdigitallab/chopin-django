@@ -149,12 +149,12 @@ LOGGING = {
             'level': LOGGING_LEVEL,
             'propagate': True
         },
-        'chopin': {
+        'catalogue.tasks': {
             'handlers': ['file'],
             'level': LOGGING_LEVEL,
             'propagate': True
         },
-        'elasticsearch': {
+        'chopin': {
             'handlers': ['file'],
             'level': LOGGING_LEVEL,
             'propagate': True
@@ -277,8 +277,8 @@ CELERY_RESULT_SERIALIZER = 'json'
 
 CELERYBEAT_SCHEDULE = {
     'haystack-update-index-every-day': {
-        'task': 'tasks.haystack_update_index',
-        'schedule': crontab(hour=2),
+        'task': 'catalogue.tasks.haystack_update_index',
+        'schedule': crontab(minute=0, hour=2),
     },
 }
 
