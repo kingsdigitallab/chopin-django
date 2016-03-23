@@ -1,23 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from fabric.api import local, task, prefix, run, sudo, env, require, cd, quiet
-from fabric.colors import green, yellow
-from fabric.contrib import django
-from functools import wraps
-import sys
 import os.path
-
+import sys
+from functools import wraps
 from getpass import getuser
 from socket import gethostname
 
+from django.conf import settings
+from fabric.api import cd, env, local, prefix, quiet, require, run, sudo, task
+from fabric.colors import green, yellow
+from fabric.contrib import django
 
 # put project directory in path
 project_root = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(project_root)
 
 django.project('chopin')
-from django.conf import settings
 
 REPOSITORY = 'https://scm.cch.kcl.ac.uk/hg/chopin-django'
 
@@ -133,7 +132,7 @@ def clone_repo():
                          ' [{}] exists').format(env.path)))
             return
 
-    print(yellow('cloneing repository to [{}]'.format(env.path)))
+    print(yellow('cloning repository to [{}]'.format(env.path)))
     run('hg clone {} {}'.format(REPOSITORY, env.path))
 
 
@@ -262,11 +261,23 @@ def own_django_log():
 
 
 @task
+def add_supervisor_conf():
+    require('srvr', 'path', provided_by=env.servers)
+
+    sudo('ln -f -s {} /etc/supervisor/conf.d'.format(
+        os.path.join(env.path,
+                     'chopin/supervisor/celery_{}.conf'.format(env.srvr)),
+        env.srvr))
+    sudo('service supervisor restart')
+
+
+@task
 def touch_wsgi():
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 
     with cd(os.path.join(env.path, 'chopin')), prefix(env.within_virtualenv):
         run('touch wsgi.py')
+
 
 @task
 def runserver(port='8000'):
