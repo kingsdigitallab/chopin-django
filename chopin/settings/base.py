@@ -159,6 +159,11 @@ LOGGING = {
             'level': LOGGING_LEVEL,
             'propagate': True
         },
+        'celery': {
+            'handlers': ['file'],
+            'level': LOGGING_LEVEL,
+            'propagate': True
+        },
     }
 }
 
