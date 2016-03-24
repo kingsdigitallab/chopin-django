@@ -428,39 +428,6 @@ def sourcesbywork(request):
                               context_instance=RequestContext(request))
 
 
-
-def worksview(request):
-    works = Work.objects.distinct()
-    return render_to_response('dbmi/tree.html', {'works': works},
-        context_instance=RequestContext(request))
-
-
-def work(request, id):
-    w = Work.objects.get(id=id)
-    wdict = w.__dict__
-    sources = w.getSources()
-    #sources = Source.objects.filter(sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=w).distinct()
-    return render_to_response('dbmi/tree.html', {'work': w, 'wdict': wdict,'sources': sources, 'IMAGE_SERVER_URL': IMAGE_SERVER_URL,}      ,
-        context_instance=RequestContext(request))
-
-def source(request, id):
-    source = Source.objects.get(id=id)
-    sLegacy = SourceLegacy.objects.get(source=source)
-    si = SourceInformation.objects.get(source=source)
-    w = Work.objects.filter(workcomponent__sourcecomponent_workcomponent__sourcecomponent__source=source).distinct()[0]
-    #Multiple Instruments
-    sComps = SourceComponent.objects.filter(source=source).distinct()
-    if sComps.__len__() == 1:
-        #Skip over source components and go straight to pages
-        pages = Page.objects.filter(sourcecomponent__source=source)
-        return render_to_response('dbmi/tree.html',
-                {'pages': pages, 'source': source, 'work': w, 'si': si, 'sLegacy': sLegacy},
-            context_instance=RequestContext(request))
-    else:
-        #Display source components
-        return render_to_response('dbmi/tree.html', {'sComps': sComps, 'source': source, 'work': w, 'si': si},
-            context_instance=RequestContext(request))
-
 #A custom admin view to show the relevant objects for a single opus
 #and a quick list of the sources attached to it
 def workadmin(request,id):

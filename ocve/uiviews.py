@@ -3,7 +3,8 @@ __author__ = 'Elliot'
 
 #Views for the user interface
 import re
-
+from django.core import serializers
+from ocve.serialize import serializeSource
 from django.shortcuts import render_to_response,HttpResponseRedirect
 from django.template.context import RequestContext
 from django.http import HttpResponse
@@ -16,11 +17,10 @@ from dbmi.sourceeditor import cleanSourceInformationHTML
 
 
 #Takes pageimageid
-from models import keyPitch
-from models_generic import BarCollection, OCVEUser
+from models import BarCollection
 import json
 import hashlib
-from django.db import connections
+from django.db import connection
 from forms import AnnotationForm
 from dbmi.datatools import convertEntities
 from imagetools import verifyImageDimensions
@@ -115,7 +115,7 @@ def cleanXML(xml):
     return xml
 
 def fixsourceinformation(request):
-    cursor = connections['ocve_db'].cursor()
+    cursor = connection.cursor()
     #sql='select sl.source_id,si.id,sl.sourceDesc,sl.witnessKey from ocve_source as s,ocve_sourceinformation as si,ocve_sourcelegacy as sl where (s.ocve=1 or s.cfeo=1) and s.id=sl.source_id and s.id=si.source_id'
     sql='select sl.source_id,si.id,sl.sourceDesc,sl.witnessKey,E.locationSimilarCopies,E.printingmethod from ocve_source as s,ocve_sourceinformation as si,ocve_sourcelegacy as sl,edition as E where (s.ocve=1 or s.cfeo=1) and E.editionKey=sl.cfeoKey and s.id=sl.source_id and s.id=si.source_id'
     sql+=' and length(si.locationsimilarcopies) = 0'
@@ -169,8 +169,9 @@ def fixsourceinformation(request):
 
 
 def browse(request,mode="OCVE",defaultFilters=None):
-
+    serializeSource(Source.objects.filter(id=18170))
     bars=Bar.objects.all()
+
 
     #Filter Items
     for si in SourceInformation.objects.filter(contentssummary__startswith='<p></p>'):
@@ -273,7 +274,7 @@ def ocvePageImageview(request, id,selectedregionid=0):
     annotation = Annotation(pageimage=pi)
 
     if request.user and request.user.id:
-        ocve_user = OCVEUser.objects.get(id=request.user.id)
+        ocve_user = User.objects.get(id=request.user.id)
         annotation.user =  ocve_user
 
     annotationForm = AnnotationForm(instance=annotation)
@@ -289,7 +290,8 @@ def ocvePageImageview(request, id,selectedregionid=0):
 
     pageimages = getOCVEPageImages(source)
 
-    cursor = connections['ocve_db'].cursor()
+    cursor = connection.cursor()
+
     cursor.execute(
         """select bar.barlabel, pi.id from ocve_bar as bar,
         ocve_bar_barregion as brr, ocve_barregion as barregion,

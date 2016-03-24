@@ -285,7 +285,7 @@ def serializeSourceJson(sourcecomponents,filename,mode):
         modeSQL="s.cfeo=1"
     else:
         modeSQL="s.ocve=1"
-    cursor = connections['ocve_db'].cursor()
+    cursor = connections.cursor()
     sql="select distinct s.id,s.sourcetype_id,s.label,s.cfeolabel,w.id,si.dedicatee_id,si.publisher_id,si.platenumber,si.sourcecode,ac.accode,si.id,ac.accode_hash"
     sql+=" from ocve_source as s,ocve_accode as ac,ocve_sourceinformation as si,ocve_sourcecomponent as sc,ocve_sourcecomponent_workcomponent as scwc, ocve_workcomponent as wc, ocve_work as w"
     sql+=" where "+modeSQL+" and si.accode_id=ac.id and s.id=sc.source_id and s.id=si.source_id and sc.id=scwc.sourcecomponent_id and scwc.workcomponent_id = wc.id and wc.work_id=w.id"
