@@ -7,7 +7,7 @@ from django.conf import settings
 from django.db import connections
 
 def mergeBarNumbers():
-    cursor = connections['ocve_db'].cursor()
+    cursor = connections.cursor()
     for x in range(0, 1500):
         bars= Bar.objects.filter(barlabel=x).order_by('id')
         master=None

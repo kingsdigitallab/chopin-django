@@ -296,7 +296,7 @@ def spineeditor(request,work,sources):
     mvtColours=['red','blue','green','gold','brown']
     mvts={}
     mvtIndex={}
-    cursor = connections['ocve_db'].cursor()
+    cursor = connections.cursor()
     if work is not None:
         workid=str(work.id)
     else:
