@@ -46,6 +46,7 @@ class Command(BaseCommand):
                 logger.info('stg dump generated')
 
         else:
+            #todo Postgres pg_dump -h db-pg-1.cch.kcl.ac.uk -U ehall -t 'ocve_*' app_ocve_merged_test > ocve_only.sql 
             mysqlstgdumpcmd = ['mysqldump','-u','root',stg_db,'>','/vol/ocve3/dumps/stg_dump.sql']
             #' '.join(pushstat)
             proc = subprocess.Popen(' '.join(mysqlstgdumpcmd),stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
