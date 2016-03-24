@@ -258,15 +258,19 @@ class PageSearchItem:
         return pagejson
 
 def serializeOCVESourceJson():
-    #sources = Source.objects.filter(ocve=True).order_by(
-    #    'sourcecomponent__sourcecomponent_workcomponent__workcomponent__work__orderno', 'orderno').distinct()
-    sourcecomponents = SourceComponent.objects.filter(source__ocve=True).distinct()
+    if settings.BUILD_LIVE_ONLY == True:
+        sourcecomponents = SourceComponent.objects.filter(source__ocve=True,source__live=True).distinct()
+    else:
+        sourcecomponents = SourceComponent.objects.filter(source__ocve=True).distinct()
     serializeSourceJson(sourcecomponents,'OCVEsourceJSON','OCVE')
 
 def serializeCFEOSourceJson():
     #sources = Source.objects.filter(cfeo=True).order_by(
     #    'sourcecomponent__sourcecomponent_workcomponent__workcomponent__work__orderno', 'orderno').distinct()
-    sourcecomponents = SourceComponent.objects.filter(source__cfeo=True).distinct()
+    if settings.BUILD_LIVE_ONLY == True:
+        sourcecomponents = SourceComponent.objects.filter(source__cfeo=True,source__live=True).distinct()
+    else:
+        sourcecomponents = SourceComponent.objects.filter(source__cfeo=True).distinct()
     serializeSourceJson(sourcecomponents,'CFEOsourceJSON','CFEO')
 
 def serializeSourceJson(sourcecomponents,filename,mode):
