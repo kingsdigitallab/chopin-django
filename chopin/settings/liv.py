@@ -7,6 +7,9 @@ INTERNAL_IPS = ('ocve3.dighum.kcl.ac.uk', )
 ALLOWED_HOSTS = ['ocve3.dighum.kcl.ac.uk', 'www,chopinonline.ac.uk',
                  'chopinonline.ac.uk']
 
+#Build Json with the live flagged sources only
+BUILD_LIVE_ONLY = True
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
