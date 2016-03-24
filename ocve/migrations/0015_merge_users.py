@@ -10,21 +10,22 @@ def copy_users(apps, schema_editor):
     model."""
     Annotation = apps.get_model('ocve', 'Annotation')
     BarCollection = apps.get_model('ocve', 'BarCollection')
+    #usermanager=apps.get_model('auth', 'UserManager')
     User = apps.get_model('auth', 'User')
     OCVEUser = apps.get_model('ocve', 'OCVEUser')
 
     #Make sure defaults have been added
-    try:
-        guest=User.objects.get(username='guest')
-    except ObjectDoesNotExist:
-        guest=User.objects.create_user('guest', 'guest@chopinonline.ac.uk', 'ThisShouldNotBeUsed')
-
-    try:
-        ocve=User.objects.get(username='ocve')
-    except ObjectDoesNotExist:
-        ocve=User.objects.create_user('ocve', 'info@chopinonline.ac.uk', 'ThisShouldNotBeUsed')
-        ocve.is_active=False
-        ocve.save()
+    # try:
+    #     guest=User.objects.get(username='guest')
+    # except ObjectDoesNotExist:
+    #     guest=usermanager.create_user('guest', 'guest@chopinonline.ac.uk', 'ThisShouldNotBeUsed')
+    #
+    # try:
+    #     ocve=User.objects.get(username='ocve')
+    # except ObjectDoesNotExist:
+    #     ocve=User.objects.create_user('ocve', 'info@chopinonline.ac.uk', 'ThisShouldNotBeUsed')
+    #     ocve.is_active=False
+    #     ocve.save()
 
     for note in Annotation.objects.all():
         ocveuser=OCVEUser.objects.get(id=note.ocveuser_id)
@@ -44,12 +45,12 @@ def copy_users(apps, schema_editor):
 def reset_users(apps, schema_editor):
     Annotation = apps.get_model('ocve', 'Annotation')
     BarCollection = apps.get_model('ocve', 'BarCollection')
-    User = apps.get_model('auth', 'User')
-     #Make sure defaults have been added
-    try:
-        guest=User.objects.get(username='guest')
-    except ObjectDoesNotExist:
-        guest=User.objects.create_user('guest', 'guest@chopinonline.ac.uk', 'ThisShouldNotBeUsed')
+    # User = apps.get_model('auth', 'User')
+    #  #Make sure defaults have been added
+    # try:
+    #     guest=User.objects.get(username='guest')
+    # except ObjectDoesNotExist:
+    #     guest=User.objects.create_user('guest', 'guest@chopinonline.ac.uk', 'ThisShouldNotBeUsed')
 
     for bc in BarCollection.objects.all():
         bc.user=guest
