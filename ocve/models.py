@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from models import *
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User,UserManager
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
@@ -18,8 +18,13 @@ def getUnicode(object):
     else:
         return force_unicode(object)
 
+class userManager(UserManager):
+    pass
 
-#
+User.objects=userManager()
+
+
+
 class WorkComponent(models.Model):
     orderno = models.IntegerField(null=True, blank=True, )
     label = models.TextField(null=False, default="", blank=True, )
@@ -913,7 +918,7 @@ class NewSource(models.Model):
     label = models.TextField(null=False, default="", blank=True, )
     library = models.TextField(null=False, default="", blank=True, )
     copyright = models.TextField(null=False, default="", blank=True, )
-    sourcecode=models.CharField(max_length=255, null=False, default="", blank=True, )
+    #sourcecode=models.CharField(max_length=255, null=False, default="", blank=True, )
     sourcecreated = models.IntegerField(null=False, blank=False,default=0 )
 
 def newSource_unicode(self):

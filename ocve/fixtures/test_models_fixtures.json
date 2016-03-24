@@ -1,5 +1,106 @@
 
 [
+     {
+  "fields": {
+    "instrument":"Piano"
+  },
+  "model": "ocve.instrument",
+  "pk": 1
+},
+
+     {
+  "fields": {
+    "type":"test"
+  },
+  "model": "ocve.pagetype",
+  "pk": 3
+},
+    {
+  "fields": {
+    "type":"test"
+  },
+  "model": "ocve.sourcecomponenttype",
+  "pk": 1
+},
+    {
+  "fields": {
+    "keypitch":"test"
+  },
+  "model": "ocve.keypitch",
+  "pk": 1518
+},
+    {
+  "fields": {
+    "keymode":"test"
+  },
+  "model": "ocve.keymode",
+  "pk": 1
+},
+    {
+  "fields": {
+    "type":"test"
+  },
+  "model": "ocve.collectiontype",
+  "pk": 1
+},
+    {
+  "fields": {
+    "label":"work c",
+     "overridelabel":"",
+     "collectiontype":1
+  },
+  "model": "ocve.workcollection",
+  "pk": 2
+},
+    {
+  "fields": {
+    "publisher":"test p",
+     "notes":"",
+     "publisherAbbrev":"tp"
+  },
+  "model": "ocve.publisher",
+  "pk": 1
+},
+     {
+  "fields": {
+    "dedicatee":"test d"
+  },
+  "model": "ocve.dedicatee",
+  "pk": 1
+},
+    {
+  "fields": {
+    "country":"test country",
+     "countryabbrev":"tc"
+  },
+  "model": "ocve.country",
+  "pk": 1
+},
+{
+  "fields": {
+    "city":"test city",
+      "country":1
+  },
+  "model": "ocve.city",
+  "pk": 1
+},
+{
+  "fields": {
+    "name":"test archive",
+    "siglum":"",
+     "notes":"",
+     "city":1
+  },
+  "model": "ocve.archive",
+  "pk": 1
+},
+{
+  "fields": {
+    "type":"test"
+  },
+  "model": "ocve.sourcetype",
+  "pk": 1
+},
     {
   "fields": {
     "relevantmanuscripts": "<p>Autograph, <em>Stichvorlage</em> to <strong>F</strong> and <strong>E</strong>: F-Pn: Ms. 107; Gutmann copy with Chopin's corrections, <em>Stichvorlage</em> to <strong>G</strong>: S-Smf</p>",
@@ -102,10 +203,18 @@
     "instrumentkey": "",
     "overridelabel": "Score",
     "orderno": 2,
-    "sourcecomponenttype": 1468
+    "sourcecomponenttype": 1
   },
   "model": "ocve.sourcecomponent",
   "pk": 36496
+},
+    {
+  "fields": {
+    "sourcecomponent": 36496,
+    "instrument": 1
+  },
+  "model": "ocve.sourcecomponent_instrument",
+  "pk": 1
 },
     {
   "fields": {
