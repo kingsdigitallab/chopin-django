@@ -13,17 +13,10 @@ BUILD_LIVE_ONLY = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'app_ocve_aco_liv',
+        'NAME': 'app_ocve_merged_test',
         'USER': 'app_ocve',
         'PASSWORD': '',
         'HOST': 'db-pg-1.cch.kcl.ac.uk'
-    },
-    'ocve_db': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ocve2real_liv',
-        'USER': 'app_ocve2',
-        'PASSWORD': '',
-        'HOST': 'my-liv-2.cch.kcl.ac.uk',
     }
 }
 
