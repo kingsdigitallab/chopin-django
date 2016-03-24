@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import ocve.models_generic
+import ocve.models
 
 
 class Migration(migrations.Migration):
@@ -29,10 +29,5 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(default=1, to='ocve.OCVEUser'),
             preserve_default=True,
         ),
-        migrations.AlterField(
-            model_name='barcollection',
-            name='user_id',
-            field=models.IntegerField(default=-1, verbose_name=ocve.models_generic.OCVEUser),
-            preserve_default=True,
-        ),
+
     ]
