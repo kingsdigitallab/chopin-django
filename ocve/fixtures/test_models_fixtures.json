@@ -133,6 +133,7 @@
     "label": "GFE: first impression (G)",
     "cfeo": true,
     "ocve": true,
+    "live": true,
     "orderno": 50
   },
   "model": "ocve.source",

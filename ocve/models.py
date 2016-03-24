@@ -138,6 +138,7 @@ class Source(models.Model):
     sourcetype = models.ForeignKey('SourceType', blank=False, null=False, default=1, )
     ocve=models.BooleanField(default=False)
     cfeo=models.BooleanField(default=False)
+    live=models.BooleanField(default=False)
     orderno=models.IntegerField(blank=False, null=False, default=999)
 
     class Meta:
