@@ -25,13 +25,14 @@ class Command(BaseCommand):
         subprocess.Popen(cpcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def handle(self, *args, **options):
-        stg_db = 'ocve2real'
         liv_db = 'chopin'
+        stg_dump = '/vol/ocve3/dumps/pg_stg_dump.sql'
+        live_dump = '/vol/ocve3/dumps/pg_liv_dump.sql'
 
         if options['revert']:
             #Revert scripts
 
-            revertstat = ['mysql', '-u', 'root', liv_db, '<', ' /vol/ocve3/dumps/liv_dump.sql']
+            revertstat = ['psql', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', 'app_ocve_merged', '<', live_dump]
             proc = subprocess.Popen(revertstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             err = proc.communicate()[1]
             if err:
@@ -43,7 +44,7 @@ class Command(BaseCommand):
 
         else:
             #todo Postgres pg_dump -h db-pg-1.cch.kcl.ac.uk -U ehall -t 'ocve_*' app_ocve_merged_test > ocve_only.sql
-            mysqlstgdumpcmd = ['pg_dump', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', '-t', 'ocve_*',  'app_ocve_merged_test', '>', '/vol/ocve3/dumps/pg_stg_dump.sql']
+            mysqlstgdumpcmd = ['pg_dump', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', '-t', 'ocve_*',  'app_ocve_merged_test', '>', stg_dump]
             #' '.join(pushstat)
             proc = subprocess.Popen(' '.join(mysqlstgdumpcmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             err = proc.communicate()[1]
@@ -53,7 +54,7 @@ class Command(BaseCommand):
             else:
                 logger.info('stg dumps generated')
                 #backup live
-                psqllivdumpcmd = ['pg_dump', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', '-t', 'ocve_*',  'app_ocve_merged',  '>', '/vol/ocve3/dumps/stg_dump.sql']
+                psqllivdumpcmd = ['pg_dump', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', '-t', 'ocve_*',  'app_ocve_merged',  '>', live_dump]
                 #' '.join(pushstat)
                 proc = subprocess.Popen(' '.join(psqllivdumpcmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
                 err = proc.communicate()[1]
@@ -62,7 +63,7 @@ class Command(BaseCommand):
                     return False
                 else:
                     #Push stg mysql to live
-                    pushstat = ['psql', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', '-t', 'app_ocve_merged',  '<', '/vol/ocve3/dumps/stg_dump.sql']
+                    pushstat = ['psql', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', 'app_ocve_merged',  '<', stg_dump]
                     proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     err = proc.communicate()[1]
                     if err:
