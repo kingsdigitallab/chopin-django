@@ -77,7 +77,7 @@ def shelfmarkview(request,acHash,mode="OCVE"):
 
 
 def cfeoBrowse(request):
-    mergeBarNumbers()
+    #mergeBarNumbers()
     return browse(request,"CFEO")
 
 
