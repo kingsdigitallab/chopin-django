@@ -44,7 +44,7 @@ class Command(BaseCommand):
 
         else:
             #todo Postgres pg_dump -h db-pg-1.cch.kcl.ac.uk -U ehall -t 'ocve_*' app_ocve_merged_test > ocve_only.sql
-            mysqlstgdumpcmd = ['pg_dump','-w', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', '-t', 'ocve_*',  'app_ocve_merged_test', '>', stg_dump]
+            mysqlstgdumpcmd = ['pg_dump','-w','-c','-O', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', '-t', 'ocve_*',  'app_ocve_merged_test', '>', stg_dump]
             #' '.join(pushstat)
             proc = subprocess.Popen(' '.join(mysqlstgdumpcmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             err = proc.communicate()[1]
@@ -54,7 +54,7 @@ class Command(BaseCommand):
             else:
                 logger.info('stg dumps generated')
                 #backup live
-                psqllivdumpcmd = ['pg_dump','-w', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', '-t', 'ocve_*',  'app_ocve_merged',  '>', live_dump]
+                psqllivdumpcmd = ['pg_dump','-w','-c','-O', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', '-t', 'ocve_*',  'app_ocve_merged',  '>', live_dump]
                 #' '.join(pushstat)
                 proc = subprocess.Popen(' '.join(psqllivdumpcmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
                 err = proc.communicate()[1]
@@ -64,7 +64,7 @@ class Command(BaseCommand):
                 else:
                     #Push stg mysql to live
                     pushstat = ['psql', '-w','-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', 'app_ocve_merged',  '<', stg_dump]
-                    proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
                     err = proc.communicate()[1]
                     if err:
                         logger.error('Push to live failed with error:' + str(err))
