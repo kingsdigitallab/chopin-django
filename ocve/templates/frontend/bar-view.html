@@ -57,7 +57,7 @@
                                             {% for s in sources %}
                                             <li>
                                                 <div class="dropdown-select toggle ">
-                                                    <input type="checkbox" class="sourceFilter" checked="checked" value="{{ s.id }}">{{ s.getAcCode }}</input>
+                                                    <input type="checkbox" class="sourceFilter" checked="checked" value="{{ s.id }}">{{ s.getAcCode | add_special_characters}}</input>
                                                 </div>
                                             </li>
                                             {% endfor %}
@@ -105,11 +105,11 @@
                             {% for r in barregions %}
                             <li id="region{{ r.br.id }}" class="source{{ r.getSource.id }}">
                                 <div class="caption">
-                                    <span>{{ r.getSource.getAcCode }} p. {{ r.pi.page }} {{ r.pi.page.getWorkComponent }} {{ r.regionlabel }}</span>
+                                    <span>{{ r.getSource.getAcCode | add_special_characters }} p. {{ r.pi.page }} {{ r.pi.page.getWorkComponent | add_special_characters }} {{ r.regionlabel }}</span>
                                 </div>
                                 <div class="image">
                                     {% for url in r.getBarImageURL %}
-                                    <img src="{{ IIP_URL }}?FIF={{ url }}" alt="{{ r.getSource.getAcCode }} page {{ r.pi.page.label }}">
+                                    <img src="{{ IIP_URL }}?FIF={{ url }}" alt="{{ r.getSource.getAcCode | add_special_characters }} page {{ r.pi.page.label | add_special_characters }}">
                                     {% endfor %}
                                     <div class="close">
                                         <a href="#" class="ctrl close closeSource" data-source-id="{{ r.getSource.id }}"><span class="fa fa-times-circle"></span></a>
@@ -118,7 +118,7 @@
                                 <div class="controls">
                                     <ul class="inline-list">
                                         <li>
-                                            <a href="#" data-reveal-id="large-image" data-img="{{ IIP_URL }}?FIF={{ r.getLargeURL.0 }}" data-region_id="{{ r.br.id }}" data-annotation="{{ r.annotation }}" data-region-label="{{ r.getSource.getAcCode }} p. {{ r.pi.page }} {{ r.regionlabel }}" class="ctrl enlarge large-image-button"><span class="fa fa-search-plus"></span></a>
+                                            <a href="#" data-reveal-id="large-image" data-img="{{ IIP_URL }}?FIF={{ r.getLargeURL.0 }}" data-region_id="{{ r.br.id }}" data-annotation="{{ r.annotation }}" data-region-label="{{ r.getSource.getAcCode | add_special_characters }} p. {{ r.pi.page }} {{ r.regionlabel }}" class="ctrl enlarge large-image-button"><span class="fa fa-search-plus"></span></a>
                                         </li>
                                         <li>
                                             <a href="/ocve/browse/pageview/{{ r.pi.id }}?brid={{ r.br.id }}" class="ctrl view-in-context"><span class="fa fa-file-text"></span></a>
