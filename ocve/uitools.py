@@ -7,7 +7,7 @@ import os
 from unicodedata import normalize as _n
 from django.conf import settings
 from django.db import connections
-from catalogue.templatetags.catalogue_tags import get_impression_exists
+from catalogue.templatetags.catalogue_tags import get_impression_exists,add_special_characters
 import urllib
 
 import hashlib
@@ -49,6 +49,7 @@ def overwritesourcecomponentlabels(source):
         wc=WorkComponent.objects.filter(sourcecomponent_workcomponent__sourcecomponent=sc)
         if wc.count() > 0:
             sc.label=wc[0].label
+            sc.label=add_special_characters(sc.label)
             sc.save()
 
 
@@ -113,12 +114,13 @@ class SourceSearchItem:
         self.id = row[0]
         self.mode=mode
         self.accode = _n(norm, row[9])
-
+        self.accode=add_special_characters(self.accode)
         if mode == 'OCVE':
             self.label = row[2]
         else:
             self.label = row[3]
         self.label=_n(norm, self.label)
+        self.label=add_special_characters(self.label)
         #Anything not a manuscript is a printed edition
         #Set first edition type to printed edition
         if int(row[1]) == 3:
@@ -135,14 +137,14 @@ class SourceSearchItem:
             self.achash=achash
         else:
             self.achash=''
-        self.work=row[4]
+        self.work=add_special_characters(row[4])
         self.genres = genres
         self.keypitches =keyPitch.objects.filter(workcomponent__sourcecomponent_workcomponent__sourcecomponent__source_id=self.id).distinct()
         self.keymodes =keyMode.objects.filter(workcomponent__sourcecomponent_workcomponent__sourcecomponent__source_id=self.id).distinct()
         years = []
         self.dedicatee = row[5]
         self.publisher = row[6]
-        self.platenumber = row[7]
+        self.platenumber = add_special_characters(row[7])
         for y in Year.objects.filter(sourceinformation_year__sourceinformation_id=int(row[10])):
              years.append(y.year)
         #else:

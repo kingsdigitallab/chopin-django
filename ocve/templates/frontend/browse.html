@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load staticfiles ocve_tags %}
+{% load staticfiles ocve_tags catalogue_tags %}
 
 {% block meta_title %}View{% if mode == "OCVE" %} OCVE{% else %} CFEO{% endif %}{% endblock %}
 
@@ -66,7 +66,7 @@
                                     <li>
                                         <a class="ctrl filterCtrl" title="{{ w }}" data-criteria="Work"
                                            data-key="{{ w.id }}"
-                                           href="#">{{ w }}</a>
+                                           href="#">{{ w | add_special_characters }}</a>
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -85,7 +85,7 @@
                                         <li>
                                             <a class="ctrl filterCtrl" title="{{ g }}" data-criteria="Genre"
                                                data-key="{{ g.id }}"
-                                               href="#">{{ g }}</a>
+                                               href="#">{{ g | add_special_characters}}</a>
                                         </li>
                                     {% endif %}
                                 {% endfor %}
