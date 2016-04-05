@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
-{% block meta_title %}{{ source.getAcCode }} {{ pageimage.textlabel }}{% endblock %}
+{% block meta_title %}{{ source.getAcCode | add_special_characters }} {{ pageimage.textlabel | add_special_characters }}{% endblock %}
 
 {% block custom_stylesheets %}
 <link rel="stylesheet" href="{{ STATIC_URL }}vendor/OpenLayers/theme/default/style.css" type="text/css">
@@ -34,8 +34,8 @@ $(window).load(function(){
 
                         <li>
                             <div class="menu-item opus-title">
-                                <a href="#" data-reveal-ajax="/{{ mode|lower }}/browse/workinformation/{{ work.id }}/" title="Work overview" data-reveal-id="opus-info">{{ work }}</a>,
-                                <a href="#" data-tooltip data-reveal-id="witness-info" data-reveal-ajax="/{{ mode|lower }}/browse/sourceinformation/{{ source.id }}/" title="Witness overview">{{ source.getAcCode }}</a>,
+                                <a href="#" data-reveal-ajax="/{{ mode|lower }}/browse/workinformation/{{ work.id }}/" title="Work overview" data-reveal-id="opus-info">{{ work.label | add_special_characters }}</a>,
+                                <a href="#" data-tooltip data-reveal-id="witness-info" data-reveal-ajax="/{{ mode|lower }}/browse/sourceinformation/{{ source.id }}/" title="Witness overview">{{ source.getAcCode | add_special_characters }}</a>,
                                 {{ pageimage.textlabel }}
                             </div>
                         </li>

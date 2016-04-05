@@ -43,6 +43,7 @@ class Command(BaseCommand):
                 logger.info('stg dump generated')
 
         else:
+
             #todo Postgres pg_dump -h db-pg-1.cch.kcl.ac.uk -U app_ocve -t 'ocve_*' app_ocve_merged_test > ocve_only.sql
             mysqlstgdumpcmd = ['pg_dump','-w','-c','-O', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'app_ocve', '-t', 'ocve_*',  'app_ocve_merged_test', '>', stg_dump]
             #' '.join(pushstat)
@@ -63,6 +64,7 @@ class Command(BaseCommand):
                     return False
                 else:
                     #Push stg mysql to live
+
                     pushstat = ['psql', '-w','-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', 'app_ocve_merged',  '<', stg_dump]
                     proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
                     err = proc.communicate()[1]
