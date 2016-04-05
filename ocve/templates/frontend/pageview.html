@@ -45,7 +45,7 @@ $(window).load(function(){
 
                         <li>
                             <div class="menu-item opus-title">
-                                {% if workinfoexists %}<a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview" id="zero">{{ work | add_special_characters }}</a>{% else %}{{ work | add_special_characters }}{% endif %},
+                                {% if workinfoexists %}<a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview" id="zero">{{ work.label | add_special_characters }}</a>{% else %}{{ work.label | add_special_characters }}{% endif %},
                                 <a href="#" data-reveal-id="witness-info" data-reveal-ajax="/ocve/browse/sourceinformation/{{ source.id }}/" title="Witness overview" id="zerob">{{ source.getAcCode | add_special_characters }}</a>,
                                 {{ pageimage.textlabel | add_special_characters}}
                             </div>

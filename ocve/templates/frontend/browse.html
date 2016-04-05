@@ -66,7 +66,7 @@
                                     <li>
                                         <a class="ctrl filterCtrl" title="{{ w }}" data-criteria="Work"
                                            data-key="{{ w.id }}"
-                                           href="#">{{ w | add_special_characters }}</a>
+                                           href="#">{{ w.label | add_special_characters }}</a>
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -85,7 +85,7 @@
                                         <li>
                                             <a class="ctrl filterCtrl" title="{{ g }}" data-criteria="Genre"
                                                data-key="{{ g.id }}"
-                                               href="#">{{ g | add_special_characters}}</a>
+                                               href="#">{{ g.genre | add_special_characters}}</a>
                                         </li>
                                     {% endif %}
                                 {% endfor %}
