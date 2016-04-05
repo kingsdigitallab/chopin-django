@@ -45,9 +45,9 @@ $(window).load(function(){
 
                         <li>
                             <div class="menu-item opus-title">
-                                {% if workinfoexists %}<a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview" id="zero">{{ work }}</a>{% else %}{{ work }}{% endif %},
-                                <a href="#" data-reveal-id="witness-info" data-reveal-ajax="/ocve/browse/sourceinformation/{{ source.id }}/" title="Witness overview" id="zerob">{{ source.getAcCode }}</a>,
-                                {{ pageimage.textlabel }}
+                                {% if workinfoexists %}<a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview" id="zero">{{ work | add_special_characters }}</a>{% else %}{{ work | add_special_characters }}{% endif %},
+                                <a href="#" data-reveal-id="witness-info" data-reveal-ajax="/ocve/browse/sourceinformation/{{ source.id }}/" title="Witness overview" id="zerob">{{ source.getAcCode | add_special_characters }}</a>,
+                                {{ pageimage.textlabel | add_special_characters}}
                             </div>
                         </li>
 
@@ -82,7 +82,7 @@ $(window).load(function(){
                                 <ul id="available-pages" class="f-dropdown" data-dropdown-content="">
                                     {% for pi in pageimages %}
                                     <li>
-                                        <a href="/{{ mode|lower }}/browse/pageview/{{ pi.id }}/">{{ pi.textlabel }}</a>
+                                        <a href="/{{ mode|lower }}/browse/pageview/{{ pi.id }}/">{{ pi.textlabel | add_special_characters }}</a>
                                     </li>
                                     {% endfor %}
                                 </ul>
