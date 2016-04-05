@@ -32,7 +32,7 @@
         {% if pi_right %}
         <header>
             <h3>
-                {{ pi_right.page.sourcecomponent.source.getWork  | add_special_characters}},<a href="/{{ mode|lower }}/browse/pageview/{{ pi_right.id }}/" title="Witness overview">{{ pi_right.page.sourcecomponent.source.getAcCode | add_special_characters }} {{ pi_right.textlabel | add_special_characters}}</a>
+                {{ pi_right.page.sourcecomponent.source.getWork.label  | add_special_characters}},<a href="/{{ mode|lower }}/browse/pageview/{{ pi_right.id }}/" title="Witness overview">{{ pi_right.page.sourcecomponent.source.getAcCode | add_special_characters }} {{ pi_right.textlabel | add_special_characters}}</a>
             </h3>
         </header>
         <img src="/iip/iipsrv.fcgi?FIF={{ pi_right.getJP2Path }}&CVT=JPG" height="800" width="500" id="image_two" class="osd-iip">
