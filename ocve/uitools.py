@@ -138,7 +138,7 @@ class SourceSearchItem:
             self.achash=achash
         else:
             self.achash=''
-        self.work=add_special_characters(row[4])
+        self.work=row[4]
         self.genres = genres
         self.keypitches =keyPitch.objects.filter(workcomponent__sourcecomponent_workcomponent__sourcecomponent__source_id=self.id).distinct()
         self.keymodes =keyMode.objects.filter(workcomponent__sourcecomponent_workcomponent__sourcecomponent__source_id=self.id).distinct()
@@ -293,7 +293,7 @@ def serializeSourceJson(sourcecomponents,filename,mode):
     else:
         modeSQL="s.ocve=True"
     cursor = connection.cursor()
-    sql="select distinct s.id,s.sourcetype_id,s.label,s.cfeolabel,w.id,si.dedicatee_id,si.publisher_id,si.platenumber,si.sourcecode,ac.accode,si.id,ac.accode_hash"
+    sql="select distinct s.id,s.sourcetype_id,s.label,s.cfeolabel,w.id,si.dedicatee_id,si.publisher_id,si.platenumber,si.sourcecode,ac.accode,si.id,ac.accode_hash,s.orderno,w.orderno"
     sql+=" from ocve_source as s,ocve_accode as ac,ocve_sourceinformation as si,ocve_sourcecomponent as sc,ocve_sourcecomponent_workcomponent as scwc, ocve_workcomponent as wc, ocve_work as w"
     sql+=" where "+modeSQL+" and si.accode_id=ac.id and s.id=sc.source_id and s.id=si.source_id and sc.id=scwc.sourcecomponent_id and scwc.workcomponent_id = wc.id and wc.work_id=w.id"
     sql+=" order by w.orderno,s.orderno"
