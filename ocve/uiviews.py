@@ -117,7 +117,7 @@ def cleanXML(xml):
 def fixsourceinformation(request):
     cursor = connection.cursor()
     #sql='select sl.source_id,si.id,sl.sourceDesc,sl.witnessKey from ocve_source as s,ocve_sourceinformation as si,ocve_sourcelegacy as sl where (s.ocve=1 or s.cfeo=1) and s.id=sl.source_id and s.id=si.source_id'
-    sql='select sl.source_id,si.id,sl.sourceDesc,sl.witnessKey,E.locationSimilarCopies,E.printingmethod from ocve_source as s,ocve_sourceinformation as si,ocve_sourcelegacy as sl,edition as E where (s.ocve=1 or s.cfeo=1) and E.editionKey=sl.cfeoKey and s.id=sl.source_id and s.id=si.source_id'
+    sql='select sl.source_id,si.id,sl.sourceDesc,sl.witnessKey,E.locationSimilarCopies,E.printingmethod from ocve_source as s,ocve_sourceinformation as si,ocve_sourcelegacy as sl,edition as E where (s.ocve=True or s.cfeo=True) and E.editionKey=sl.cfeoKey and s.id=sl.source_id and s.id=si.source_id'
     sql+=' and length(si.locationsimilarcopies) = 0'
     cursor.execute(sql)
     log=""
