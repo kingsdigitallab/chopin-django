@@ -3,9 +3,13 @@
 
 {% block meta_title %}View{% if mode == "OCVE" %} OCVE{% else %} CFEO{% endif %}{% endblock %}
 
-
+{% block header_scripts %}
     <!--PourOver from http://nytimes.github.io/pourover/ -->
 
+    <script type="text/javascript" src="{% static 'javascripts/browse.js' %}"></script>
+{% endblock header_scripts %}
+
+{% block content %}
     <script type="text/javascript" src="{% static 'javascripts/underscore-min.js' %}"></script>
     <script type="text/javascript" src="{% static 'javascripts/pourover.js' %}"></script>
     {% if mode == "OCVE" %}
@@ -45,12 +49,6 @@
         'defaultFilters': {{defaultFilters | to_json }}
     }
     </script>
-
-    <script type="text/javascript" src="{% static 'javascripts/browse.js' %}"></script>
-{% block header_scripts %}
-{% endblock header_scripts %}
-
-{% block content %}
     <section class="main content-section">
         <div class="row">
             <div class="large-3 columns">
