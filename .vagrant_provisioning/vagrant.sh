@@ -35,23 +35,28 @@ apt-get -y install mysql-client mysql-server libmysqlclient-dev
 apt-get -y install postgresql postgresql-client postgresql-server-dev-all
 
 # OCVE/CFEO MySQL database
-mysql --password=password -e "CREATE DATABASE IF NOT EXISTS app_ocve_dev;"
-mysql --password=password -e "CREATE USER 'app_ocve'@'localhost' IDENTIFIED BY 'password';"
+#mysql --password=password -e "CREATE DATABASE IF NOT EXISTS app_ocve_dev;"
+#mysql --password=password -e "CREATE USER 'app_ocve'@'localhost' IDENTIFIED BY 'password';"
 
-tar -C /vagrant/.vagrant_provisioning -zxvf /vagrant/.vagrant_provisioning/ocve.sql.tar.gz
-mysql --password=password app_ocve_dev < /vagrant/.vagrant_provisioning/ocve.sql
-rm /vagrant/.vagrant_provisioning/ocve.sql
+#tar -C /vagrant/.vagrant_provisioning -zxvf /vagrant/.vagrant_provisioning/ocve.sql.tar.gz
+#mysql --password=password app_ocve_dev < /vagrant/.vagrant_provisioning/ocve.sql
+#rm /vagrant/.vagrant_provisioning/ocve.sql
 
 mysql --password=password -e "GRANT ALL ON app_ocve_dev.* TO 'app_ocve'@'localhost';"
 
 # Catalogue Postgres database
 sudo su - postgres -c "psql -c \"create user vagrant with superuser password 'vagrant';\""
 sudo su - postgres -c "psql -c \"create user app_ocve password 'app_ocve';\""
+sudo su - postgres -c "createdb app_ocve_merged_test -E UTF-8 - -O app_ocve"
 sudo su - postgres -c "createdb app_ocve_dev -E UTF-8 -T template0 -O app_ocve"
 
 tar -C /vagrant/.vagrant_provisioning -zxvf /vagrant/.vagrant_provisioning/aco.sql.tar.gz
 sudo su - postgres -c "psql app_ocve_dev < /vagrant/.vagrant_provisioning/aco.sql"
 rm /vagrant/.vagrant_provisioning/aco.sql
+
+tar -C /vagrant/.vagrant_provisioning -zxvf /vagrant/.vagrant_provisioning/chopin_merged.tar.gz
+sudo su - postgres -c "psql app_ocve_merged_test < /vagrant/.vagrant_provisioning/chopin_merged.sql"
+rm /vagrant/.vagrant_provisioning/chopin_merged.sql
 
 sudo su - postgres -c "psql app_ocve_dev -c \"grant all on database app_ocve_dev to app_ocve;\""
 
