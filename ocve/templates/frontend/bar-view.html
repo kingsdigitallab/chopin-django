@@ -106,7 +106,7 @@
                             {% for r in barregions %}
                             <li id="region{{ r.br.id }}" class="source{{ r.getSource.id }}">
                                 <div class="caption">
-                                    <span>{{ r.getSource.getAcCode | add_special_characters }} p. {{ r.pi.page }} {{ r.pi.page.getWorkComponent.type | add_special_characters }} {{ r.regionlabel }}</span>
+                                    <span>{{ r.getSource.getAcCode | add_special_characters }} p. {{ r.pi.page }} {{ r.pi.page.getWorkComponent.type }} {{ r.regionlabel }}</span>
                                 </div>
                                 <div class="image">
                                     {% for url in r.getBarImageURL %}
