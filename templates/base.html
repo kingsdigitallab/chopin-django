@@ -1,11 +1,15 @@
-{% load compress staticfiles wagtailuserbar %}
+{% load compress staticfiles wagtailuserbar catalogue_tags %}
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{% block meta_title %}{% endblock %} | Chopin Online</title>
-    <meta name="description" content="">
+ {% compress css %}
+    {# SCSS compilation relies on django compressor #}
+    <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main-'|add:BASE_URL|add:'.scss' %}">
+    {% endcompress %}   <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
