@@ -430,12 +430,10 @@ def barview(request):
     work = Work.objects.get(id=workid)
     regionThumbs = []
     sources = []
-
     try:
         range = int(request.GET['range'])
     except MultiValueDictKeyError:
         range = 1
-
     try:
         pageimageid = int(request.GET['pageimageid'])
     except:
@@ -454,22 +452,21 @@ def barview(request):
         bar = Bar.objects.get(id=barid)
         pageimage = PageImage.objects.get(id=pageimageid)
         #source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work
-        spine = BarSpine.objects.filter(
-            sourcecomponent__page__pageimage=pageimage, bar=bar)
+        if 'i' in bar.barlabel:
+            spine = BarSpine.objects.filter(sourcecomponent__page__pageimage=pageimage, bar__barlabel=str(bar.barnumber)+'i')
+        else:
+            spine = BarSpine.objects.filter(sourcecomponent__page__pageimage=pageimage, bar=bar)
         if spine.count() > 0:
-            orderno = spine[0].orderNo
+            orderno = spine[0].orderno
 
     if orderno > 0:
         barSpines = getSpinesByWork(work, orderno,range)
-
         #Arrange bar spines into groups based on source
         barSpines = sorted(barSpines, key=lambda sp: sp.source.orderno)
         for sp in barSpines:
             if sources.__contains__(sp.source) is False:
                 sources.append(sp.source)
-
         regionThumbs=spinesToRegionThumbs(barSpines,range)
-
     sortedsources = sorted(sources, key=lambda source: source.orderno)
     sources = sortedsources
     mode = "OCVE"
