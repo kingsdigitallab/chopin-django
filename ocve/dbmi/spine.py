@@ -9,7 +9,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from ocve.models import *
 from ocve.bartools import BarRegionThumbnail
-from django.db import connections, transaction
+from django.db import connection, transaction
 
 
 # *** Spine Views ***
@@ -296,7 +296,7 @@ def spineeditor(request,work,sources):
     mvtColours=['red','blue','green','gold','brown']
     mvts={}
     mvtIndex={}
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     if work is not None:
         workid=str(work.id)
     else:

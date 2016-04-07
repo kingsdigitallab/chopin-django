@@ -5,7 +5,7 @@ from django.http import HttpResponse
 __author__ = 'Elliot'
 
 from ocve.models import *
-from django.db import connections, transaction
+from django.db import connection, transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from ocve.imagetools import verifyImageDimensions
@@ -42,7 +42,7 @@ excKeys = "65"
 def importAnnotations():
     cType=AnnotationType.objects.get(id=2)
     cuser=User.objects.get(id=12)
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     cursor.execute("select a.annotationKey,a.text,a.timestamp from annotation as a where a.ocve=-1")
     Annotation.objects.all().delete()
     for row in cursor.fetchall():
@@ -51,7 +51,7 @@ def importAnnotations():
         note.notetext=row[1]
         note.user=cuser
         aKey=row[0]
-        c2=connections.cursor()
+        c2=connection.cursor()
         c2.execute("select b.barNumber,b.barNumberExtra,ba.witnessKey from bar as b,barannotation as ba where ba.annotationKey="+str(aKey)+" and b.barKey=ba.barKey")
         for barRow in c2.fetchall():
             regions=BarRegion.objects.filter(pageimage__page__sourcecomponent__source__sourcelegacy__witnessKey=int(barRow[2]),bar__barnumber=int(barRow[0]))
@@ -66,7 +66,7 @@ def importAnnotations():
 
 #One-time fix for bar range error row[0]
 def fixBarRange():
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     cursor.execute(
         "SELECT pi.id,pi.startbar,pi.endbar,min(b.barnumber),max(b.barnumber) FROM ocve_pageimage as pi , ocve_barregion as br, ocve_bar as b, ocve_bar_barregion as brr where br.pageimage_id=pi.id and br.id=brr.barregion_id and brr.bar_id=b.id group by pi.id")
     log = '<html><head></head><body><ul>'
@@ -97,7 +97,7 @@ def fixBarRange():
 #A one-time function to correct problems in the merging of phase 1 OCVE/CFEO databases
 def uploadOCVEOpus28():
     #Get all sources for opus 28
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     log = "<html><head></head><body><table>"
     sourceKey = 0
     #Different order Ocve 1 to 2
@@ -145,7 +145,7 @@ def uploadOCVEOpus28():
                     publisher = Publisher.objects.filter(publisherAbbrev=publisherAbbrev)[0]
             si.publisher = publisher
             #Get rest of metadata from old source table (c2 is new cursor)
-            c2 = connections.cursor()
+            c2 = connection.cursor()
             c2.execute(
                 "SELECT ai.shelfmark,a.code from source as s,archive as a,archiveitem as ai where s.archiveItemKey=ai.archiveItemKey and ai.archiveKey=a.archiveKey and s.sourceKey= " + str(
                     row[2]))
@@ -159,7 +159,7 @@ def uploadOCVEOpus28():
                 si.leaves = '0'
             si.save()
 
-            witCursor = connections.cursor()
+            witCursor = connection.cursor()
             witCursor.execute("SELECT Witness.witnessKey,Witness.pieceKey,Witness.sourceKey,Witness.CFEOeditionKey,"
                               "Witness.witnessDescription,Witness.publisherAbbrev,Witness.full_text_c,Piece.opusPartNo FROM witness as Witness,piece as Piece where Witness.pieceKey=Piece.pieceKey and Witness.sourceKey=" + str(
                 sourceKey) + " order by witnessKey")
@@ -182,7 +182,7 @@ def uploadOCVEOpus28():
 
 
 def fixKeys():
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     #cursor.execute("SELECT owc.id,wc.componentKey,ta.tonart,km.id FROM ocve_workcomponent as owc,workcomponent as wc,work as w,ocve_opus as o, ocve_keymode as km,tonart as t,tonartal as ta where owc.orderno=wc.orderNo and owc.opus_id=o.id and o.opusno=w.opusNo and w.workKey=wc.workKey and wc.componentKey=t.componentKey and ta.tonartKey=t.tonartKey and ta.tonart regexp km.keymode order by wc.componentKey ")
     #for row in cursor.fetchall():
     #wc=WorkComponent.objects.get(id=int(row[0]))
@@ -200,7 +200,7 @@ def fixKeys():
 
 
 def upload(request):
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     resetTables()
     initialValues()
     importAuthorityLists()
@@ -223,7 +223,7 @@ def uploadCFEO():
 
 def resetTables():
     Archive.objects.all().delete()
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     #cursor.execute("INSERT INTO ocve_country (country,countryabbrev) SELECT country,countryAbbrev FROM country")
     cursor.execute("DELETE FROM ocve_sourcecomponent_instrument")
     cursor.execute("DELETE FROM ocve_sourcecomponent_workcomponent")
@@ -295,7 +295,7 @@ def initialValues():
     ct = CollectionType(id=3, type='Posthumous')
     ct.save()
     addWorkCollection()
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     #Tone Keys
     keyMode(id=1, keymode=uns).save()
     keyMode(id=2, keymode=none).save()
@@ -316,7 +316,7 @@ def importAuthorityLists():
     importGenre()
     importPublisher()
     #importInstrument()
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     #cursor.execute("INSERT INTO ocve_country (country,countryabbrev) SELECT country,countryAbbrev FROM country")
     cursor.execute("INSERT INTO ocve3.ocve_opus (opusno) SELECT opusNo FROM ocve3.opusal")
     #INSERT INTO ocve_tonenote (toneNote) SELECT REPLACE(tonart,' major','')   FROM ocve3.tonartal t where tonart regexp '.*major.*' order by tonart;
@@ -329,7 +329,7 @@ def importAuthorityLists():
 
 def importCountries():
     global countries
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     cursor.execute("SELECT countryKey,country,countryAbbrev from Country order by countryKey")
     for row in cursor.fetchall():
         c = Country(country=row[1], countryabbrev=row[2])
@@ -340,7 +340,7 @@ def importCountries():
 
 def importCities():
     global cities
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     cursor.execute("SELECT cityKey,countryKey,city from City order by cityKey")
     for row in cursor.fetchall():
         c = countries[str(row[1])]
@@ -352,7 +352,7 @@ def importCities():
 
 #NOTE:  Imports only the pitch, filtering out mode
 def importTonart():
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     cursor.execute("SELECT tonart,orderNo from tonartal")
     for row in cursor.fetchall():
         pitch = row[0]
@@ -368,7 +368,7 @@ def importTonart():
 
 #Import OCVE bar regions and translate to new structure
 def importBarRegions(pi, p, ocvePageKey):
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     barDict = buildBarDict()
     cursor.execute("SELECT barKey,page_imageKey,x1,y1,x2,y2 FROM barregion where page_imageKey=" + str(ocvePageKey))
     #p=Page.objects.get(id=4)
@@ -389,7 +389,7 @@ def importBarRegions(pi, p, ocvePageKey):
 
 
 def buildBarDict():
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     cursor.execute("SELECT barKey,barNumber FROM bar order by barKey ")
     barDict = {}
     for row in cursor.fetchall():
@@ -399,7 +399,7 @@ def buildBarDict():
 
 
 def importPublisher():
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     global publishers
     cursor.text_factory = lambda x: unicode(x, "utf-8", "ignore")
     cursor.execute("SELECT publisherKey,publisherAbbrev,publisherName from publisheral ")
@@ -410,14 +410,14 @@ def importPublisher():
 
 
 def importInstrument():
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     cursor.execute("SELECT instrumentKey,instrumentName,instrumentAbbrev FROM instrumental ")
     for row in cursor.fetchall():
         Instrument(id=int(row[0]), instrument=str(row[1]), instrumentabbrev=str(row[2])).save()
 
 
 def importGenre():
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     #OCVE Genres
     cursor.execute("SELECT genreKey,genreName,pluralName from genreal ")
     for row in cursor.fetchall():
@@ -435,7 +435,7 @@ def importGenre():
 
 
 def lookupGenre(genreKey, CFEO):
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     row = None
     if CFEO == 1:
         cursor.execute("SELECT genreKey,genreName,altName from algenre where genreKey=" + str(genreKey))
@@ -453,7 +453,7 @@ def lookupGenre(genreKey, CFEO):
 
 
 def importArchives():
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     global archives
     cursor.execute("SELECT archiveKey,cityKey,archiveName,archiveSiglum from o_archive ")
     for row in cursor.fetchall():
@@ -529,7 +529,7 @@ def parseSourceDesc(s, sourceDesc):
 
 #Generate new source table from CFEO, OCVE sources
 def importWitness():
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     #todo: ChristopheTextWitness,Witness.notes,Witness.designation,Witness.designationSuperscript, removed for now due to unicode errors
     cursor.execute(
         "SELECT Witness.witnessKey,Witness.pieceKey,Witness.sourceKey,Witness.CFEOeditionKey,Witness.witnessDescription,Witness.publisherAbbrev,Witness.full_text_c FROM Witness where Witness.pieceKey<3 or Witness.pieceKey>26 order by witnessKey")
@@ -566,7 +566,7 @@ def importWitness():
                 publisher.save()
         si.publisher = publisher
         #Get rest of metadata from old source table (c2 is new cursor)
-        c2 = connections.cursor()
+        c2 = connection.cursor()
         c2.execute(
             "SELECT ai.shelfmark,a.code from Source as s,Archive as a,ArchiveItem as ai where s.archiveItemKey=ai.archiveItemKey and ai.archiveKey=a.archiveKey and s.sourceKey= " + str(
                 row[2]))
@@ -598,7 +598,7 @@ def importPiece():
     wc = WorkCollection.objects.get(label__iexact='None')
     km = keyMode.objects.get(id=2)
     kp = keyPitch.objects.get(id=2)
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     cursor.execute(
         "SELECT Piece.pieceKey,Piece.opusNo,Piece.genreKey,Piece.tonartKey,Piece.opusPartNo,Piece.ChristopheTextPiece,Piece.pieceDescription FROM Piece where Piece.opusNo!=28 order by orderNo")
     for row in cursor.fetchall():
@@ -637,7 +637,7 @@ def getSourceType(oldKey):
 
 #Generate new page and pageimage from OCVE sources
 def importPageImage(sc, witnessKey):
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     #
     cursor.execute(
         "SELECT p.pageID,p.orderNo,p.startBar,p.endBar,p.sourceWidth,p.sourceHeight,p.page_imageKey,p.filename,p.storageStructure FROM page_image as p,witnesspage_intersection as wp WHERE wp.pageImageKey=p.page_imageKey and wp.witnessKey=" + str(
@@ -670,7 +670,7 @@ def importPageImage(sc, witnessKey):
 
 #todo: Compare OCVe/CFEO publishers
 def getPublisher(key):
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     cursor.execute("SELECT publisherKey,publisherAbbrev,publisherName from publisheral where publisherKey=" + str(key))
     for row in cursor.fetchall():
         abbrev = row[1]
@@ -726,7 +726,7 @@ def convertEntities(chunk):
 
 def verifySourceComponent(comp, volumeKey, workcomp):
     #Create Source Component
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     cursor.execute("SELECT textID from volume where volumeKey=" + str(volumeKey))
     #Get volume
     for row in cursor.fetchall():
@@ -774,7 +774,7 @@ def verifySourceComponent(comp, volumeKey, workcomp):
 
 
 def importCFEOPages(comp, compKey, editionKey):
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     global log
     global compHash
     ptm = PageType.objects.get(type='music')
@@ -840,7 +840,7 @@ def safeGet(data):
 
 
 def importEditions():
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     #Convert editions to sources
     a = Archive.objects.get(id=1)
     global sourceEditions
@@ -967,7 +967,7 @@ def importEditions():
 
 #Get CFEo order number to create unified work order with OCVE
 def getWorkOrder(workKey):
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     cursor.execute("SELECT Work.orderNo from Work where Work.workKey=" + str(workKey))
     orderNo = 99
     for row in cursor.fetchall():
@@ -977,7 +977,7 @@ def getWorkOrder(workKey):
 
 #Another oneoff to re-import CFEO histories missed by old DB
 def fixHistory():
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     cursor.execute(
         "SELECT Work.workKey,Work.title,Work.numbID,Work.opusNo,Work.orderNo,Work.notes,Work.posthumous,Work.history " +
         " FROM work as Work  order by orderNo")
@@ -1050,7 +1050,7 @@ def parseHistory(history):
 #Import standard CFEO works, ignoring posthumous and special cases
 #<p>General introduction</p><p>Not only are Chopin's mazurkas his most original compositions, but they are also the most abundant of any genre in his output, amounting to fifty-eight works in total. Two of them &#150; in G major and B-flat major &#150; were published in Warsaw before he left his native Poland. The other mazurkas that appeared during his lifetime include Opp. 6, 7, 17, 24, 30, 33, 41, 50, 56, 59 and 63, the Mazurka dedicated to Emile Gaillard, and the Mazurka from La France Musicale, while Opp. 68 and 69 were brought out in the posthumous edition prepared by Julian Fontana in 1855. The first editions of the mazurkas inscribed by Chopin in the albums of Vaclav Hanka, Alexandrine Wo&#322;owska and Maria Szymanowska appeared in 1879, 1909 and 1930 respectively. The authenticity of the Mazurka in C major (published by Kaufmann in 1869) and D major (Leitgeber, 1875) is doubtful, while the Mazurka in F-sharp minor &#150; formerly attributed to Chopin &#150; has been identified as the work of Charles Mayer. </p><p>In these compositions inspired by Polish folklore, Chopin masterfully achieves both an artistic synthesis of three dances &#150; mazur, kujawiak and oberek &#150; and a rich and varied expressive palette ranging from innocent joy to profound feelings of nostalgia, despair and the celebrated '&#380;al'. These darker emotions are conveyed with particular potency in the Mazurka in E minor Op. 41 No. 1.</p><p>Manuscripts relevant to published editions: Autograph, serving as <em>Stichvorlage</em> for <strong>G</strong>: PL-Wn: Mus. 221. Copy by Fontana, serving as <em>Stichvorlage</em> for <strong>F</strong>: Lvov: Historical Museum (Op. 33 No. 1); Tokyo, private collection (Op. 33 No. 2); Torino, Radio (Op. 33 No. 3); US-Wc (Op. 33 No. 4).</p><p>Analysis of printed sources and the publication process</p><p>The layouts of <strong>F</strong> and <strong>G</strong> have very little in common, and those few similarities that do exist are entirely coincidental (e.g. Mazurka in C major: systems 1, 2, 5, 6; Mazurka in D major: p. 6 system 5, p. 7 system 1&#150;3; Mazurka in B minor: p. 10/11 system 1). In <strong>G</strong>, the Mazurka in C major is placed after the Mazurka in D major &#150; an initiative of the publisher rather than the composer since a different ordering of these works is found in the Stichvorlage and indeed the other two first editions. Considerable differences also exist between the layouts of <strong>F</strong> and <strong>E</strong>, despite which certain commonalities may also be observed: systems 3&#150;6 on p. 4; systems 4 & 5 on p. 5; systems 1 & 2 on p. 6; systems 2 & 5 on p. 8; pp. 9 & 16 in toto; final system on pp. 11 & 13. The engraver of <strong>E</strong> also chose to distribute the text more spaciously, with as many as six systems on pp. 3&#150;5, 10&#150;13 & 15, whereas in <strong>F</strong> six systems appear only on pp. 4 & 5. Notwithstanding the various differences, it is certain that <strong>E</strong> was based on <strong>F</strong>, in view of the numerous similarities. As for <strong>G</strong>, it seems to have been based on an autograph post-dating the one used to prepare <strong>F</strong>. </p><p>The copy of <strong>F</strong> reproduced in CFEO was produced by means of lithographic transfer for distribution as a supplement to the <em>Revue et Gazette musicale de Paris</em> before the engraved version was released. As a result of this production method, the score contains numerous errors: for example, the rhythmic value of LH note 3 in the final bar of Op. 33 No. 2 is transformed into a minim, similarly that of LH note 2 and the lowest note in LH chord 3 of the final bar of Op. 3 No. 4. The plate number on p. 6 (i.e. within Op. 33 No. 3) is also missing for this reason. <strong>F</strong> contains many other flaws which escaped Chopin's attention while correcting the proofs. Some of these originated with the engraver, for example the following: </p><ul><li>Op. 33 No. 1: tempo indication misinterpreted ('Presto' instead of 'Mesto')</li><li>Op. 33 No. 3: ties added over barline to lowest notes of LH chords at bs 8&#150;9, 24&#150;25 et seq.; essential ledger lines missing to LH note 1 in bs 20 & 80 and to a-flat<sup>2</sup> in RH chord 3 in b. 60; double flats before LH note 4 in b. 63 replaced by single flat</li><li>Op. 33 No. 4: sharp added to LH notes 3 & 4 in b. 63 (and by extension in b. 103).</li></ul><p>Numerous essential accidentals are also missing from <strong>F</strong> (as they are in the <em>Stichvorlage</em> used by the French publisher): </p><ul><li>Op. 33 No. 1: sharp to a1 in RH chord 3 b. 5; sharp to a in LH chord 2 bs 27, 33 & 35 </li><li>Op. 33 No. 2: flat to d(-natural)1 in RH chord 3 b. 26</li><li>Op. 33 No. 4: natural to RH note 4 bs 19, 43, 83, 107 & 211; flat to LH note 3 bs 62 & 64.</li></ul><p>The accidentals missing in Fontana's copy and in <strong>F</strong> are also missing in the autograph used to prepare <strong>G</strong>, but they were all restored by the proofreader in Leipzig. Oddly enough, <strong>G</strong> makes two erroneous corrections in the Mazurka in D major which are also found in <strong>F</strong>: i.e. a tie is added over the barline between the lowest notes of the LH chords in bs 8&#150;9 & 24&#150;25 <em>et seq</em>., and the double flats to LH note 4 in b. 63 are replaced by a single flat. As there is no evidence that Chopin had any role in the preparation of <strong>G</strong>, these correspondences are surely coincidental. Moreover, a few bars earlier at b. 54, the flat sign to LH note 4 is also missing from <strong>G</strong>. </p><p>Certain corrections can nevertheless be found in <strong>G</strong> which do not appear in <strong>F</strong> and which were entered by the composer on the <em>Stichvorlage</em> dispatched to Leipzig (see LH in bs 29&#150;30, 34&#150;36 of Op. 33 No. 1). <strong>G</strong> also contains the original version with mordents of RH note 1 in bs 11, 35, 79 & 203 of Op. 33 No. 4, which Chopin eliminated when correcting <strong>F</strong>. </p><p>Changes unique to <strong>G</strong> include the following : </p><ul><li>Op. 33 No. 1: rest added to middle LH voice on beat 1 of b. 2</li><li>Op. 33 No. 2 (i.e. Mazurka in D major): most staccato dots omitted, except for bs 62&#150;64 (RH chord 1) and b. 134 (RH notes 1&#150;6)</li><li>Op. 33 No. 3 (i.e. Mazurka in C major): sharp added to f1 in RH chord 1 b. 13.</li></ul><p><strong>E</strong> reproduces <strong>F</strong>'s text but with numerous modifications. It corrects all of the errors in <strong>F</strong> caused by lithographic transfer, then restores the accidentals missing from its <em>Stichvorlage</em> apart from the one in b. 26 of Op. 33 No. 2. It also does not restore the double flat sign to LH note 4 in b. 63 of Op. 33 No. 3. In b. 8 of Op. 33 No. 2, <strong>E</strong> separates RH chord 3 into two voices and then introduces the indication 'Dolce' in bs 16&#150;17. It also restores the copious LH staccato dots (e.g. LH note 1 in bs 7&#150;9, 15, 16, 19&#150;21), as well as the dynamic indications '<strong><em>f</strong></em>' in b. 73 and '<strong><em>pp</strong></em>' in b. 97 of Op. 33 No. 3. The English proofreader apparently considered the lowest note of RH chords 1 & 2 in b. 56 of Op. 33 No. 3 (b(-flat)<sup>1</sup> in <strong>F</strong>) to be incorrect; changing it to a<sup>1</sup> reestablished the symmetry while restoring the text to the version found in Chopin's manuscript and Fontana's copy. <strong>E</strong> also adds accidentals whose omission was obvious (e.g. Op. 33 No. 3: flat to d<sup>3</sup> in RH chord 4 b. 60; flat to LH note 4 b. 64), and it changes the notation of the appoggiaturas into semiquavers (e.g. Op. 33 No. 1: bs 6, 10 RH note 1).</p><p>The later evolution of the first editions can be inferred from the 'Information on subsequent reprints'. The <em>Annotated Catalogue</em> provides full details of these sources and where they are located.</p><p></p></p>
 def importCFEOWork(workKey):
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     global worksHash
     cursor.execute(
         "SELECT Work.workKey,Work.title,Work.numbID,Work.opusNo,Work.orderNo,Work.notes,Work.posthumous,Work.history " +
@@ -1102,7 +1102,7 @@ def importCFEOWork(workKey):
 
 
 def importCFEOWorkComponent(source, work, editionKey, inOCVE):
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     global worksHash
     global sourceEditions
     global compHash
@@ -1185,7 +1185,7 @@ def getInstrument(label):
 
 #A special case for the Posthumous that need to be re-worked for new structure
 def importPosthumous():
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     #Posthumous work collection
     wc = WorkCollection.objects.get(id=3)
 
@@ -1278,7 +1278,7 @@ def renameimages(request):
 
 
 def findmeta(request):
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     cursor.execute(
         "SELECT si.source_id,sl.sourceDesc,sl.cfeoKey,sl.witnessKey FROM ocve2real.ocve_sourceinformation as si,ocve2real.ocve_sourcelegacy as sl where si.source_id=sl.source_id and (si.datepublication='' or si.placepublication_id=1 or si.displayedcopy='')")
     for row in cursor.fetchall():
@@ -1298,7 +1298,7 @@ def findmeta(request):
                             si.displayedcopy = display
                             si.save()
                 elif cfeoKey > 0:
-                    cursor2 = connections.cursor()
+                    cursor2 = connection.cursor()
                     cursor2.execute("SELECT shelfmark FROM ocve2real.edition where editionKey=" + str(cfeoKey))
                     for row2 in cursor2.fetchall():
                         si.displayedcopy = str(row2[0])
@@ -1313,7 +1313,7 @@ def findmeta(request):
                         si.save()
             if si.placepublication_id < 2:
                 if cfeoKey > 0:
-                    cursor2 = connections.cursor()
+                    cursor2 = connection.cursor()
                     cursor2.execute("SELECT placepublication FROM ocve2real.edition where editionKey=" + str(cfeoKey))
                     for row2 in cursor2.fetchall():
                         city = str(row2[0])
@@ -1327,7 +1327,7 @@ def findmeta(request):
 
 
 def correctSourceInformation(request):
-    cursor = connections.cursor()
+    cursor = connection.cursor()
     infos = SourceInformation.objects.filter(source__sourcelegacy__witnessKey__gt=0)
     #todo: ChristopheTextWitness,Witness.notes,Witness.designation,Witness.designationSuperscript, removed for now due to unicode errors
     emptyDedicatee = Dedicatee.objects.get(id=1)
