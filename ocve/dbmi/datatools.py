@@ -25,17 +25,17 @@ from unicodedata import normalize as _n
 log = '<html><head><title>Upload Log</title></head><body>'
 
 #All dicts store new objects indexed by old OCVE key
-cities = {}
-countries = {}
-archives = {}
-sources = {}
-witnesses = {}
-publishers = {}
-sourceEditions = {}
-CFEOSourceComponents = {}
-worksHash = {}
-compHash = {}
-pieces = {}
+# cities = {}
+# countries = {}
+# archives = {}
+# sources = {}
+# witnesses = {}
+# publishers = {}
+# sourceEditions = {}
+# CFEOSourceComponents = {}
+# worksHash = {}
+# compHash = {}
+# pieces = {}
 #Work keys of works that are separated for special cases like posthumous
 excKeys = "65"
 

@@ -10,6 +10,7 @@ from spine import *
 
 urlpatterns = patterns('', #(r'^source/(?P<id>\d+)/$', source),
                        #Source and source information
+                       (r'^sources/$', sources), #New source view
                        (r'^sourceviews/(?P<m>\d+)/$', sourceView),
                        (r'^sourceview/(?P<id>\d+)/$', uncorrectedSource),
                        (r'^sourceeditor/(?P<id>\d+)/$', existingsourceeditor),
@@ -87,7 +88,7 @@ urlpatterns = patterns('', #(r'^source/(?P<id>\d+)/$', source),
                         (r'^savework/(?P<id>\d+)/$', savework),
                         (r'^saveworkinformation/(?P<id>\d+)/$', saveworkinformation),
                         (r'^saveworkcomponents/(?P<id>\d+)/$', saveworkcomponents),
-                       #(r'^works/', worksview),
+                        (r'^works/', works),
 
 
 )
