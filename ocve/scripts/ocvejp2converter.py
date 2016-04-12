@@ -157,8 +157,8 @@ class ArchiveJP2Converter (object):
                             src = in_file
                             dst=os.path.join(archive_full_path,name)
                             #todo: Restore when permissions fixed.
-                            #move(src,dst)
-                            copy(src,dst)
+                            move(src,dst)
+                            #copy(src,dst)
                             logger.info('Image archived at [%s]' % dst)
                 #If folder is now empty, remove it.
                 if len(os.listdir(root)) == 0:

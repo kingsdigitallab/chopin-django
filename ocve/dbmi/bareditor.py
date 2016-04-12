@@ -193,7 +193,7 @@ def updateBarNumber(request):
         for number in numbers.split(","):
             number = number.strip(' ')
             bars = Bar.objects.filter(barlabel=number)
-            if bars.__len__() > 0:
+            if bars.count() > 0:
                 for b in bars:
                     #br.bar_barregion_set.create(bar=b,barregion=br)
                     barlink = Bar_BarRegion(bar=b, barregion=br)
