@@ -367,6 +367,7 @@ THUMBNAIL_DIR = '/vol/ocve3/images/thumbnails/'
 ACCOUNT_ACTIVATION_DAYS = 7
 EMAIL_HOST = 'smtp.cch.kcl.ac.uk'
 EMAIL_PORT = 25
+DEFAULT_FROM_EMAIL = 'noreply@kcl.ac.uk'
 
 # -----------------------------------------------------------------------------
 # TinyMCE
