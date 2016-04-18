@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from bartools import toGeos
 from ocve.forms import AnnotationForm
 from ocve.models import Annotation, Annotation_BarRegion, Bar, BarRegion
-from ocve.models import AnnotationType
+from ocve.models_generic import AnnotationType
 
 
 # Note edit views
