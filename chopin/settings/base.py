@@ -7,16 +7,8 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 For production settings see
 https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 """
-import getpass
-import logging
-import os
-
-import django.utils.text
-from celery.schedules import crontab
-from ddhldap.settings import *  # noqa
-from django.conf import global_settings
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 PROJECT_NAME = 'chopin'
@@ -28,10 +20,10 @@ SITE_TITLE = {
     'ocve': 'Online Chopin Variorum Edition'
 }
 
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Core Settings
 # https://docs.djangoproject.com/en/1.6/ref/settings/#id6
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 ADMINS = (
     ('Miguel Vieira', 'jose.m.vieira@kcl.ac.uk'),
@@ -61,6 +53,7 @@ CACHES = {
 DATABASES = {
 }
 
+DATABASE_ROUTERS = ['chopin.dbrouter.ChopinOnlineRouter']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -100,6 +93,8 @@ INSTALLED_APPS += (
 
 INTERNAL_IPS = ('127.0.0.1', )
 
+# https://docs.djangoproject.com/en/1.6/topics/logging/
+import logging
 
 LOGGING_ROOT = os.path.join(BASE_DIR, 'logs')
 LOGGING_LEVEL = logging.WARN
@@ -148,12 +143,12 @@ LOGGING = {
             'level': LOGGING_LEVEL,
             'propagate': True
         },
-        'catalogue.tasks': {
+        'chopin': {
             'handlers': ['file'],
             'level': LOGGING_LEVEL,
             'propagate': True
         },
-        'chopin': {
+        'elasticsearch': {
             'handlers': ['file'],
             'level': LOGGING_LEVEL,
             'propagate': True
@@ -179,6 +174,7 @@ ROOT_URLCONF = PROJECT_NAME + '.urls'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ''
 
+from django.conf import global_settings
 TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
     'catalogue.context_processors.settings',
@@ -202,21 +198,22 @@ USE_TZ = True
 WSGI_APPLICATION = PROJECT_NAME + '.wsgi.application'
 
 
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Authentication
 # https://docs.djangoproject.com/en/1.6/ref/settings/#auth
 # https://scm.cch.kcl.ac.uk/hg/ddhldap-django
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
+from ddhldap.settings import *
 
 AUTH_LDAP_REQUIRE_GROUP = 'cn=ocve,' + LDAP_BASE_OU
 
 
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 # https://docs.djangoproject.com/en/1.6/ref/settings/#static-files
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, STATIC_URL.strip('/'))
@@ -239,13 +236,13 @@ if not os.path.exists(MEDIA_ROOT):
     os.makedirs(MEDIA_ROOT)
 
 
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Installed Applications Settings
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Catalogue
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 AC_ENCODING = 'UTF-8'
 
@@ -260,55 +257,34 @@ POSTHUMOUS_WORKS_WITHOUT_OPUS = ['MazC', 'MazG&Bflat', 'Mazd,Bflat,G,Lento',
                                  'WaltzEm']
 ALL_WORKS_WITHOUT_OPUS = WORKS_WITHOUT_OPUS + POSTHUMOUS_WORKS_WITHOUT_OPUS
 
-# -----------------------------------------------------------------------------
-# Celery
-# http://docs.celeryproject.org/en/latest/
-# -----------------------------------------------------------------------------
-
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379:' + CACHE_REDIS_DATABASE
-BROKER_URL = 'redis://127.0.0.1:6379:' + CACHE_REDIS_DATABASE
-
-#: Only add pickle to this list if your broker is secured
-#: from unwanted access (see userguide/security.html)
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-
-CELERYBEAT_SCHEDULE = {
-    'haystack-update-index-every-day': {
-        'task': 'catalogue.tasks.haystack_update_index',
-        'schedule': crontab(minute=0, hour=2),
-    },
-}
-
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # CMS
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 ITEMS_PER_PAGE = 10
 ALLOW_COMMENTS = True
 DISQUS_SHORTNAME = None
 
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Django Compressor
 # http://django-compressor.readthedocs.org/en/latest/
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'django_libsass.SassCompiler'),
 )
 
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Django Grappelli
 # http://django-grappelli.readthedocs.org/en/latest/
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 GRAPPELLI_ADMIN_TITLE = PROJECT_TITLE
 
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Django Haystack
 # http://django-haystack.readthedocs.org/en/latest/
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 HAYSTACK_CONNECTIONS = {
     'default': {
@@ -327,6 +303,7 @@ HAYSTACK_LIMIT_TO_REGISTERED_MODELS = False
 # FABRIC
 # -----------------------------------------------------------------------------
 
+import getpass
 FABRIC_USER = getpass.getuser()
 
 # -----------------------------------------------------------------------------
@@ -335,7 +312,7 @@ FABRIC_USER = getpass.getuser()
 
 IIP_URL = '/iip/iipsrv.fcgi'
 IMAGE_SERVER_URL = 'https://ocve3-images.dighum.kcl.ac.uk/iip/iipsrv.fcgi'
-# Absolute server path to physical repository of jp2 images
+#Absolute server path to physical repository of jp2 images
 IMAGEFOLDER = '/vol/ocve3/images/'
 
 # -----------------------------------------------------------------------------
@@ -343,8 +320,6 @@ IMAGEFOLDER = '/vol/ocve3/images/'
 # -----------------------------------------------------------------------------
 
 SOURCEJSONPATH = os.path.join(STATIC_ROOT, 'javascripts')
-#Build Json with the live flag
-BUILD_LIVE_ONLY = False
 
 IMAGE_UPLOAD_PATH = '/vol/ocve2/images/upload/'
 CONVERTED_UPLOAD_PATH = '/vol/ocve2/images/temp/'
@@ -354,11 +329,11 @@ UPLOAD_EXTENSION = '.tif'
 # The width of the image when extracting bar region thumbnails in iip
 THUMBNAIL_WIDTH = 500
 
-# Height of images in bar-view template
-BAR_IMAGE_HEIGHT = 200
+#Height of images in bar-view template
+BAR_IMAGE_HEIGHT=200
 
-# Folder where thumbnails generated from iip reside
-THUMBNAIL_DIR = '/vol/ocve3/images/thumbnails/'
+#Folder where thumbnails generated from iip reside
+THUMBNAIL_DIR ='/vol/ocve3/images/thumbnails/'
 
 # -----------------------------------------------------------------------------
 # Registration
@@ -384,18 +359,18 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme_advanced_resizing': True,
 }
 
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Wagtail
 # http://wagtail.readthedocs.org/en/latest/
-# -----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 WAGTAIL_SITE_NAME = PROJECT_TITLE
 
-
 # Allow all manner of non-alphanumeric characters in filenames, since
 # the PDF files for Works/Impressions use them meaningfully.
-def get_valid_filename(s):
+def get_valid_filename (s):
     from django.utils.encoding import force_text
     return force_text(s).strip().replace(' ', '_')
 
+import django.utils.text
 django.utils.text.get_valid_filename = get_valid_filename

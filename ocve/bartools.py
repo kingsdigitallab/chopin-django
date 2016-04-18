@@ -4,10 +4,10 @@ __author__ = 'Elliot'
 from models import *
 from django.utils.datastructures import MultiValueDictKeyError
 from django.conf import settings
-from django.db import connection
+from django.db import connections
 
 def mergeBarNumbers():
-    cursor = connection.cursor()
+    cursor = connections['ocve_db'].cursor()
     for x in range(0, 1500):
         bars= Bar.objects.filter(barlabel=x).order_by('id')
         master=None

@@ -8,7 +8,7 @@ from datatools import correctSourceInformation
 from uploader import convertFolder,convertimage
 from spine import *
 
-urlpatterns = patterns('', #(r'^source/(?P<id>\d+)/$', source),
+urlpatterns = patterns('', (r'^source/(?P<id>\d+)/$', source),
                        #Source and source information
                        (r'^sourceviews/(?P<m>\d+)/$', sourceView),
                        (r'^sourceview/(?P<id>\d+)/$', uncorrectedSource),
@@ -82,12 +82,12 @@ urlpatterns = patterns('', #(r'^source/(?P<id>\d+)/$', source),
                        #Export/import in CSV for editing
                        (r'^exportspine/(?P<id>\d+)/$', exportXLS),
                        (r'^deletesourcespines/(?P<id>\d+)/$', deleteSourceSpines),
-                       # (r'^work/(?P<id>\d+)/$', work),
+                        (r'^work/(?P<id>\d+)/$', work),
                         (r'^workadmin/(?P<id>\d+)/$', workadmin),
                         (r'^savework/(?P<id>\d+)/$', savework),
                         (r'^saveworkinformation/(?P<id>\d+)/$', saveworkinformation),
                         (r'^saveworkcomponents/(?P<id>\d+)/$', saveworkcomponents),
-                       #(r'^works/', worksview),
+                       (r'^works/', worksview),
 
 
 )
