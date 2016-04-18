@@ -171,8 +171,6 @@ def fixsourceinformation(request):
 def browse(request,mode="OCVE",defaultFilters=None):
     serializeSource(Source.objects.filter(id=18170))
     bars=Bar.objects.all()
-
-
     #Filter Items
     for si in SourceInformation.objects.filter(contentssummary__startswith='<p></p>'):
         si.contentssummary=si.contentssummary.replace('<p></p>','')
