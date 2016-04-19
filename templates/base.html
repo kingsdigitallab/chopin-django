@@ -1,0 +1,108 @@
+{% load compress staticfiles wagtailuserbar %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block meta_title %}{% endblock %} | Chopin Online</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/static/CACHE/css/main.2e6feefa4972.css"/>
+    {% compress css %}
+    {# SCSS compilation relies on django compressor #}
+    <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main-'|add:BASE_URL|add:'.scss' %}">
+    {% endcompress %}
+
+    {% block custom_stylesheets %}
+
+    {% endblock custom_stylesheets %}
+
+    <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="//use.typekit.net/caf1nkf.js"></script>
+    <script type="text/javascript">try {
+        Typekit.load();
+    } catch (e) {}
+    </script>
+
+    {% compress js %}
+    {% block header_scripts %}{% endblock header_scripts %}
+    {% endcompress %}
+
+    <!-- Favicon -->
+    {% include 'includes/favicon.html' %}
+
+    <script src="{% static 'vendor/modernizr/modernizr.js' %}"></script>
+</head>
+
+<body class="{% block body_class %}{{ BASE_URL }}-page{% endblock %}">
+
+    <header class="header header-{{ BASE_URL }}">
+    {% block header %}
+    {% include 'includes/header.html' %}
+    {% endblock %}
+    </header>
+
+    {% include 'includes/navigation.html' %}
+
+    {% if BASE_URL == 'aco' or self %}
+    <section class="main content-section">
+        <div class="row clear">
+            <div class="large-12 columns">
+    {% endif %}
+    
+    {% block breadcrumbs %}
+    {% if BASE_URL == 'aco' %}
+    {% include 'includes/breadcrumbs.html' %}
+    {% endif %}
+    {% endblock %}
+
+    {% block content %}
+    <div class="row clear">
+        <div class="large-2 columns navigation">
+            {% block local_menu %}
+            {% include 'includes/local_menu.html' %}
+            {% endblock %}
+        </div>
+
+        <div class="large-10 columns">
+            {% block overtitle %}
+            <h1>{% block title %}{% endblock %}</h1>
+            {% endblock %}
+            {% block main %}{% endblock %}
+        </div>
+    </div>
+    {% endblock %}
+
+    {% if BASE_URL == 'aco' or self %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <footer class="footer">
+        {% block footer %}
+        {% include 'includes/footer.html' %}
+        {% endblock %}
+    </footer>
+
+    {% block collections %}
+    <div class="collections-inline">
+        <a href="#" class="close-collections-inline"><span class="fa fa-angle-double-down"></span></a>
+        <div class="inner"></div>
+    </div>
+    {% endblock %}
+
+    {% block footer_scripts %}
+    <script src="{% static 'vendor/foundation/js/vendor/fastclick.js' %}"></script>
+    <script src="{% static 'vendor/foundation/js/foundation.min.js' %}"></script>
+    <script src="{% static 'javascripts/app.js' %}"></script>
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $(document).foundation();
+    });
+    </script>
+    {% endblock %}
+
+    {# wagtailuserbar #}
+</body>
+</html>
