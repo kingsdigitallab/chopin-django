@@ -686,7 +686,7 @@ class BarSpine(models.Model):
     bar = models.ForeignKey('Bar', blank=False, null=False, default=1 )
     #page = models.ForeignKey('Page', blank=False, null=False, default=1 )
     sourcecomponent = models.ForeignKey('SourceComponent', blank=False, null=False, default=1 )
-    orderNo = models.IntegerField(null=True, blank=True,default=0 )
+    orderno = models.IntegerField(null=True, blank=True,default=0 )
     source = models.ForeignKey('Source', blank=False, null=False, default=1 )
     implied=models.IntegerField(null=True, blank=True,default=0 )
 
