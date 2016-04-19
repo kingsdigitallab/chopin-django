@@ -54,7 +54,7 @@ def updateSourceComponent(request):
 
 
 def login_page(request):
-    return render_to_response('registration/login-page.html')
+    return render_to_response('registration/login-page.html',{},context_instance=RequestContext(request))
 
 
 def user_profile(request):
