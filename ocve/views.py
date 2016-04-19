@@ -59,7 +59,7 @@ def login_page(request):
 
 def user_profile(request):
     if request.user and request.user.id:
-        annotations=Annotation.objects.filter(ocve_user_id=request.user.id)
+        annotations=Annotation.objects.filter(user_id=request.user.id)
 
     return render_to_response("registration/user_profile.html",
             {'annotations':annotations},
