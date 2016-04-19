@@ -53,6 +53,8 @@ def updateSourceComponent(request):
     return HttpResponseRedirect("/ocve/structure/18153/#"+str(page_id))
 
 
+def login_page(request):
+    return render_to_response('registration/login-page.html', {})
 
 
 def user_profile(request):
