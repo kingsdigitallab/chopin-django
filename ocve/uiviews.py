@@ -438,7 +438,7 @@ def barview(request):
         pageimageid = 1
 
     try:
-        orderno = int(request.GET['orderNo'])
+        orderno = int(request.GET['orderno'])
         spine = BarSpine.objects.filter(
             source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work,
             orderno=orderno)
