@@ -18,7 +18,10 @@ def getUnicode(object):
     else:
         return force_unicode(object)
 
-
+# class userManager(UserManager):
+#     pass
+#
+# User.objects=userManager()
 
 
 
