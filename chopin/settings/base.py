@@ -13,7 +13,7 @@ import os
 
 import django.utils.text
 from celery.schedules import crontab
-from ddhldap.settings import *  # noqa
+#from ddhldap.settings import *  # noqa
 from django.conf import global_settings
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -138,11 +138,11 @@ LOGGING = {
             'level': LOGGING_LEVEL,
             'propagate': True
         },
-        'django_auth_ldap': {
-            'handlers': ['file'],
-            'level': LOGGING_LEVEL,
-            'propagate': True
-        },
+       # 'django_auth_ldap': {
+       #     'handlers': ['file'],
+       #     'level': LOGGING_LEVEL,
+       #     'propagate': True
+      #  },
         'catalogue': {
             'handlers': ['file'],
             'level': LOGGING_LEVEL,
@@ -209,7 +209,7 @@ WSGI_APPLICATION = PROJECT_NAME + '.wsgi.application'
 # -----------------------------------------------------------------------------
 
 
-AUTH_LDAP_REQUIRE_GROUP = 'cn=ocve,' + LDAP_BASE_OU
+#AUTH_LDAP_REQUIRE_GROUP = 'cn=ocve,' + LDAP_BASE_OU
 
 
 # -----------------------------------------------------------------------------
