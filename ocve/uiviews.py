@@ -441,7 +441,7 @@ def barview(request):
         orderno = int(request.GET['orderNo'])
         spine = BarSpine.objects.filter(
             source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work,
-            orderNo=orderno)
+            orderno=orderno)
         if spine.count() > 0:
             bar = spine[0].bar
     except MultiValueDictKeyError:
@@ -477,7 +477,7 @@ def barview(request):
         try:
             nextOrder = orderno+1
             nextSpine = BarSpine.objects.filter(
-                orderNo=nextOrder,
+                orderno=nextOrder,
                 source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).distinct()
             if nextSpine.count() > 0:
                 next = nextSpine[0]
@@ -487,7 +487,7 @@ def barview(request):
         try:
             prevOrder = orderno - 1
             prevSpine = BarSpine.objects.filter(
-                orderNo=prevOrder,
+                orderno=prevOrder,
                 source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).distinct()
             if prevSpine.count() > 0:
                 prev = prevSpine[0]
@@ -503,7 +503,7 @@ def barview(request):
         return render_to_response(
             'frontend/bar-view.html', {
                 'mode': mode, 'next': next, 'range': range, 'prev': prev,
-                'opuses': opuses, 'orderNo': orderno, 'bar': bar,
+                'opuses': opuses, 'orderno': orderno, 'bar': bar,
                 'barregions': regionThumbs, 'sources': sources, 'work': work,
                 'pageimageid': pageimageid,
                 'IMAGE_SERVER_URL': IMAGE_SERVER_URL
