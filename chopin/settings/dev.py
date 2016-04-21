@@ -19,7 +19,7 @@ DATABASES = {
 
 LOGGING_LEVEL = logging.DEBUG
 
-LOGGING['loggers']['django_auth_ldap']['level'] = LOGGING_LEVEL
+#LOGGING['loggers']['django_auth_ldap']['level'] = LOGGING_LEVEL
 LOGGING['loggers']['catalogue']['level'] = LOGGING_LEVEL
 LOGGING['loggers']['catalogue.tasks']['level'] = LOGGING_LEVEL
 LOGGING['loggers']['chopin']['level'] = LOGGING_LEVEL
