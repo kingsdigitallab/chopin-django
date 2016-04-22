@@ -36,14 +36,14 @@
                                 {% if prev %}
                                 <li>
                                     <div class="menu-item">
-                                        <a href="?workid={{ work.id }}&orderno={{ prev.orderno }}&range={{ range }}" class="ctrl prev"><span class="fa fa-caret-left"></span></a>
+                                        <a href="?workid={{ work.id }}&orderno={{ prev.orderno }}&range={{ range }}&pageimageid={{ pageimageid }}" class="ctrl prev"><span class="fa fa-caret-left"></span></a>
                                     </div>
                                 </li>
                                 {% endif %}
                                 {% if next %}
                                 <li>
                                     <div class="menu-item">
-                                        <a href="?workid={{ work.id }}&orderno={{ next.orderno }}&range={{ range }}" class="ctrl next"><span class="fa fa-caret-right"></span></a></div>
+                                        <a href="?workid={{ work.id }}&orderno={{ next.orderno }}&range={{ range }}&pageimageid={{ pageimageid }}" class="ctrl next"><span class="fa fa-caret-right"></span></a></div>
                                 </li>
                                 {% endif %}
                                 <li>
@@ -76,16 +76,16 @@
                                         <a href="#" data-dropdown="available-ranges">Bar range</a>
                                         <ul id="available-ranges" class="f-dropdown" data-dropdown-content="">
                                             <li>
-                                                <a href="/ocve/browse/barview?workid={{ work.id }}&orderno={{ orderno }}">1</a>
+                                                <a href="/ocve/browse/barview?workid={{ work.id }}&orderno={{ orderno }}&pageimageid={{ pageimageid }}">1</a>
                                             </li>
                                             <li>
-                                                <a href="/ocve/browse/barview?workid={{ work.id }}&orderno={{ orderno }}&range=2">2</a>
+                                                <a href="/ocve/browse/barview?workid={{ work.id }}&orderno={{ orderno }}&range=2&pageimageid={{ pageimageid }}">2</a>
                                             </li>
                                             <li>
-                                                <a href="/ocve/browse/barview?workid={{ work.id }}&orderno={{ orderno }}&range=3">3</a>
+                                                <a href="/ocve/browse/barview?workid={{ work.id }}&orderno={{ orderno }}&range=3&pageimageid={{ pageimageid }}">3</a>
                                             </li>
                                             <li>
-                                                <a href="/ocve/browse/barview?workid={{ work.id }}&orderno={{ orderno }}&range=4">4</a>
+                                                <a href="/ocve/browse/barview?workid={{ work.id }}&orderno={{ orderno }}&range=4&pageimageid={{ pageimageid }}">4</a>
                                             </li>
                                         </ul>
                                     </div>
