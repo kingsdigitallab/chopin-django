@@ -171,8 +171,6 @@ def fixsourceinformation(request):
 def browse(request,mode="OCVE",defaultFilters=None):
     serializeSource(Source.objects.filter(id=18170))
     bars=Bar.objects.all()
-
-
     #Filter Items
     for si in SourceInformation.objects.filter(contentssummary__startswith='<p></p>'):
         si.contentssummary=si.contentssummary.replace('<p></p>','')
@@ -430,22 +428,20 @@ def barview(request):
     work = Work.objects.get(id=workid)
     regionThumbs = []
     sources = []
-
     try:
         range = int(request.GET['range'])
     except MultiValueDictKeyError:
         range = 1
-
     try:
         pageimageid = int(request.GET['pageimageid'])
     except:
         pageimageid = 1
 
     try:
-        orderno = int(request.GET['orderNo'])
+        orderno = int(request.GET['orderno'])
         spine = BarSpine.objects.filter(
             source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work,
-            orderNo=orderno)
+            orderno=orderno)
         if spine.count() > 0:
             bar = spine[0].bar
     except MultiValueDictKeyError:
@@ -454,22 +450,21 @@ def barview(request):
         bar = Bar.objects.get(id=barid)
         pageimage = PageImage.objects.get(id=pageimageid)
         #source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work
-        spine = BarSpine.objects.filter(
-            sourcecomponent__page__pageimage=pageimage, bar=bar)
+        if 'i' in bar.barlabel:
+            spine = BarSpine.objects.filter(sourcecomponent__page__pageimage=pageimage, bar__barlabel=str(bar.barnumber)+'i')
+        else:
+            spine = BarSpine.objects.filter(sourcecomponent__page__pageimage=pageimage, bar=bar)
         if spine.count() > 0:
-            orderno = spine[0].orderNo
+            orderno = spine[0].orderno
 
     if orderno > 0:
         barSpines = getSpinesByWork(work, orderno,range)
-
         #Arrange bar spines into groups based on source
         barSpines = sorted(barSpines, key=lambda sp: sp.source.orderno)
         for sp in barSpines:
             if sources.__contains__(sp.source) is False:
                 sources.append(sp.source)
-
         regionThumbs=spinesToRegionThumbs(barSpines,range)
-
     sortedsources = sorted(sources, key=lambda source: source.orderno)
     sources = sortedsources
     mode = "OCVE"
@@ -482,7 +477,7 @@ def barview(request):
         try:
             nextOrder = orderno+1
             nextSpine = BarSpine.objects.filter(
-                orderNo=nextOrder,
+                orderno=nextOrder,
                 source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).distinct()
             if nextSpine.count() > 0:
                 next = nextSpine[0]
@@ -492,7 +487,7 @@ def barview(request):
         try:
             prevOrder = orderno - 1
             prevSpine = BarSpine.objects.filter(
-                orderNo=prevOrder,
+                orderno=prevOrder,
                 source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).distinct()
             if prevSpine.count() > 0:
                 prev = prevSpine[0]
@@ -508,7 +503,7 @@ def barview(request):
         return render_to_response(
             'frontend/bar-view.html', {
                 'mode': mode, 'next': next, 'range': range, 'prev': prev,
-                'opuses': opuses, 'orderNo': orderno, 'bar': bar,
+                'opuses': opuses, 'orderno': orderno, 'bar': bar,
                 'barregions': regionThumbs, 'sources': sources, 'work': work,
                 'pageimageid': pageimageid,
                 'IMAGE_SERVER_URL': IMAGE_SERVER_URL
