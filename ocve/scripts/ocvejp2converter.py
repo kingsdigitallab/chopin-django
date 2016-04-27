@@ -19,11 +19,12 @@ import copy_reg
 import logging
 import multiprocessing
 import os
+import os.path
 import shlex
 import subprocess
 import types
 import re
-from shutil import move,copy
+from shutil import move
 
 import progressbar as pb
 
@@ -49,6 +50,11 @@ if not lockFile("/vol/ocve3/webroot/stg/logs/.imageconvert.lock"):
     sys.exit(0)
 
 # End lock guard
+
+# Early check to see if the imageprocessing run is blocked
+if os.path.exists('/vol/ocve3/webroot/stg/logs/.imageconvert.stop'):
+    logger.fatal('Image processing run blocked, /vol/ocve3/webroot/stg/logs/.imageconvert.stop present')
+    sys.exit(2)
 
 class ArchiveJP2Converter (object):
     def __init__ (self, in_dir, out_dir, archive_dir,fail_dir, force=False, show_progress=False):
@@ -118,6 +124,7 @@ class ArchiveJP2Converter (object):
                     jp2_file = '%s.jp2' % base_out_file
                     if self._force or not(os.path.isfile(jp2_file)):
                         params = (in_file, tiff_file, jp2_file, lossless)
+                        logger.info('Queuing %s for conversion' % in_file)
                         pool.apply_async(self._convert, params,
                                          callback=self._result_callback)
 
@@ -129,46 +136,53 @@ class ArchiveJP2Converter (object):
             self._bar.finish()
         #Added by EH for archiving originals outside input dir (for OCVE)
         if self._archive_dir is not None:
-            for root, dirs, files in os.walk(self._in_dir):
-                out_rel_path = os.path.relpath(root, self._in_dir)
-                out_full_path = os.path.abspath(
-                    os.path.join(self._out_dir, out_rel_path))
-                for name in files:
-                     if re.match('.*\.[tif|TIF]',name,re.IGNORECASE):
-                        basename = os.path.splitext(name)[0]
-                        in_file = os.path.join(root, name)
-                        jp2_file=basename+'.jp2'
-                        jp2= os.path.join(out_full_path, jp2_file)
-                        archive_full_path = ''
-                        if os.path.isfile(jp2) and  os.path.getsize(jp2) > 0:
-                            #JP2 is successfully converted, archive original
-                            archive_full_path = os.path.abspath(os.path.join(self._archive_dir, out_rel_path))
-                        else:
-                            #Move to failed dir
-                            archive_full_path = os.path.abspath(os.path.join(self._failed_dir, out_rel_path))
-                        if len(archive_full_path) > 0:
-                            if not os.path.isdir(archive_full_path):
-                               logger.info('Creating directory [%s]' % archive_full_path)
-                               try:
-                                   os.makedirs(archive_full_path)
-                               except OSError as e:
-                                   logger.fatal('Unable to create directory [%s], Reason: %s' % (archive_full_path, e.strerror))
-                                   sys.exit(1)
-                            src = in_file
-                            dst=os.path.join(archive_full_path,name)
-                            #todo: Restore when permissions fixed.
-                            move(src,dst)
-                            #copy(src,dst)
-                            logger.info('Image archived at [%s]' % dst)
-                #If folder is now empty, remove it.
-                if len(os.listdir(root)) == 0:
-                    if os.path.isdir(root):
-                        os.rmdir(root)
+        	try:
+	            for root, dirs, files in os.walk(self._in_dir):
+	                out_rel_path = os.path.relpath(root, self._in_dir)
+	                out_full_path = os.path.abspath(
+	                    os.path.join(self._out_dir, out_rel_path))
+	                for name in files:
+	                     if re.match('.*\.[tif|TIF]',name,re.IGNORECASE):
+	                        basename = os.path.splitext(name)[0]
+	                        in_file = os.path.join(root, name)
+	                        jp2_file=basename+'.jp2'
+	                        jp2= os.path.join(out_full_path, jp2_file)
+	                        archive_full_path = ''
+	                        if os.path.isfile(jp2) and  os.path.getsize(jp2) > 0:
+	                            #JP2 is successfully converted, archive original
+	                            archive_full_path = os.path.abspath(os.path.join(self._archive_dir, out_rel_path))
+	                        else:
+	                            #Move to failed dir
+	                            archive_full_path = os.path.abspath(os.path.join(self._failed_dir, out_rel_path))
+	                        if len(archive_full_path) > 0:
+	                            if not os.path.isdir(archive_full_path):
+	                               logger.info('Creating directory [%s]' % archive_full_path)
+	                               try:
+	                                   os.makedirs(archive_full_path)
+	                               except OSError as e:
+	                                   logger.fatal('Unable to create directory [%s], Reason: %s' % (archive_full_path, e.strerror))
+	                                   sys.exit(1)
+	                            src = in_file
+	                            dst=os.path.join(archive_full_path,name)
+	                            move(src,dst)
+	                            logger.info('Image archived at [%s]' % dst)
+	                #If folder is now empty, remove it.
+	                if len(os.listdir(root)) == 0:
+	                    if os.path.isdir(root):
+	                        os.rmdir(root)
+	        except OSError as e:
+                    logger.warn('Archive failure [%s], Reason: %s' % (out_full_path,e.strerror) )
+                    
+
         else:
             logger.info('Archive folder not found')
         return not(self._has_errors)
 
     def _convert (self, in_file, tiff_file, jp2_file, lossless):
+        # Test if the lockout file exists and bail
+        if os.path.exists('/vol/ocve3/webroot/stg/logs/.imageconvert.stop'):
+            logger.fatal('Image processing run blocked by /vol/ocve3/webroot/stg/logs/.imageconvert.stop present, skipping %s' % in_file)
+            return False
         logger.info('convert [%s]->[%s]' % (in_file, tiff_file) )
         cmd = [ 'convert', 
                 '-compress', 
@@ -271,5 +285,5 @@ if __name__ == "__main__":
 
     logger.info('Starting image conversion run')
 # FIXME change the paths here
-    ArchiveJP2Converter('/vol/ocve2/images/upload','/vol/ocve2/images/temp/','/vol/ocve2/images/convert/','/vol/ocve2/images/convertfail/',True,False).convert(True)
+    ArchiveJP2Converter('/vol/ocve3/images/upload','/vol/ocve3/images/temp/','','/vol/ocve3/images/convertfail/',True,False).convert(True)
     logger.info('Completed image conversion run')

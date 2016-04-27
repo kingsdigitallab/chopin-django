@@ -23,11 +23,11 @@
 <h1>{% if work != None %}{{ work.label }}{% else %}Posthumous{% endif %}</h1>
 <ul class="barList">
     {% if prev > 0 %}
-    <li><a href="spine?work_id={% if work != None %}{{ work.id }}{% else %}posthumous{% endif %}&orderNo={{ prev }}">{{ prev }}</a></li>
+    <li><a href="spine?work_id={% if work != None %}{{ work.id }}{% else %}posthumous{% endif %}&orderno={{ prev }}">{{ prev }}</a></li>
     {% endif %}
     <li>Spine {{ orderno}}</li>
     {% if next > 0 %}
-        <li><a href="spine?work_id={% if work != None %}{{ work.id }}{% else %}posthumous{% endif %}&orderNo={{ next }}">{{ next }}</a></li>
+        <li><a href="spine?work_id={% if work != None %}{{ work.id }}{% else %}posthumous{% endif %}&orderno={{ next }}">{{ next }}</a></li>
     {% endif %}
 </ul>
 <a href="/ocve/editspine/{% if work != None %}{{ work.id }}{% else %}posthumousspine{% endif %}/">Return to Spine overview </a>

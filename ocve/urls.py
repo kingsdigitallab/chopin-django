@@ -62,6 +62,7 @@ urlpatterns = patterns('',
 
                        # User account management - required for OCVE UI
                        (r'^accounts/profile/$', user_profile),
+                       (r'^accounts/login-page/$', login_page),
                        (r'^accounts/',
                         include('registration.backends.default.urls')),
                        )
