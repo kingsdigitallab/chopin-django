@@ -36,14 +36,15 @@
                                 {% if prev %}
                                 <li>
                                     <div class="menu-item">
-                                        <a href="?workid={{ work.id }}&orderNo={{ prev.orderNo }}&range={{ range }}" class="ctrl prev"><span class="fa fa-caret-left"></span></a>
+                           <a href="?workid={{ work.id }}&orderno={{ prev.orderno }}&range={{ range }}&pageimageid={{ pageimageid }}" class="ctrl prev"><span class="fa fa-caret-left"></span></a>
+
                                     </div>
                                 </li>
                                 {% endif %}
                                 {% if next %}
                                 <li>
                                     <div class="menu-item">
-                                        <a href="?workid={{ work.id }}&orderNo={{ next.orderNo }}&range={{ range }}" class="ctrl next"><span class="fa fa-caret-right"></span></a></div>
+                                        <a href="?workid={{ work.id }}&orderno={{ next.orderno }}&pageimageid={{ pageimageid }}&range={{ range }}" class="ctrl next"><span class="fa fa-caret-right"></span></a></div>
                                 </li>
                                 {% endif %}
                                 <li>
@@ -76,7 +77,7 @@
                                         <a href="#" data-dropdown="available-ranges">Bar range</a>
                                         <ul id="available-ranges" class="f-dropdown" data-dropdown-content="">
                                             <li>
-                                                <a href="/ocve/browse/barview?workid={{ work.id }}&orderNo={{ orderNo }}">1</a> 
+                                                <a href="/ocve/browse/barview?workid={{ work.id }}&orderNo={{ orderNo }}">1</a>
                                             </li>
                                             <li>
                                                 <a href="/ocve/browse/barview?workid={{ work.id }}&orderNo={{ orderNo }}&range=2">2</a>

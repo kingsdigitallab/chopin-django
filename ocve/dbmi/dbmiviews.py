@@ -427,9 +427,38 @@ def sourcesbywork(request):
                               {'works': works, 'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL, },
                               context_instance=RequestContext(request))
 
+#New sources view for quick edits and management
+@csrf_exempt
+def sources(request):
+    order='orderno'
+    filter=''
+    try:
+        order=request.GET['order']
+    except MultiValueDictKeyError:
+        pass
+    try:
+        filter=request.GET['filter']
+    except MultiValueDictKeyError:
+        pass
+
+    if filter == 'ocve':
+            sources=Source.objects.filter(ocve=True).order_by(order)
+    elif filter == 'cfeo':
+            sources=Source.objects.filter(cfeo=True).order_by(order)
+    else:
+        sources=Source.objects.all().order_by(order)
+    return render_to_response('dbmi/sources.html', {'sources': sources,'order':order,'filter':filter})
+
+
+#Quick list of all works to link to workadmin
+@csrf_exempt
+def works(request):
+    works=Work.objects.all()
+    return render_to_response('dbmi/works.html', {'works': works})
 
 #A custom admin view to show the relevant objects for a single opus
 #and a quick list of the sources attached to it
+@csrf_exempt
 def workadmin(request,id):
     w = Work.objects.get(id=id)
     wform=WorkForm(instance=w)
