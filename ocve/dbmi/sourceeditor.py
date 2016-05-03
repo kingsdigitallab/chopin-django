@@ -42,7 +42,7 @@ def newsourceeditor(request, id=0):
         sourcelegacy = SourceLegacy(source=source, cfeoKey=0, witnessKey=0, sourceDesc='', editstatus=EditStatus.objects.get(id=2), mellon=0, needsBarLines=1)
         sourcelegacy.save()
         sourceInformation = SourceInformation(source=source)
-        sourceInformation.sourcecode = newS.sourcecode
+        #sourceInformation.sourcecode = newS.sourcecode
         newS.sourcecreated=source.id
         newS.save()
 
@@ -53,12 +53,12 @@ def newsourceeditor(request, id=0):
     newpages=None
     if newS is not None:
         newpages = NewPageImage.objects.filter(source=newS)
-    if sourceInformation.accode is None:
-        try:
-            accode = AcCode.objects.get(accode=newS.sourcecode)
-        except ObjectDoesNotExist:
-            accode = AcCode.objects.create(accode=newS.sourcecode)
-            accode.save()
+    # if sourceInformation.accode is None:
+    #     try:
+    #         accode = AcCode.objects.get(accode=newS.sourcecode)
+    #     except ObjectDoesNotExist:
+    #         accode = AcCode.objects.create(accode=newS.sourcecode)
+    #         accode.save()
     if accode is not None:
         sourceInformation.accode = accode
         sourceInformation.save()
