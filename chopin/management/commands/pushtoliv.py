@@ -65,7 +65,7 @@ class Command(BaseCommand):
                 else:
                     #Push stg mysql to live
 
-                    pushstat = ['psql', '-w','-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', 'app_ocve_merged',  '<', stg_dump]
+                    pushstat = ['psql', '-w','-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'app_ocve', 'app_ocve_merged',  '<', stg_dump]
                     proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
                     err = proc.communicate()[1]
                     if err:
