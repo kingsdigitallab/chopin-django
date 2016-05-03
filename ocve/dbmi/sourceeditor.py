@@ -209,7 +209,7 @@ def editsourcecomponent(request,sc):
     curinstrument=None
     if Instrument.objects.filter(sourcecomponent=sc).count() > 0:
         curinstrument=Instrument.objects.filter(sourcecomponent=sc)[0]
-    instruments=Instrument.objects.filter(id__gt=2)
+    instruments=Instrument.objects.filter()
     #If changed
         #return existingsourceeditor(request, id)
     return render_to_response('dbmi/sourcecomponent.html',{'sc':sc,'scf':scf,'workcomponents':workcomponents,'currentwc':currentwc,'instruments':instruments,'curinstrument':curinstrument}, context_instance=RequestContext(request))
