@@ -28,10 +28,8 @@ class Command(BaseCommand):
         liv_db = 'chopin'
         stg_dump = '/vol/ocve3/dumps/pg_stg_dump.sql'
         live_dump = '/vol/ocve3/dumps/pg_liv_dump.sql'
-
         if options['revert']:
             #Revert scripts
-
             revertstat = ['psql', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'app_ocv', 'app_ocve_merged', '<', live_dump]
             proc = subprocess.Popen(revertstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             err = proc.communicate()[1]
@@ -44,8 +42,8 @@ class Command(BaseCommand):
 
         else:
 
-            #todo Postgres pg_dump -h db-pg-1.cch.kcl.ac.uk -U app_ocve -t 'ocve_*' app_ocve_merged_test > ocve_only.sql
-            mysqlstgdumpcmd = ['pg_dump','-w','-c','-O', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'app_ocve', '-t', 'ocve_*',  'app_ocve_merged_test', '>', stg_dump]
+            #todo Postgres pg_dump -h db-pg-1.cch.kcl.ac.uk -U app_ocve -t 'ocve_*' app_ocve_merged_stg > ocve_only.sql
+            mysqlstgdumpcmd = ['pg_dump','-w','-c','-O', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'app_ocve', '-t', 'ocve_*',  'app_ocve_merged_stg', '>', stg_dump]
             #' '.join(pushstat)
             proc = subprocess.Popen(' '.join(mysqlstgdumpcmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             err = proc.communicate()[1]
@@ -64,8 +62,7 @@ class Command(BaseCommand):
                     return False
                 else:
                     #Push stg mysql to live
-
-                    pushstat = ['psql', '-w','-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'app_ocve', 'app_ocve_merged',  '<', stg_dump]
+                    pushstat = ['psql', '-w','-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'ehall', 'app_ocve_merged',  '<', stg_dump]
                     proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
                     err = proc.communicate()[1]
                     if err:
