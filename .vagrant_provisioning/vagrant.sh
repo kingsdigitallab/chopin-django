@@ -13,7 +13,7 @@ chsh -s /bin/zsh vagrant
 cp /vagrant/.vagrant_provisioning/zshrc /home/vagrant/.zshrc
 
 apt-get -y install ack-grep mercurial vim-nox
-sudo su - vagrant -c 'curl http://j.mp/spf13-vim3 -L -o - | sh 2>/dev/null 1>&2'
+# sudo su - vagrant -c 'curl http://j.mp/spf13-vim3 -L -o - | sh 2>/dev/null 1>&2'
 
 apt-get -y install python-dev python-setuptools
 sudo easy_install pip
@@ -50,12 +50,13 @@ sudo su - postgres -c "psql -c \"create user app_ocve password 'app_ocve';\""
 sudo su - postgres -c "createdb app_ocve_merged_test -E UTF-8 - -O app_ocve"
 sudo su - postgres -c "createdb app_ocve_dev -E UTF-8 -T template0 -O app_ocve"
 
-tar -C /vagrant/.vagrant_provisioning -zxvf /vagrant/.vagrant_provisioning/aco.sql.tar.gz
-sudo su - postgres -c "psql app_ocve_dev < /vagrant/.vagrant_provisioning/aco.sql"
-rm /vagrant/.vagrant_provisioning/aco.sql
+# tar -C /vagrant/.vagrant_provisioning -zxvf /vagrant/.vagrant_provisioning/aco.sql.tar.gz
+# sudo su - postgres -c "psql app_ocve_dev < /vagrant/.vagrant_provisioning/aco.sql"
+# rm /vagrant/.vagrant_provisioning/aco.sql
 
 tar -C /vagrant/.vagrant_provisioning -zxvf /vagrant/.vagrant_provisioning/chopin_merged.tar.gz
-sudo su - postgres -c "psql app_ocve_merged_test < /vagrant/.vagrant_provisioning/chopin_merged.sql"
+# sudo su - postgres -c "psql app_ocve_merged_test < /vagrant/.vagrant_provisioning/chopin_merged.sql"
+sudo su - postgres -c "psql app_ocve_dev < /vagrant/.vagrant_provisioning/chopin_merged.sql"
 rm /vagrant/.vagrant_provisioning/chopin_merged.sql
 
 sudo su - postgres -c "psql app_ocve_dev -c \"grant all on database app_ocve_dev to app_ocve;\""
@@ -78,7 +79,7 @@ virtualenv /home/vagrant/venv
 source /home/vagrant/venv/bin/activate
 pip install -r /vagrant/requirements-dev.txt
 python /vagrant/manage.py makemigrations --noinput
-python /vagrant/manage.py migrate ocve --database=ocve_db --noinput
+# python /vagrant/manage.py migrate ocve --database=ocve_db --noinput
 python /vagrant/manage.py migrate --noinput
 python /vagrant/manage.py update_index
 
