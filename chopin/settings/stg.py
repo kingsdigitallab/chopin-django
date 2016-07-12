@@ -9,7 +9,7 @@ ALLOWED_HOSTS = ['ocve3-stg.dighum.kcl.ac.uk', 'www.chopinonline.ac.uk']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'app_ocve_merged_test',
+        'NAME': 'app_ocve_merged_stg',
         'USER': 'app_ocve',
         'PASSWORD': '',
         'HOST': 'db-pg-1.cch.kcl.ac.uk'
