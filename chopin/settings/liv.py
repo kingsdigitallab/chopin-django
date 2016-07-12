@@ -20,6 +20,17 @@ DATABASES = {
     }
 }
 
+CELERYBEAT_SCHEDULE = {
+    'haystack-update-index-every-day': {
+        'task': 'catalogue.tasks.haystack_update_index',
+        'schedule': crontab(minute=0, hour=2),
+    },
+    'push-to-liv-daily':{
+        'task':'ocve.tasks.push_to_liv',
+        'schedule': crontab(minute=0, hour=1),
+    }
+}
+
 # -----------------------------------------------------------------------------
 # Local settings
 # -----------------------------------------------------------------------------
