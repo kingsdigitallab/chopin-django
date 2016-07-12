@@ -1,21 +1,13 @@
-CACHE_REDIS_DATABASE = '0'
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'app_ocve_dev',
+        'NAME': 'app_ocve_merged_stg',
         'USER': 'app_ocve',
         'PASSWORD': 'app_ocve',
-        'HOST': 'localhost'
-    },
-    'ocve_db': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'app_ocve_dev',
-        'USER': 'app_ocve',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1'
     }
 }
+CACHE_REDIS_DATABASE = '0'
 
 INTERNAL_IPS = ('0.0.0.0', '127.0.0.1', '::1')
 
