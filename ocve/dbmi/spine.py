@@ -9,7 +9,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from ocve.models import *
 from ocve.bartools import BarRegionThumbnail
-from django.db import connections, transaction
+from django.db import connection, transaction
 
 
 # *** Spine Views ***
@@ -57,7 +57,7 @@ def exportXLS(request,id):
         #Current source component
 
     i=2
-    orderNo=1
+    orderno=1
     while 1:
         #Write single spine as xls row
         row=sheet.row(i)
@@ -68,7 +68,7 @@ def exportXLS(request,id):
             page=" "
             bar=" "
             try:
-                spines=BarSpine.objects.filter(orderNo=orderNo,source=s)
+                spines=BarSpine.objects.filter(orderno=orderno,source=s)
                 if spines.count() > 0:
                     spine=spines[0]
                     if spines.count() > 1:
@@ -100,7 +100,7 @@ def exportXLS(request,id):
         if spineFound == 0:
             break
         i+=1
-        orderNo+=1
+        orderno+=1
 
     #Finish and write to stream
     book.save(response)
@@ -158,9 +158,9 @@ def importXLS(request):
                                         bs=BarSpine()
                                         bs.bar=bar
                                         bs.implied=implied
-                                        orderNo=row-1
-                                        bs.label=orderNo
-                                        bs.orderNo=orderNo
+                                        orderno=row-1
+                                        bs.label=orderno
+                                        bs.orderno=orderno
                                         bs.source=sources[col]
                                         comp=None
                                         #Verify bar (needed for implied problems)
@@ -213,16 +213,16 @@ def generateSpine(source):
     x = 1
     for r in regions:
         for bar in r.bar.all():
-            bs = BarSpine(label=x, orderNo=x, bar=bar, source=source,sourcecomponent=r.pageimage.page.sourcecomponent)
+            bs = BarSpine(label=x, orderno=x, bar=bar, source=source,sourcecomponent=r.pageimage.page.sourcecomponent)
             bs.save()
             x += 1
 
 #get a particular spine from a work
-def getSpinesByWork(work, orderNo,range=1):
+def getSpinesByWork(work, orderno,range=1):
     #if range > 1:
-    #    spines = BarSpine.objects.filter(orderNo__range=(orderNo,orderNo+range),source__ocve=1,source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).order_by('ocve_barSpine.source_id').distinct()
+    #    spines = BarSpine.objects.filter(orderno__range=(orderno,orderno+range),source__ocve=1,source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).order_by('ocve_barSpine.source_id').distinct()
     #else:
-    spines = BarSpine.objects.filter(orderNo=orderNo,source__ocve=1,source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).distinct()
+    spines = BarSpine.objects.filter(orderno=orderno,source__ocve=1,source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).distinct()
     return spines
 
 #Remove the bar spines for a source and then rebuild from default
@@ -243,8 +243,8 @@ def spinesToRegionThumbs(spines,range=1):
         for r in barregions:
             rangespines=None
             if range > 1:
-                extent=spine.orderNo+range-1
-                rangespines=BarRegion.objects.filter(bar__barspine__orderNo__range=(spine.orderNo,extent),bar__barspine__source=spine.source,pageimage__page__sourcecomponent=spine.sourcecomponent).order_by('bar__barspine__orderNo').distinct()
+                extent=spine.orderno+range-1
+                rangespines=BarRegion.objects.filter(bar__barspine__orderno__range=(spine.orderno,extent),bar__barspine__source=spine.source,pageimage__page__sourcecomponent=spine.sourcecomponent).order_by('bar__barspine__orderno').distinct()
                 #b = BarRegionThumbnail(r, r.pageimage.page, r.pageimage,rangespines)
             b = BarRegionThumbnail(r, r.pageimage.page, r.pageimage,rangespines)
             regions.append(b)
@@ -252,23 +252,23 @@ def spinesToRegionThumbs(spines,range=1):
 
 #Show a particular spine from a work
 def spine(request):
-    orderNo = int(request.GET['orderNo'])
-    prev = orderNo - 1
-    next = orderNo + 1
+    orderno = int(request.GET['orderno'])
+    prev = orderno - 1
+    next = orderno + 1
     if str(request.GET['work_id']) == 'posthumous':
         #Special case for posthumous works
-        spines = BarSpine.objects.filter(orderNo=orderNo,source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work__workcollection__id=3).distinct()
+        spines = BarSpine.objects.filter(orderno=orderno,source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work__workcollection__id=3).distinct()
         work=None
     else:
         work = Work.objects.get(id=int(request.GET['work_id']))
         #Get relevant spines from work
-        barSpines=getSpinesByWork(work, orderNo,1)
+        barSpines=getSpinesByWork(work, orderno,1)
         #Arrange bar spines into groups based on source
         spines=sorted(barSpines, key=lambda sp: sp.source.orderno)
     #Get bar regions
     regions=spinesToRegionThumbs(spines)
     return render_to_response('dbmi/showspine.html',
-        {'work': work, 'orderNo': orderNo, 'prev': prev, 'next': next, 'regions': regions,
+        {'work': work, 'orderno': orderno, 'prev': prev, 'next': next, 'regions': regions,
          'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL},
         context_instance=RequestContext(request))
 
@@ -296,7 +296,7 @@ def spineeditor(request,work,sources):
     mvtColours=['red','blue','green','gold','brown']
     mvts={}
     mvtIndex={}
-    cursor = connections['ocve_db'].cursor()
+    cursor = connection.cursor()
     if work is not None:
         workid=str(work.id)
     else:
@@ -316,7 +316,7 @@ def spineeditor(request,work,sources):
     tbody = ''
     i=1
     rowCounter=1
-    spineSQL="SELECT bs.id,b.barlabel,bs.bar_id,bs.orderNo,bs.source_id,bs.sourcecomponent_id,bs.implied FROM ocve_barspine as bs,ocve_bar as b where bs.bar_id=b.id and source_id in ("+sourceKeyString+") order by source_id,bs.sourcecomponent_id,orderNo;"
+    spineSQL="SELECT bs.id,b.barlabel,bs.bar_id,bs.orderno,bs.source_id,bs.sourcecomponent_id,bs.implied FROM ocve_barspine as bs,ocve_bar as b where bs.bar_id=b.id and source_id in ("+sourceKeyString+") order by source_id,bs.sourcecomponent_id,orderno;"
     cursor.execute(spineSQL)
     for row in cursor.fetchall():
         spineid=row[0]
@@ -337,11 +337,11 @@ def spineeditor(request,work,sources):
 
     while 1:
         spineFound=0
-        tbody += '<tr>\n<td><a href="/ocve/spine?work_id=' + workid + '&orderNo=' + str(i) + '">' + str(
+        tbody += '<tr>\n<td><a href="/ocve/spine?work_id=' + workid + '&orderno=' + str(i) + '">' + str(
             i) + '</a></td>'
         for s in sources:
             try:
-                #spine=BarSpine.objects.get(orderNo=i, source=s)
+                #spine=BarSpine.objects.get(orderno=i, source=s)
                 spine=spines[str(s.id)][str(i)]
                 if spine['sourcecomponentid'] != mvts[s.id]:
                     mvts[s.id]=spine['sourcecomponentid']

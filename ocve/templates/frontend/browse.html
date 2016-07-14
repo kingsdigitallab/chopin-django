@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load staticfiles ocve_tags %}
+{% load staticfiles ocve_tags catalogue_tags %}
 
 {% block meta_title %}View{% if mode == "OCVE" %} OCVE{% else %} CFEO{% endif %}{% endblock %}
 
@@ -45,11 +45,12 @@
         'defaultFilters': {{defaultFilters | to_json }}
     }
     </script>
-
     <script type="text/javascript" src="{% static 'javascripts/browse.js' %}"></script>
 {% endblock header_scripts %}
 
 {% block content %}
+    
+    
     <section class="main content-section">
         <div class="row">
             <div class="large-3 columns">
@@ -66,7 +67,7 @@
                                     <li>
                                         <a class="ctrl filterCtrl" title="{{ w }}" data-criteria="Work"
                                            data-key="{{ w.id }}"
-                                           href="#">{{ w }}</a>
+                                           href="#">{{ w.label | add_special_characters }}</a>
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -85,7 +86,7 @@
                                         <li>
                                             <a class="ctrl filterCtrl" title="{{ g }}" data-criteria="Genre"
                                                data-key="{{ g.id }}"
-                                               href="#">{{ g }}</a>
+                                               href="#">{{ g.genre | add_special_characters}}</a>
                                         </li>
                                     {% endif %}
                                 {% endfor %}
