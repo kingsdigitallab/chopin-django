@@ -23,3 +23,5 @@ testupload/*
 @material
 bower_components
 thumbnails/*
+.hgrc
+.hgignore
