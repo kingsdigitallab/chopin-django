@@ -427,42 +427,38 @@ def sourcesbywork(request):
                               {'works': works, 'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL, },
                               context_instance=RequestContext(request))
 
+#New sources view for quick edits and management
+@csrf_exempt
+def sources(request):
+    order='orderno'
+    filter=''
+    try:
+        order=request.GET['order']
+    except MultiValueDictKeyError:
+        pass
+    try:
+        filter=request.GET['filter']
+    except MultiValueDictKeyError:
+        pass
 
-
-def worksview(request):
-    works = Work.objects.distinct()
-    return render_to_response('dbmi/tree.html', {'works': works},
-        context_instance=RequestContext(request))
-
-
-def work(request, id):
-    w = Work.objects.get(id=id)
-    wdict = w.__dict__
-    sources = w.getSources()
-    #sources = Source.objects.filter(sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=w).distinct()
-    return render_to_response('dbmi/tree.html', {'work': w, 'wdict': wdict,'sources': sources, 'IMAGE_SERVER_URL': IMAGE_SERVER_URL,}      ,
-        context_instance=RequestContext(request))
-
-def source(request, id):
-    source = Source.objects.get(id=id)
-    sLegacy = SourceLegacy.objects.get(source=source)
-    si = SourceInformation.objects.get(source=source)
-    w = Work.objects.filter(workcomponent__sourcecomponent_workcomponent__sourcecomponent__source=source).distinct()[0]
-    #Multiple Instruments
-    sComps = SourceComponent.objects.filter(source=source).distinct()
-    if sComps.__len__() == 1:
-        #Skip over source components and go straight to pages
-        pages = Page.objects.filter(sourcecomponent__source=source)
-        return render_to_response('dbmi/tree.html',
-                {'pages': pages, 'source': source, 'work': w, 'si': si, 'sLegacy': sLegacy},
-            context_instance=RequestContext(request))
+    if filter == 'ocve':
+            sources=Source.objects.filter(ocve=True).order_by(order)
+    elif filter == 'cfeo':
+            sources=Source.objects.filter(cfeo=True).order_by(order)
     else:
-        #Display source components
-        return render_to_response('dbmi/tree.html', {'sComps': sComps, 'source': source, 'work': w, 'si': si},
-            context_instance=RequestContext(request))
+        sources=Source.objects.all().order_by(order)
+    return render_to_response('dbmi/sources.html', {'sources': sources,'order':order,'filter':filter})
+
+
+#Quick list of all works to link to workadmin
+@csrf_exempt
+def works(request):
+    works=Work.objects.all()
+    return render_to_response('dbmi/works.html', {'works': works})
 
 #A custom admin view to show the relevant objects for a single opus
 #and a quick list of the sources attached to it
+@csrf_exempt
 def workadmin(request,id):
     w = Work.objects.get(id=id)
     wform=WorkForm(instance=w)

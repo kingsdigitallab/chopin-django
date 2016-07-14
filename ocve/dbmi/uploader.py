@@ -55,8 +55,10 @@ def convertFolder(request,folderName):
     folderName=folderName.encode('utf-8')
     files=os.listdir(os.path.join(settings.CONVERTED_UPLOAD_PATH, folderName))
     for f in files:
+        fullurl = settings.IMAGE_SERVER_URL + '?FIF='+settings.CONVERTED_UPLOAD_PATH+'/'+f
+        dimensions = imagetools.getImageDimensions(fullurl)
         npi = NewPageImage(source=newS, filename=f, surrogate=1, versionnumber=1, permission=False,
-                        permissionnote='', height=0, width=0, startbar=0, endbar=0, corrected=0)
+                        permissionnote='', height=dimensions['height'], width=dimensions['width'], startbar=0, endbar=0, corrected=0)
         npi.save()
         logger.debug('Copied '+settings.CONVERTED_UPLOAD_PATH+'/'+f+' '+settings.NEWJP2_UPLOAD_PATH+'/'+str(npi.id)+'.jp2')
         cmd=["mv",

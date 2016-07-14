@@ -6,9 +6,10 @@ import json
 import os
 from unicodedata import normalize as _n
 from django.conf import settings
-from django.db import connections
-from catalogue.templatetags.catalogue_tags import get_impression_exists
+from django.db import connection
+from catalogue.templatetags.catalogue_tags import get_impression_exists,add_special_characters
 import urllib
+import re
 
 import hashlib
 
@@ -49,6 +50,7 @@ def overwritesourcecomponentlabels(source):
         wc=WorkComponent.objects.filter(sourcecomponent_workcomponent__sourcecomponent=sc)
         if wc.count() > 0:
             sc.label=wc[0].label
+            sc.label=add_special_characters(sc.label)
             sc.save()
 
 
@@ -113,12 +115,13 @@ class SourceSearchItem:
         self.id = row[0]
         self.mode=mode
         self.accode = _n(norm, row[9])
-
+        self.accode=add_special_characters(self.accode)
         if mode == 'OCVE':
             self.label = row[2]
         else:
             self.label = row[3]
         self.label=_n(norm, self.label)
+        self.label=add_special_characters(self.label)
         #Anything not a manuscript is a printed edition
         #Set first edition type to printed edition
         if int(row[1]) == 3:
@@ -142,7 +145,7 @@ class SourceSearchItem:
         years = []
         self.dedicatee = row[5]
         self.publisher = row[6]
-        self.platenumber = row[7]
+        self.platenumber = add_special_characters(row[7])
         for y in Year.objects.filter(sourceinformation_year__sourceinformation_id=int(row[10])):
              years.append(y.year)
         #else:
@@ -258,15 +261,19 @@ class PageSearchItem:
         return pagejson
 
 def serializeOCVESourceJson():
-    #sources = Source.objects.filter(ocve=True).order_by(
-    #    'sourcecomponent__sourcecomponent_workcomponent__workcomponent__work__orderno', 'orderno').distinct()
-    sourcecomponents = SourceComponent.objects.filter(source__ocve=True).distinct()
+    if settings.BUILD_LIVE_ONLY == True:
+        sourcecomponents = SourceComponent.objects.filter(source__ocve=True,source__live=True).distinct()
+    else:
+        sourcecomponents = SourceComponent.objects.filter(source__ocve=True).distinct()
     serializeSourceJson(sourcecomponents,'OCVEsourceJSON','OCVE')
 
 def serializeCFEOSourceJson():
     #sources = Source.objects.filter(cfeo=True).order_by(
     #    'sourcecomponent__sourcecomponent_workcomponent__workcomponent__work__orderno', 'orderno').distinct()
-    sourcecomponents = SourceComponent.objects.filter(source__cfeo=True).distinct()
+    if settings.BUILD_LIVE_ONLY == True:
+        sourcecomponents = SourceComponent.objects.filter(source__cfeo=True,source__live=True).distinct()
+    else:
+        sourcecomponents = SourceComponent.objects.filter(source__cfeo=True).distinct()
     serializeSourceJson(sourcecomponents,'CFEOsourceJSON','CFEO')
 
 def serializeSourceJson(sourcecomponents,filename,mode):
@@ -282,11 +289,11 @@ def serializeSourceJson(sourcecomponents,filename,mode):
     destination.write('var sources = [')
     orderno = 1
     if mode == 'CFEO':
-        modeSQL="s.cfeo=1"
+        modeSQL="s.cfeo=True"
     else:
-        modeSQL="s.ocve=1"
-    cursor = connections['ocve_db'].cursor()
-    sql="select distinct s.id,s.sourcetype_id,s.label,s.cfeolabel,w.id,si.dedicatee_id,si.publisher_id,si.platenumber,si.sourcecode,ac.accode,si.id,ac.accode_hash"
+        modeSQL="s.ocve=True"
+    cursor = connection.cursor()
+    sql="select distinct s.id,s.sourcetype_id,s.label,s.cfeolabel,w.id,si.dedicatee_id,si.publisher_id,si.platenumber,si.sourcecode,ac.accode,si.id,ac.accode_hash,s.orderno,w.orderno"
     sql+=" from ocve_source as s,ocve_accode as ac,ocve_sourceinformation as si,ocve_sourcecomponent as sc,ocve_sourcecomponent_workcomponent as scwc, ocve_workcomponent as wc, ocve_work as w"
     sql+=" where "+modeSQL+" and si.accode_id=ac.id and s.id=sc.source_id and s.id=si.source_id and sc.id=scwc.sourcecomponent_id and scwc.workcomponent_id = wc.id and wc.work_id=w.id"
     sql+=" order by w.orderno,s.orderno"
@@ -316,15 +323,15 @@ def serializeAcCodeConnector():
     first = 0
     for s in sources:
         if s.getSourceInformation() is not None and s.getSourceInformation().accode is not None:
-            if s.cfeo ==1 or s.ocve == 1:
+            if s.cfeo ==True or s.ocve == True:
                 if first > 0:
                     destination.write(',\n')
                 accode=s.getSourceInformation().accode.accode
                 acHash=s.getSourceInformation().accode.accode_hash
                 acjson =  "{'accode':"+json.dumps(accode)+",'achash':"+json.dumps(acHash)+",'id':"+json.dumps(s.id)
-                if s.cfeo == 1:
+                if s.cfeo == True:
                     acjson  += ",'cfeo':1"
-                if s.ocve == 1:
+                if s.ocve == True:
                     acjson  += ",'ocve':1"
                 acjson +=  "}"
                 destination.write(acjson)

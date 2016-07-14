@@ -61,7 +61,6 @@ CACHES = {
 DATABASES = {
 }
 
-DATABASE_ROUTERS = ['chopin.dbrouter.ChopinOnlineRouter']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -344,6 +343,8 @@ IMAGEFOLDER = '/vol/ocve3/images/'
 # -----------------------------------------------------------------------------
 
 SOURCEJSONPATH = os.path.join(STATIC_ROOT, 'javascripts')
+#Build Json with the live flag
+BUILD_LIVE_ONLY = False
 
 IMAGE_UPLOAD_PATH = '/vol/ocve2/images/upload/'
 CONVERTED_UPLOAD_PATH = '/vol/ocve2/images/temp/'
@@ -366,6 +367,7 @@ THUMBNAIL_DIR = '/vol/ocve3/images/thumbnails/'
 ACCOUNT_ACTIVATION_DAYS = 7
 EMAIL_HOST = 'smtp.cch.kcl.ac.uk'
 EMAIL_PORT = 25
+DEFAULT_FROM_EMAIL = 'noreply@kcl.ac.uk'
 
 # -----------------------------------------------------------------------------
 # TinyMCE
