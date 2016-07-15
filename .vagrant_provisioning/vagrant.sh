@@ -57,7 +57,7 @@ cp /vagrant/.vagrant_provisioning/local_settings.py /vagrant/chopin/settings/loc
 virtualenv /home/vagrant/venv
 source /home/vagrant/venv/bin/activate
 pip install -r /vagrant/requirements-dev.txt
-# python /vagrant/manage.py makemigrations --noinput
+python /vagrant/manage.py migrate ocve 0001 --fake --noinput
 python /vagrant/manage.py migrate --noinput
 python /vagrant/manage.py update_index
 
