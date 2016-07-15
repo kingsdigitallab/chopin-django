@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import django.contrib.auth.models
 from django.conf import settings
 
 
@@ -18,9 +17,11 @@ class Migration(migrations.Migration):
             name='AcCode',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('accode', models.CharField(default=b'', max_length=255, blank=True)),
+                ('accode', models.CharField(default=b'', unique=True, max_length=255, blank=True)),
+                ('accode_hash', models.CharField(max_length=256, editable=False)),
             ],
             options={
+                'ordering': ['accode'],
                 'verbose_name': 'AcCode',
                 'verbose_name_plural': 'AcCodes',
             },
@@ -101,7 +102,6 @@ class Migration(migrations.Migration):
             name='BarCollection',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('user_id', models.IntegerField(default=-1, verbose_name=django.contrib.auth.models.User)),
                 ('name', models.TextField(default=b'', blank=True)),
                 ('xystring', models.TextField(default=b'', blank=True)),
             ],
@@ -146,7 +146,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('label', models.TextField(default=b'', blank=True)),
-                ('orderNo', models.IntegerField(default=0, null=True, blank=True)),
+                ('orderno', models.IntegerField(default=0, null=True, blank=True)),
                 ('implied', models.IntegerField(default=0, null=True, blank=True)),
                 ('bar', models.ForeignKey(default=1, to='ocve.Bar')),
             ],
@@ -319,7 +319,6 @@ class Migration(migrations.Migration):
                 ('label', models.TextField(default=b'', blank=True)),
                 ('library', models.TextField(default=b'', blank=True)),
                 ('copyright', models.TextField(default=b'', blank=True)),
-                ('sourcecode', models.CharField(default=b'', max_length=255, blank=True)),
                 ('sourcecreated', models.IntegerField(default=0)),
             ],
             options={
@@ -469,6 +468,7 @@ class Migration(migrations.Migration):
                 ('cfeolabel', models.TextField(default=b'', blank=True)),
                 ('ocve', models.BooleanField(default=False)),
                 ('cfeo', models.BooleanField(default=False)),
+                ('live', models.BooleanField(default=False)),
                 ('orderno', models.IntegerField(default=999)),
             ],
             options={
@@ -610,29 +610,6 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'SourceType',
                 'verbose_name_plural': 'SourceTypes',
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='TreeType',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('type', models.CharField(default=b'', max_length=128, blank=True)),
-            ],
-            options={
-                'verbose_name': 'TreeType',
-                'verbose_name_plural': 'TreeTypes',
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Uncertain',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('pageimage', models.ForeignKey(to='ocve.PageImage')),
-                ('source', models.ForeignKey(to='ocve.Source')),
-            ],
-            options={
             },
             bases=(models.Model,),
         ),
@@ -864,6 +841,12 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AddField(
+            model_name='barcollection',
+            name='user',
+            field=models.ForeignKey(default=11, to=settings.AUTH_USER_MODEL),
+            preserve_default=True,
+        ),
+        migrations.AddField(
             model_name='bar_barregion',
             name='barregion',
             field=models.ForeignKey(default=1, to='ocve.BarRegion'),
@@ -896,7 +879,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='annotation',
             name='user',
-            field=models.ForeignKey(default=1, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(default=11, to=settings.AUTH_USER_MODEL),
             preserve_default=True,
         ),
     ]

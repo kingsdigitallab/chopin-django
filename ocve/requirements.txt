@@ -1,5 +1,4 @@
 django-registration-redux
-MySQL-python
 django-tinymce
 xlwt
 xlrd
