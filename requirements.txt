@@ -2,13 +2,13 @@ django<1.8
 -r ddhldap/requirements.txt
 django-compressor==1.6
 django-grappelli
-django-haystack
+django-haystack==2.4.1
 django-libsass
 django-modelcluster==1.1
 django-model-utils
 django-redis<4
 django-taggit
-elasticsearch
+elasticsearch==2.2.0
 lxml
 -r ocve/requirements.txt
 parsley
