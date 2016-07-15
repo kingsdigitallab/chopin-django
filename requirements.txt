@@ -9,6 +9,7 @@ django-model-utils
 django-redis<4
 django-taggit
 elasticsearch==2.2.0
+html5lib==0.9999999
 lxml
 -r ocve/requirements.txt
 parsley
