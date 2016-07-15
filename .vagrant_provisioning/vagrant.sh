@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-debconf-set-selections <<< 'mysql-server mysql-server/root_password password password'
-debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password password'
-
 # Update sources
 apt-get update
 
@@ -13,7 +10,6 @@ chsh -s /bin/zsh vagrant
 cp /vagrant/.vagrant_provisioning/zshrc /home/vagrant/.zshrc
 
 apt-get -y install ack-grep mercurial vim-nox
-# sudo su - vagrant -c 'curl http://j.mp/spf13-vim3 -L -o - | sh 2>/dev/null 1>&2'
 
 apt-get -y install python-dev python-setuptools
 sudo easy_install pip
@@ -31,35 +27,18 @@ apt-get -y install poppler-utils
 apt-get -y install redis-server
 
 apt-get -y install adminer mercurial lynx
-apt-get -y install mysql-client mysql-server libmysqlclient-dev
 apt-get -y install postgresql postgresql-client postgresql-server-dev-all
-
-# OCVE/CFEO MySQL database
-#mysql --password=password -e "CREATE DATABASE IF NOT EXISTS app_ocve_dev;"
-#mysql --password=password -e "CREATE USER 'app_ocve'@'localhost' IDENTIFIED BY 'password';"
-
-#tar -C /vagrant/.vagrant_provisioning -zxvf /vagrant/.vagrant_provisioning/ocve.sql.tar.gz
-#mysql --password=password app_ocve_dev < /vagrant/.vagrant_provisioning/ocve.sql
-#rm /vagrant/.vagrant_provisioning/ocve.sql
-
-mysql --password=password -e "GRANT ALL ON app_ocve_dev.* TO 'app_ocve'@'localhost';"
 
 # Catalogue Postgres database
 sudo su - postgres -c "psql -c \"create user vagrant with superuser password 'vagrant';\""
 sudo su - postgres -c "psql -c \"create user app_ocve password 'app_ocve';\""
-sudo su - postgres -c "createdb app_ocve_merged_stg -E UTF-8 - -O app_ocve"
-#sudo su - postgres -c "createdb app_ocve_dev -E UTF-8 -T template0 -O app_ocve"
+sudo su - postgres -c "createdb app_ocve_dev -E UTF-8 -O app_ocve"
 
-# tar -C /vagrant/.vagrant_provisioning -zxvf /vagrant/.vagrant_provisioning/aco.sql.tar.gz
-# sudo su - postgres -c "psql app_ocve_dev < /vagrant/.vagrant_provisioning/aco.sql"
-# rm /vagrant/.vagrant_provisioning/aco.sql
+tar -C /vagrant/.vagrant_provisioning -zxvf /vagrant/.vagrant_provisioning/data.tar.gz
+sudo su - postgres -c "psql app_ocve_dev < /vagrant/.vagrant_provisioning/data.sql"
+rm /vagrant/.vagrant_provisioning/data.sql
 
-tar -C /vagrant/.vagrant_provisioning -zxvf /vagrant/.vagrant_provisioning/app_ocve_merged_stg.tar.gz
-sudo su - postgres -c "psql app_ocve_merged_stg < /vagrant/.vagrant_provisioning/app_ocve_merged_stg.sql"
-#sudo su - postgres -c "psql app_ocve_dev < /vagrant/.vagrant_provisioning/chopin_merged.sql"
-rm /vagrant/.vagrant_provisioning/app_ocve_merged_stg.sql
-
-sudo su - postgres -c "psql app_ocve_merged_stg -c \"grant all on database app_ocve_merged_stg to app_ocve;\""
+sudo su - postgres -c "psql app_ocve_dev -c \"grant all on database app_ocve_dev to app_ocve;\""
 
 for tbl in `sudo su - postgres -c "psql -qAt -c \"select tablename from pg_tables where schemaname = 'public';\" app_ocve_dev"`;
 do  sudo su - postgres -c "psql -c \"alter table $tbl owner to app_ocve;\" app_ocve_dev"
@@ -78,8 +57,7 @@ cp /vagrant/.vagrant_provisioning/local_settings.py /vagrant/chopin/settings/loc
 virtualenv /home/vagrant/venv
 source /home/vagrant/venv/bin/activate
 pip install -r /vagrant/requirements-dev.txt
-python /vagrant/manage.py makemigrations --noinput
-# python /vagrant/manage.py migrate ocve --database=ocve_db --noinput
+# python /vagrant/manage.py makemigrations --noinput
 python /vagrant/manage.py migrate --noinput
 python /vagrant/manage.py update_index
 
