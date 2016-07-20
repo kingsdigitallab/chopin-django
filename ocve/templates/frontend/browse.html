@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% load staticfiles ocve_tags catalogue_tags %}
+
+{% block meta_title %}View{% if mode == "OCVE" %} OCVE{% else %} CFEO{% endif %}{% endblock %}
+
+{% block header_scripts %}
+    <!--PourOver from http://nytimes.github.io/pourover/ -->
+
+    <script type="text/javascript" src="{% static 'javascripts/underscore-min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'javascripts/pourover.js' %}"></script>
+    {% if mode == "OCVE" %}
+        <script type="text/javascript" src="{% static 'javascripts/OCVEsourceJSON.js' %}"></script>
+    {% else %}
+        <script type="text/javascript" src="{% static 'javascripts/CFEOsourceJSON.js' %}"></script>
+    {% endif %}
+
+    <script type="text/javascript">
+    var config = {
+        // URL for pageview, prefixed by mode (ocve of cfeo) in browse.js options
+        'browse_pageview_url': "/browse/pageview",
+        'thumbnails_url': "{% static 'thumbnails/' %}",
+
+        //Displaying OCVE or CFEO?
+        'mode': '{{ mode }}',
+        // Authority List arrays for filters
+        'works':[0, {{ works|pick:'id'|join:',' }}],
+        'workinfos': [0, {{ workinfos|join:',' }}],
+        'work_names': [{{ works|join_and_quote:',' }}],
+
+        'genres': [ {{ genres|pick:'id'|join:',' }} ],
+        'publishers': [ {{ publishers|pick:'id'|join:',' }} ],
+        'years': [ {{ years|join:',' }} ],
+
+        'sourceType': [ {{ sourceTypes|pick:'id'|join:',' }} ],
+        'keyModes': [1, 3],
+
+        'selectedFilterSelector': 'dl.selected-filter',
+        'noFiltersSelector': '#no-filters',
+        'clearFiltersSelector': "#filters-refresh",
+
+        //Number of page images to show in initial display
+        'numPagesDisplay': 4,
+
+        // default filters to apply (session or link)
+        'defaultFilters': {{defaultFilters | to_json }}
+    }
+    </script>
+    <script type="text/javascript" src="{% static 'javascripts/browse.js' %}"></script>
+{% endblock header_scripts %}
+
+{% block content %}
+    
+    
+    <section class="main content-section">
+        <div class="row">
+            <div class="large-3 columns">
+                <h3>Filter by</h3>
+                <section data-section="expandable" data-expandable-group-member="facets" class="expandable-list">
+                    <div class="list-item">
+                        <div class="list-header">
+                            <h4><a class="ctrl expand" href="#"><i class="fa fa-caret-right"></i> Work</a></h4>
+                        </div>
+                        <div class="list-content">
+                            <ul>
+                                <!-- TODO: Can we add an if !empty thing here? - GF -->
+                                {% for w in works %}
+                                    <li>
+                                        <a class="ctrl filterCtrl" title="{{ w }}" data-criteria="Work"
+                                           data-key="{{ w.id }}"
+                                           href="#">{{ w.label | add_special_characters }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="list-item">
+                        <div class="list-header">
+                            <h4><a class="ctrl expand" href="#"><i class="fa fa-caret-right"></i> Genre</a></h4>
+                        </div>
+                        <div class="list-content">
+                            <ul>
+                                <!-- TODO: Can we add an if !empty thing here? - GF -->
+                                {% for g in genres %}
+                                    {% if g.id != 2144 and g.id != 2136 and g.genre != 'None' %}
+                                        <li>
+                                            <a class="ctrl filterCtrl" title="{{ g }}" data-criteria="Genre"
+                                               data-key="{{ g.id }}"
+                                               href="#">{{ g.genre | add_special_characters}}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="list-item">
+                        <div class="list-header">
+                            <h4><a class="ctrl expand" href="#"><i class="fa fa-caret-right"></i> Publisher</a></h4>
+                        </div>
+                        <div class="list-content">
+                            <ul>
+                                <!-- TODO: Can we add an if !empty thing here? - GF -->
+                                {% for p in publishers %}
+                                    <li>
+                                        <a class="ctrl filterCtrl" title="{{ p }}" data-criteria="Publisher"
+                                           data-key="{{ p.id }}"
+                                           href="#">{% autoescape off %}{{ p }}{% endautoescape %}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% if mode == "OCVE" %}
+                        <div class="list-item">
+                            <div class="list-header">
+                                <h4><a class="ctrl expand" href="#"><i class="fa fa-caret-right"></i> Source Type</a>
+                                </h4>
+                            </div>
+                            <div class="list-content">
+                                <ul>
+                                    <!-- TODO: Can we add an if !empty thing here? - GF -->
+                                    {% for st in sourceTypes %}
+                                        {% if st.id != 3 %}
+                                            <li>
+                                                <a class="ctrl filterCtrl" title="{{ st }}" data-criteria="Type"
+                                                   data-key="{{ st.id }}"
+                                                   href="#">{{ st }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </section>
+            </div>
+            <div class="large-9 columns">
+                <h1>Browse sources</h1>
+
+                <div class="row">
+                    <div class="large-9 columns">
+
+                        <dl class="show-filters">
+                            <dt class="filters-header">Selected filters
+                                <a class="ctrl refresh" href="#" id="filters-refresh"><i class="fa fa-refresh" data-tooltip="" title="Clear all filters"></i>
+                                </a>
+                            </dt>
+                            <dd id="no-filters" class="no-filters-message">No filters are currently selected: showing all results
+                            </dd>
+                        </dl>
+
+                        <div class="clear"></div>
+
+                        <div id="selectedFilters"></div>
+                    </div>
+
+                    <div class="large-3 columns">
+                        <div id="instrumentFilterControl">
+                            {% if instruments.count > 1 %}
+                                <a href="#" id="instrumentToggle" data-dropdown="instrumentFilters" aria-controls="instrumentFilters" aria-expanded="false" class="small radius button dropdown right" data-options="is_hover:true; hover_timeout:1000">Filter by instrument</a>
+                                <ul id="instrumentFilters" data-dropdown-content class="f-dropdown" aria-hidden="true">
+                                    <li class="instrumentFilter" data-instrument_id="0">
+                                        <a href="#" data-instrument_id="0">All</a>
+                                    </li>
+                                    {% for i in instruments %}
+                                    <li class="instrumentFilter" data-instrument_id="{{ i.id }}">
+                                        <a href="#" data-instrument_id="{{ i.id }}">{{ i }}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="updating">
+                    <img id="loading" class="spinner" src="{{ STATIC_URL }}images/spinner.svg" alt="Updating results">
+                </div>
+
+                <div class="clear"></div>
+
+                <div id="results-section">
+                    <div id="results">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block footer %}
+    {{ block.super }}
+    <div id="witness-info" class="reveal-modal" data-reveal>
+
+    </div>
+
+    <div id="opus-info" class="reveal-modal" data-reveal>
+
+    </div>
+{% endblock %}
