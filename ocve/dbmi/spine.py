@@ -2,6 +2,7 @@ __author__ = 'Elliott Hall'
 
 from xlwt import Workbook, easyxf
 from xlrd import open_workbook
+import numpy as np
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
@@ -17,10 +18,10 @@ from django.db import connection, transaction
 def exportXLS(request, id):
     response = HttpResponse(content_type='application/vnd.ms-excel')
     if int(id) == 0:
-        #Posthumous case
+        # Posthumous case
         sources = Source.objects.filter(
             sourcecomponent__sourcecomponent_workcomponent__workcomponent__work__workcollection=3).order_by(
-            'sourcecomponent__sourcecomponent_workcomponent__workcomponent__work','orderno').distinct()
+            'sourcecomponent__sourcecomponent_workcomponent__workcomponent__work', 'orderno').distinct()
         response['Content-Disposition'] = 'attachment; filename="Posthumous_Spine.xls"'
         label = 'Posthumous Spines'
     else:
@@ -29,7 +30,7 @@ def exportXLS(request, id):
             sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).order_by('orderno').distinct()
         response['Content-Disposition'] = 'attachment; filename="Spine' + str(work.id) + '.xls"'
         label = work.label + ' Spines'
-    #Create Workbook and single sheet for all spines
+    # Create Workbook and single sheet for all spines
     book = Workbook(encoding='utf-8')
     label = label.replace('[', '').replace(']', '')
     if len(label) > 20:
@@ -49,7 +50,6 @@ def exportXLS(request, id):
     colIndex = 0
     mvtIndexes = []
 
-
     for s in sources:
         #Write the first two rows, containing source keys and ac codes
         code = s.getAcCode()
@@ -57,8 +57,8 @@ def exportXLS(request, id):
         codeRow.write(colIndex, code, )
 
         mvtIndexes.append(0)
-        mvtFormatIndex=0
-        curSourceComponent=0
+        mvtFormatIndex = 0
+        curSourceComponent = 0
         #Write all spines for source
         spines = BarSpine.objects.filter(source=s)
 
@@ -67,16 +67,16 @@ def exportXLS(request, id):
             r = spine.orderno + 1
             if spine.implied == 1:
                 bar = bar + '(I)'
-            if curSourceComponent ==0:
-                curSourceComponent=spine.sourcecomponent
-            elif curSourceComponent!=spine.sourcecomponent:
+            if curSourceComponent == 0:
+                curSourceComponent = spine.sourcecomponent
+            elif curSourceComponent != spine.sourcecomponent:
                 #Change style
                 if mvtFormatIndex == 4:
-                    mvtFormatIndex=0
+                    mvtFormatIndex = 0
                 else:
-                    mvtFormatIndex+=1
-                curSourceComponent=spine.sourcecomponent
-            style=mvtFormats[mvtFormatIndex]
+                    mvtFormatIndex += 1
+                curSourceComponent = spine.sourcecomponent
+            style = mvtFormats[mvtFormatIndex]
             sheet.write(r, colIndex, bar, style)
 
         colIndex += 1
@@ -87,12 +87,82 @@ def exportXLS(request, id):
     return response
 
 
+# Generates a positional map for every bar in a work
+#This allows the precise region to be found on import without having the source component id
+def getCellMap(sourceid):
+    cursor = connection.cursor()
+    #barregion,bar,sourcecomponent,source
+    #order by source.orderno,sourceomponent,orderno,bar
+    sql = "select distinct b.barlabel,b.id,p.id,sc.id,s.id,s.orderno as source_order,sc.orderno,p.orderno,b.barnumber "
+    sql += "from ocve_bar as b,ocve_bar_barregion as bbr,ocve_barregion as br,ocve_page as p,ocve_pageimage as pi,"
+    sql += "ocve_sourcecomponent as sc,ocve_source as s "
+    sql += "where b.id=bbr.bar_id and bbr.barregion_id=br.id and br.pageimage_id=pi.id and pi.page_id=p.id "
+    sql += "and p.sourcecomponent_id=sc.id and sc.source_id=s.id and s.id=" + str(sourceid)
+    sql += " order by s.orderno,sc.orderno,p.orderno,b.barnumber;"
+    dt = np.dtype(
+        [('barlabel', np.str_, 10), ('bar_id', np.int_), ('page_id', np.int_), ('sourcecomponent_id', np.int_),
+         ('source_id', np.int_), ('assigned', np.bool_)])
+    cursor.execute(sql)
+    cellmap = np.ndarray(shape=(cursor.rowcount,), dtype=dt)
+    x = 0
+    for row in cursor.fetchall():
+        cellmap[x]['barlabel'] = row[0]
+        cellmap[x]['bar_id'] = row[1]
+        cellmap[x]['page_id'] = row[2]
+        cellmap[x]['sourcecomponent_id'] = row[3]
+        cellmap[x]['source_id'] = row[4]
+        cellmap[x]['assigned'] = False
+        x += 1
+
+    return cellmap
+
+
+# @csrf_exempt
+# def importXLS(request):
+#     workid = int(request.POST['workid'])
+#     work = Work.objects.get(id=workid)
+#
+#     result = "File Uploaded"
+#     if request.method == 'POST':
+#         try:
+#             workid = int(request.POST['workid'])
+#             work = Work.objects.get(id=workid)
+#             #response.write('<h1>'+work.label+'</h1><table border=\"1\">')
+#             BarSpine.objects.filter(
+#                 source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).delete()
+#             #Load worksheet
+#             wb = open_workbook(file_contents=request.FILES['uploadFile'].read())
+#
+#             for s in wb.sheets():
+#                 #For each column (source)
+#                 for col in range(s.ncols):
+#                     #For each row in column
+#                     for row in s.col(col):
+#                         #Get cell
+
+
+def getCellFromMap(barvalue, implied, barmap,lastindex):
+    #Since most pieces are linear, use lastindex for a guess before iteration
+    guess=lastindex+1
+    if guess < len(barmap) and barmap[guess]['barlabel'] == barvalue and barmap[guess]['assigned'] == False:
+        barmap[guess]['assigned'] = True
+        return [guess,barmap[guess]]
+    else:
+        #Start again
+        index=0
+        for cell in np.nditer(barmap,op_flags=['readwrite']):
+            if cell['barlabel'] == barvalue and cell['assigned'] == False:
+                cell['assigned'] = True
+                return [index,cell]
+            index+=1
+    return None
+
+
 @csrf_exempt
 def importXLS(request):
     workid = int(request.POST['workid'])
     work = Work.objects.get(id=workid)
-    #response = HttpResponse(content_type='text/html')
-    #response.write('<html><head></head><body>')
+
     result = "File Uploaded"
     if request.method == 'POST':
         try:
@@ -105,28 +175,19 @@ def importXLS(request):
             wb = open_workbook(file_contents=request.FILES['uploadFile'].read())
             sources = []
             components = []
+            #get bar map
+
             for s in wb.sheets():
-                for row in range(s.nrows):
-                    #response.write('<tr>')
-                    for col in range(s.ncols):
-                        if row == 0:
-                            #Source keys
-                            try:
-                                source = Source.objects.get(id=int(s.cell(row, col).value))
-                                sources.append(source)
-                                if source.getFirstBarRegion() is not None:
-                                    sc = source.getFirstBarRegion().pageimage.page.sourcecomponent
-                                    components.append(sc)
-                                else:
-                                    components.append(0)
-                            except ObjectDoesNotExist:
-                                result += "Source " + str(s.cell(row, col).value) + " not found, column ignored"
-                                #response.write('<td>'+s.cell(row,col).value+'</td>')
-                        elif row > 1:
+                for col in range(s.ncols):
+                    source_id = s.cell(0, col).value
+                    if source_id > 1:
+                        barmap = getCellMap(source_id)
+                        lastindex = 0
+                        for row in range(2, s.nrows):
                             value = str(s.cell(row, col).value)
                             #response.write('<td>'+value+'</td>')
                             try:
-                                if len(value) > 0 and value != ' ' and components[col] != 0:
+                                if len(value) > 0 and value != ' ':
                                     implied = 0
                                     value = value.replace('.0', '')
                                     if '(I)' in value:
@@ -134,70 +195,34 @@ def importXLS(request):
                                         value = value.replace('(I)', '')
                                         implied = 1
                                     try:
-                                        bars = Bar.objects.filter(barlabel__iexact=value)
-                                        if bars.count() > 0:
-                                            bar = bars[0]
-                                        bs = BarSpine()
-                                        bs.bar = bar
-                                        bs.implied = implied
-                                        orderno = row - 1
-                                        bs.label = orderno
-                                        bs.orderno = orderno
-                                        bs.source = sources[col]
-                                        comp = None
-                                        #Verify bar (needed for implied problems)
-                                        if BarRegion.objects.filter(bar__barlabel=bar.barlabel,
-                                                                    pageimage__page__sourcecomponent=components[
-                                                                        col]).count() > 0:
-                                            bs.sourcecomponent = components[col]
-                                        else:
-                                            #Bar actually belongs to earlier component.
-                                            #Try Previous component
-                                            prev = BarRegion.objects.filter(bar__barlabel=bar.barlabel,
-                                                                            pageimage__page__sourcecomponent__orderno=sc.orderno - 1,
-                                                                            pageimage__page__sourcecomponent__source=
-                                                                            sources[col])
-                                            if prev.count() > 0:
-                                                bs.sourcecomponent = prev[0].pageimage.page.sourcecomponent
-                                        if bs.sourcecomponent_id == 1:
-                                            stop = 0;
-                                        else:
+                                        result = getCellFromMap(value, implied, barmap,lastindex)
+                                        if result != None:
+                                            cell=result[1]
+                                            lastindex=result[0]
+                                            bs = BarSpine()
+                                            bs.bar_id = cell['bar_id']
+                                            bs.implied = implied
+                                            orderno = row - 1
+                                            bs.label = orderno
+                                            bs.orderno = orderno
+                                            bs.source_id = source_id
+                                            bs.sourcecomponent_id=cell['sourcecomponent_id']
                                             bs.save()
+                                        else:
+                                            result += "Bar at row " + str(row)+" col "+str(col) + " not found in source, ignored"
                                     except IndexError:
                                         col
-                                    try:
-                                        if BarRegion.objects.filter(pageimage__page__sourcecomponent=components[
-                                            col]).count() == 0 or bar.barlabel == BarRegion.objects.filter(
-                                                pageimage__page__sourcecomponent=components[col]).order_by(
-                                                'pageimage__page__sourcecomponent__orderno', 'pageimage__page__orderno',
-                                                'bar').distinct().reverse()[:1][0].getHighestBar().barlabel:
-                                            #Last bar in component, Advance source component
-                                            #if bs.implied == 1 and :
-                                            #else:
-                                            comps = SourceComponent.objects.filter(source=sources[col])
-                                            next = 0
-                                            for x, sc in enumerate(comps):
-                                                if next == 1:
-                                                    components[col] = sc
-                                                    break
-                                                if sc == components[col]:
-                                                    next = 1
-                                    except IndexError:
-                                        BarRegion.objects.filter(
-                                            pageimage__page__sourcecomponent=components[col]).order_by(
-                                            'pageimage__page__sourcecomponent__orderno', 'pageimage__page__orderno',
-                                            'bar').distinct().reverse()[:1][0].getHighestBar()
                             except ObjectDoesNotExist:
                                 skip = 0
                                 #response.write('</tr>')
                                 #response.write('</table></body></html>')
+                    else:
+                        result += "Source key" + str(s.cell(0, col).value) + " not found, column ignored"
+
         except ObjectDoesNotExist:
             result = "Parse Error"
     return render_to_response('dbmi/importresult.html',
-                              {'result': result, 'work': work})
-
-
-#Creates a default spine for a source.
+                          {'result': result, 'work': work})  #Creates a default spine for a source.
 def generateSpine(source):
     regions = BarRegion.objects.filter(pageimage__page__sourcecomponent__source=source).order_by(
         'pageimage__page__sourcecomponent__orderno', 'pageimage__page__orderno', 'bar').distinct()
