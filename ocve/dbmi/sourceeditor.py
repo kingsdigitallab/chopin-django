@@ -438,6 +438,7 @@ def savePage(request):
     is_textlabel=str(request.POST['is_textlabel'])
     if is_textlabel == 'true':
         #Update the text label for a page
+        msg=msg.replace(u'-',u'\u2013')
         spageimage = PageImage.objects.get(id=int(request.POST['id']))
         spageimage.textlabel=msg
         spageimage.save()
