@@ -17,6 +17,7 @@ from django.db import connection, transaction
 # Export Spines of a work to an Excel workbook for editing
 def exportXLS(request, id):
     response = HttpResponse(content_type='application/vnd.ms-excel')
+    cursor = connection.cursor()
     if int(id) == 0:
         # Posthumous case
         sources = Source.objects.filter(
@@ -37,7 +38,7 @@ def exportXLS(request, id):
         label = label[:20] + '...'
     sheet = book.add_sheet(label)
 
-    #Different colour backgrounds to distinguish between movements in the workbook
+    # Different colour backgrounds to distinguish between movements in the workbook
     mvtFormats = [
         easyxf('font: color red;'),
         easyxf('font: color blue;'),
@@ -60,35 +61,35 @@ def exportXLS(request, id):
         mvtFormatIndex = 0
         curSourceComponent = 0
         #Write all spines for source
-        spines = BarSpine.objects.filter(source=s)
-
-        for spine in spines:
-            bar = spine.bar.barlabel
-            r = spine.orderno + 1
-            if spine.implied == 1:
+        sql="SELECT DISTINCT ocve_bar.barlabel,ocve_barspine.bar_id,ocve_barspine.orderno,ocve_barspine.source_id,ocve_barspine.implied,ocve_barspine.sourcecomponent_id FROM ocve_bar,ocve_barspine where ocve_bar.id=ocve_barspine.bar_id and source_id="+str(s.id)
+        cursor.execute(sql)
+        for row in cursor.fetchall():
+            bar=row[0]
+            r=int(row[2])+1
+            sourcecomponent=row[5]
+            if row[4] == 1:
                 bar = bar + '(I)'
             if curSourceComponent == 0:
-                curSourceComponent = spine.sourcecomponent
-            elif curSourceComponent != spine.sourcecomponent:
-                #Change style
+                 curSourceComponent = sourcecomponent
+            elif curSourceComponent != sourcecomponent:
+            #Change style
                 if mvtFormatIndex == 4:
                     mvtFormatIndex = 0
                 else:
                     mvtFormatIndex += 1
-                curSourceComponent = spine.sourcecomponent
+                curSourceComponent = sourcecomponent
             style = mvtFormats[mvtFormatIndex]
             sheet.write(r, colIndex, bar, style)
 
         colIndex += 1
-
-
+        
     #Finish and write to stream
     book.save(response)
     return response
 
 
 # Generates a positional map for every bar in a work
-#This allows the precise region to be found on import without having the source component id
+# This allows the precise region to be found on import without having the source component id
 def getCellMap(sourceid):
     cursor = connection.cursor()
     #barregion,bar,sourcecomponent,source
@@ -141,20 +142,20 @@ def getCellMap(sourceid):
 #                         #Get cell
 
 
-def getCellFromMap(barvalue, implied, barmap,lastindex):
+def getCellFromMap(barvalue, implied, barmap, lastindex):
     #Since most pieces are linear, use lastindex for a guess before iteration
-    guess=lastindex+1
-    if guess < len(barmap) and barmap[guess]['barlabel'] == barvalue and barmap[guess]['assigned'] == False:
-        barmap[guess]['assigned'] = True
-        return [guess,barmap[guess]]
-    else:
-        #Start again
-        index=0
-        for cell in np.nditer(barmap,op_flags=['readwrite']):
-            if cell['barlabel'] == barvalue and cell['assigned'] == False:
-                cell['assigned'] = True
-                return [index,cell]
-            index+=1
+    guess = lastindex + 1
+    # if guess < len(barmap) and barmap[guess]['barlabel'] == barvalue and barmap[guess]['assigned'] == False:
+    #     barmap[guess]['assigned'] = True
+    #     return [guess,barmap[guess]]
+    # else:
+    #     #Start again
+    startIndex=0
+    for index in range(startIndex,len(barmap)):
+        cell= barmap[index]
+        if cell['barlabel'] == barvalue and cell['assigned'] == False:
+            cell['assigned'] = True
+            return [index, cell]
     return None
 
 
@@ -162,7 +163,7 @@ def getCellFromMap(barvalue, implied, barmap,lastindex):
 def importXLS(request):
     workid = int(request.POST['workid'])
     work = Work.objects.get(id=workid)
-
+    cursor = connection.cursor()
     result = "File Uploaded"
     if request.method == 'POST':
         try:
@@ -173,8 +174,7 @@ def importXLS(request):
                 source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work).delete()
             #wb = open_workbook(request.FILES['uploadFile'])
             wb = open_workbook(file_contents=request.FILES['uploadFile'].read())
-            sources = []
-            components = []
+            spines = []
             #get bar map
 
             for s in wb.sheets():
@@ -195,21 +195,23 @@ def importXLS(request):
                                         value = value.replace('(I)', '')
                                         implied = 1
                                     try:
-                                        result = getCellFromMap(value, implied, barmap,lastindex)
-                                        if result != None:
-                                            cell=result[1]
-                                            lastindex=result[0]
-                                            bs = BarSpine()
-                                            bs.bar_id = cell['bar_id']
-                                            bs.implied = implied
+                                        results = getCellFromMap(value, implied, barmap, lastindex)
+                                        if results != None:
+                                            cell = results[1]
+                                            lastindex = results[0]
+                                            # bs = BarSpine()
+                                            # bs.bar_id = cell['bar_id']
+                                            # bs.implied = implied
                                             orderno = row - 1
-                                            bs.label = orderno
-                                            bs.orderno = orderno
-                                            bs.source_id = source_id
-                                            bs.sourcecomponent_id=cell['sourcecomponent_id']
-                                            bs.save()
+                                            # bs.label = orderno
+                                            # bs.orderno = orderno
+                                            # bs.source_id = source_id
+                                            # bs.sourcecomponent_id = cell['sourcecomponent_id']
+                                            # bs.save()
+                                            spines.append([orderno,cell['bar_id'],orderno,source_id,implied,cell['sourcecomponent_id']])
                                         else:
-                                            result += "Bar at row " + str(row)+" col "+str(col) + " not found in source, ignored"
+                                            result += "<p>Bar at row " + str(row) + " col " + str(
+                                                col) + " not found in source, ignored</p>"
                                     except IndexError:
                                         col
                             except ObjectDoesNotExist:
@@ -217,12 +219,16 @@ def importXLS(request):
                                 #response.write('</tr>')
                                 #response.write('</table></body></html>')
                     else:
-                        result += "Source key" + str(s.cell(0, col).value) + " not found, column ignored"
-
+                        result += "<p>Source key" + str(s.cell(0, col).value) + " not found, column ignored</p>"
+            #Insert Spines
+            args_str = ','.join(cursor.mogrify("(%s,%s,%s,%s,%s,%s)", x) for x in spines)
+            cursor.execute("INSERT INTO ocve_barspine (label,bar_id,orderno,source_id,implied,sourcecomponent_id) VALUES " + args_str)
         except ObjectDoesNotExist:
             result = "Parse Error"
     return render_to_response('dbmi/importresult.html',
-                          {'result': result, 'work': work})  #Creates a default spine for a source.
+                              {'result': result, 'work': work})  #Creates a default spine for a source.
+
+
 def generateSpine(source):
     regions = BarRegion.objects.filter(pageimage__page__sourcecomponent__source=source).order_by(
         'pageimage__page__sourcecomponent__orderno', 'pageimage__page__orderno', 'bar').distinct()
