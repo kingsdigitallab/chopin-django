@@ -13,13 +13,13 @@
             {% get_site_root as site_root %}
             {% main_menu root=site_root current_page=self %}
             {% endblock %}
-            {% if BASE_URL == 'aco' %}
+
             <ul class="right header-search">
                 <li class="has-form">
                     {% include "includes/search_box.html" %}
                 </li>
             </ul>
-            {% endif %}
+
         </section>
     </nav>
 </div>
