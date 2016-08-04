@@ -25,8 +25,8 @@
         // Authority List arrays for filters
         'works':[0, {{ works|pick:'id'|join:',' }}],
         'workinfos': [0, {{ workinfos|join:',' }}],
-        'work_names': [{{ works|join_and_quote:',' }}],
 
+        'work_names':[{% for w in works %}"{{ w.getSpecialLabel|escapejs }}",{% endfor %}""],
         'genres': [ {{ genres|pick:'id'|join:',' }} ],
         'publishers': [ {{ publishers|pick:'id'|join:',' }} ],
         'years': [ {{ years|join:',' }} ],
