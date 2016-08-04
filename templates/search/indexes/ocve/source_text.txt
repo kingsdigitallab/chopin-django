@@ -1,0 +1,22 @@
+{{ object.label}}
+{{ object.cfeolabel}}
+{%if object.sourcetype%}
+{{ object.sourcetype.type}}
+{% endif%}
+{%if object.getSourceInformation%}
+{{ object.getSourceInformation.platenumber }}
+{{ object.getSourceInformation.source }}
+{{ object.getSourceInformation.locationsimilarcopies }}
+{{ object.getSourceInformation.reprints }}
+{{ object.getSourceInformation.publisher.publisher }}
+{{ object.getSourceInformation.archive.name }}
+{{ object.getSourceInformation.dedicatee.dedicatee }}
+{{ object.getSourceInformation.accode.accode}}
+{{ object.getSourceInformation.displayedcopy}}
+
+{{ object.}}
+{% endif %}
+
+
+
+

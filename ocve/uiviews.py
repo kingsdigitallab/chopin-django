@@ -166,6 +166,27 @@ def fixsourceinformation(request):
         si.save()
     return HttpResponse(log)
 
+def browse_source(request,id):
+    filters = []
+    mode="OCVE"
+    sources=Source.objects.filter(id=id)
+    if sources.count > 0:
+        source=sources[0]
+        work=source.getWork()
+        if source.cfeo == True:
+            mode="CFEO"
+        filters.append({'type': 'Work', 'id': work.id,'selection': work.label})
+        filters.append({'type': 'Source', 'id':source.id,'selection': source.label})
+    return browse(request,mode,filters)
+
+def browse_work(request,id):
+    filters = []
+    mode="OCVE"
+    works=Work.objects.filter(id=id)
+    if works.count > 0:
+        work=works[0]
+        filters.append({'type': 'Work', 'id': work.id,'selection': work.label})
+    return browse(request,mode,filters)
 
 
 def browse(request,mode="OCVE",defaultFilters=None):
@@ -181,7 +202,7 @@ def browse(request,mode="OCVE",defaultFilters=None):
             defaultFilters=json.loads(filterJSON, encoding='utf-8')
     except KeyError:
         pass
-        #defaultFilters = ''u' Bodleian Library, Oxford'
+
     sourceTypes=SourceType.objects.all()
     workinfos=[]
     if mode == 'OCVE':
@@ -190,7 +211,7 @@ def browse(request,mode="OCVE",defaultFilters=None):
             for w in works:
                 if len(w.workinformation.OCVE)> 0:
                     workinfos.append(w.id)
-        #dedicatees=Dedicatee.objects.filter(sourceinformation__source__ocve=True).filter(id__gt=2).distinct()
+
         publishers=Publisher.objects.filter(sourceinformation__source__ocve=True).filter(id__gt=2).distinct()
         years=Year.objects.filter(sourceinformation__source__ocve=True).distinct()
         genres=Genre.objects.filter(work__workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__ocve=True).filter(id__gt=2).distinct()
@@ -201,7 +222,7 @@ def browse(request,mode="OCVE",defaultFilters=None):
             for w in works:
                 if len(w.workinformation.analysis)> 0 or len(w.workinformation.generalinfo)> 0 or len(w.workinformation.relevantmanuscripts)> 0:
                     workinfos.append(w.id)
-        #dedicatees=Dedicatee.objects.filter(sourceinformation__source__cfeo=True).distinct()
+
         publishers=Publisher.objects.filter(sourceinformation__source__cfeo=True).distinct()
         years=Year.objects.filter(sourceinformation__source__cfeo=True).distinct()
         genres=Genre.objects.filter(work__workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__cfeo=True).distinct()

@@ -6,6 +6,8 @@ from views import *
 
 urlpatterns = patterns('',
                        url(r'^browse/$', cfeoBrowse, name='cfeo_browse'),
+                       url(r'^browse/source/(?P<id>\d+)/$', browse_source, name='ocve_browse_source'),
+                       url(r'^browse/work/(?P<id>\d+)/$', browse_work, name='ocve_browse_work'),
                        (r'^browse/acview/(?P<acHash>[\d|\w]+)/$', cfeoacview),
                        url(r'^browse/pageview/(?P<id>\d+)/$', cfeoPageImageview, name='cfeo_pageview'),
                        url(r'^browse/comparepageview/(?P<compareleft>\d*)/(?P<compareright>\d*)/$', comparePageImageview,name='cfeo_comparepageview'),
