@@ -483,7 +483,7 @@
       var $this = $(this),
         type = $this.data('criteria'),
         id = $this.data('key'),
-        selection = $this.attr('title');
+        selection = $this.html(); //$this.attr('title');
 
       applyFilter(type, id, selection);
       filterFacets(options.sourceview.getCurrentItems(), type);

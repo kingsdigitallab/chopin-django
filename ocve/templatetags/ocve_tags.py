@@ -4,6 +4,7 @@ from django import template
 
 from django.utils.safestring import mark_safe
 from json import dumps
+from catalogue.templatetags.catalogue_tags import add_special_characters
 import re
 
 register = template.Library()
@@ -49,6 +50,10 @@ def index_by(a_list, attribute):
 @register.filter
 def join_and_quote(a_list, separator=','):
     return mark_safe(separator.join(['"{}"'.format(i) for i in a_list]))
+
+@register.filter
+def join_and_quote_special(a_list, separator=','):
+    return mark_safe(separator.join(['"{}"'.format(add_special_characters(i)) for i in a_list]))
 
 
 @register.filter
