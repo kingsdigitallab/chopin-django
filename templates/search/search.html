@@ -65,6 +65,7 @@
 
     <ul class="impressions search-results">
         {% for result in page.object_list %}
+
         <li>
             <a title="Filter by {{ result.document }}"
             class="label secondary" href="{{ request.get_full_path }}&amp;selected_facets=document:{{ result.document|urlencode }}">
@@ -77,6 +78,7 @@
         </p>
         {% endif %}
     </li>
+
     {% empty %}
     <li>No results found</li>
     {% endfor %}
