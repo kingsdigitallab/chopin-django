@@ -7,6 +7,7 @@ from django.contrib.contenttypes import generic
 from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
 from django.db import models
 from django.utils.encoding import force_unicode
+from catalogue.templatetags.catalogue_tags import add_special_characters
 
 import hashlib
 
@@ -42,6 +43,8 @@ class WorkComponent(models.Model):
     table_group = ''
 
 
+
+
 #
 class Work(models.Model):
     complete = models.BooleanField(default=False, null=False, blank=False, )
@@ -61,6 +64,8 @@ class Work(models.Model):
         sources = Source.objects.filter(sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=self).distinct()
         return sources
 
+    def getSpecialLabel(self):
+        return add_special_characters(self.label)
 #
 class Opus(models.Model):
     opusno = models.IntegerField(null=True, blank=True, )
