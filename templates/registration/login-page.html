@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<section class="main content-section">
+    <div class="row">
+        <div class="medium-6 large-4 large-offset-4 medium-offset-3 columns">
+            <form action="{% url "auth_login" %}" method="post" id="login-form">
+            {% csrf_token %}
+            <input id="id_username" name="username" type="text" placeholder="Username">
+            <input id="id_password" name="password" type="password" placeholder="Password">
+            <button type="submit" class="tiny button radius expand">Log in</button>
+            <input type="hidden" name="next" value="/ocve/accounts/profile/">
+        </form>
+        <p><em><a href="/ocve/accounts/password/reset">Forgot your password?</a></em></p>
+
+        <hr>
+
+        <a href="/ocve/accounts/register" class="tiny button radius secondary expand">Create an account</a>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+    document.getElementById('id_username');
+</script>
+{% endblock %}
