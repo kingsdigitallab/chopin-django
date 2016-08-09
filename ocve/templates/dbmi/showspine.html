@@ -37,7 +37,9 @@
         <span>
         {{ r.getSource.getAcCode }} bar {{ r.br.getHighestBar.barlabel }}</span>
             <a href="editbars/{{ r.pi.id}}/">
-            <img title="{{ r.getSource.label }} page {{ r.pi.page.label}}"  border align="0" src="{{ IMAGE_SERVER_URL }}?FIF={{ r.getBarImageURL }}"/>
+                {% for url in r.getBarImageURL %}
+            <img title="{{ r.getSource.label }} page {{ r.pi.page.label}}"  border align="0" src="{{ IMAGE_SERVER_URL }}?FIF={{ url }}"/>
+                    {% endfor %}
             </a>
     </li>
 {% endfor %}
