@@ -695,6 +695,7 @@ class BarSpine(models.Model):
     source = models.ForeignKey('Source', blank=False, null=False, default=1 )
     implied=models.IntegerField(null=True, blank=True,default=0 )
 
+BarSpine._meta.ordering=["orderno","source"]
 
 def country_unicode(self):
     return self.country
