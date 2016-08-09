@@ -206,7 +206,7 @@ def editsourcecomponent(request,sc):
     if comps.count() > 0:
         currentwc=comps[0]
     scf=SourceComponentForm(instance=sc)
-    curinstrument=None
+    curinstrument=Instrument.objects.get(instrument='Piano')
     if Instrument.objects.filter(sourcecomponent=sc).count() > 0:
         curinstrument=Instrument.objects.filter(sourcecomponent=sc)[0]
     instruments=Instrument.objects.filter()
