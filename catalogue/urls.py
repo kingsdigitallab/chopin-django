@@ -3,11 +3,11 @@ from catalogue.views import FacetedSearchView
 from django.conf.urls import patterns, include, url
 
 from haystack.forms import FacetedSearchForm
-from haystack.query import SearchQuerySet
+from haystack.query import SearchQuerySet, SQ
 
 from wagtail.wagtailcore import urls as wagtail_urls
 
-sqs = SearchQuerySet().order_by(
+sqs = SearchQuerySet().exclude(SQ(document='Source') | SQ(document='Opus')).order_by(
     '-_score').order_by('sort_order').facet('document')
 
 urlpatterns = patterns('',
