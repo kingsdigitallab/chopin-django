@@ -1,3 +1,4 @@
+{% load  catalogue_tags %}
 {{ object.label}}
 {{ object.cfeolabel}}
 {%if object.sourcetype%}
