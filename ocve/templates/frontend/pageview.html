@@ -122,7 +122,7 @@ $(window).load(function(){
                 <div id="annotations" class="large-4 columns">
                     <div id="annotationTools">
                         <p><strong>Annotation tools</strong></p>
-                        {% if notes.count == 0 %}
+                        {% if notes.count == 0 and comments.count == 0 %}
                         <p>This image has no annotations yet.</p>
                         {% endif %}
 

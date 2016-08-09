@@ -7,6 +7,7 @@ from django.contrib.contenttypes import generic
 from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
 from django.db import models
 from django.utils.encoding import force_unicode
+from catalogue.templatetags.catalogue_tags import add_special_characters
 
 import hashlib
 
@@ -42,6 +43,8 @@ class WorkComponent(models.Model):
     table_group = ''
 
 
+
+
 #
 class Work(models.Model):
     complete = models.BooleanField(default=False, null=False, blank=False, )
@@ -61,6 +64,8 @@ class Work(models.Model):
         sources = Source.objects.filter(sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=self).distinct()
         return sources
 
+    def getSpecialLabel(self):
+        return add_special_characters(self.label)
 #
 class Opus(models.Model):
     opusno = models.IntegerField(null=True, blank=True, )
@@ -690,6 +695,7 @@ class BarSpine(models.Model):
     source = models.ForeignKey('Source', blank=False, null=False, default=1 )
     implied=models.IntegerField(null=True, blank=True,default=0 )
 
+BarSpine._meta.ordering=["orderno","source"]
 
 def country_unicode(self):
     return self.country

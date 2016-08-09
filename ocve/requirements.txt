@@ -3,3 +3,4 @@ django-tinymce
 xlwt
 xlrd
 progressbar
+numpy
