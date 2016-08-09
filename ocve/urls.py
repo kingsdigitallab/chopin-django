@@ -6,12 +6,11 @@ from dbmi.uploader import newsourcefiles, posth
 from views import *
 
 from haystack.forms import FacetedSearchForm
-from haystack.query import SearchQuerySet
+from haystack.query import SearchQuerySet, SQ
 from catalogue.views import FacetedSearchView
 
 
-sqs = SearchQuerySet().order_by(
-    '-_score').order_by('sort_order').facet('document')
+sqs = SearchQuerySet().filter(SQ(document='Source') | SQ(document='Opus')).filter(ocve=True).filter(live=True).order_by('orderno').facet('document')
 
 urlpatterns = patterns('',
                        # DBMI
