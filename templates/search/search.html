@@ -39,7 +39,7 @@
                 <ul>
                     {% for term in facets.fields|get_item:facet %}
                     <li>
-                        <a href="{{ request.get_full_path }}&amp;selected_facets=document:{{ term.0|urlencode }}">
+                        <a href="{{ request.get_full_path }}&amp;selected_facets={{ facet }}:{{ term.0|urlencode }}">
                             {{ term.0 }}
                             <span class="label radius right">{{ term.1 }}</span>
                         </a>
@@ -71,12 +71,11 @@
             class="label secondary" href="{{ request.get_full_path }}&amp;selected_facets=document:{{ result.document|urlencode }}">
             {{ result.document  }}
         </a>
-        <a href="{% if BASE_URL != 'aco' %}/{{ BASE_URL}}{% endif %}{{ result.url }}">{{ result.title|safe|add_special_characters }}</a>
+        <a href="{% if 'aco' not in result.resource %}/{% if BASE_URL in result.resource %}{{ BASE_URL}}{% else%}{{ result.resource.0 }}{% endif %}{% endif %}{{ result.url }}">{{ result.title|safe|add_special_characters }}</a>
         {% if not result.document = 'Impression' and not result.document = 'General information' %}
         <p>
-        {% autoescape off %}
             {% highlight result.text  with query html_tag 'strong' max_length 120 %}
-        {% endautoescape %}
+
         </p>
         {% endif %}
     </li>
