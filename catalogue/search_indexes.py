@@ -8,6 +8,7 @@ class ImpressionIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     document = indexes.FacetCharField(default='Impression')
     title = indexes.CharField(boost=100)
+    resource =indexes.FacetMultiValueField(default=["ACO"])
     sort_order = indexes.FloatField()
     url = indexes.CharField(model_attr='url', indexed=False, null=True)
 
@@ -31,6 +32,7 @@ class ImpressionIndex(indexes.SearchIndex, indexes.Indexable):
 class LibraryIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     document = indexes.FacetCharField(default='Library')
+    resource =indexes.FacetMultiValueField(default=["ACO"])
     title = indexes.CharField()
     url = indexes.CharField(model_attr='url', indexed=False, null=True)
 
@@ -48,6 +50,7 @@ class PageIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     document = indexes.FacetCharField(default='Contextual material')
     title = indexes.CharField()
+    resource =indexes.FacetMultiValueField(default=["ACO"])
     url = indexes.CharField(model_attr='url', indexed=False, null=True)
 
     def get_model(self):
@@ -72,6 +75,7 @@ class PageIndex(indexes.SearchIndex, indexes.Indexable):
 class PublisherIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     document = indexes.FacetCharField(default='Publisher')
+    resource =indexes.FacetMultiValueField(default=["ACO"])
     title = indexes.CharField()
     url = indexes.CharField(model_attr='url', indexed=False, null=True)
 
@@ -89,6 +93,7 @@ class WorkIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True)
     document = indexes.FacetCharField(default='General information')
     title = indexes.CharField(model_attr='title')
+    resource =indexes.FacetMultiValueField(default=["ACO"])
     sort_order = indexes.FloatField(model_attr='sort_order')
     url = indexes.CharField(model_attr='url', indexed=False, null=True)
 

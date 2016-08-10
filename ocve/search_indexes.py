@@ -15,6 +15,7 @@ class WorkIndex(indexes.SearchIndex, indexes.Indexable):
     ocve = indexes.BooleanField()
     cfeo = indexes.BooleanField()
     live = indexes.BooleanField()
+    resource =indexes.FacetMultiValueField()
     title = indexes.CharField()
 
     def prepare_title(self, obj):
@@ -29,9 +30,17 @@ class WorkIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare_live(self,obj):
         return Work.objects.filter(id=obj.id,workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__live=True).exists()
 
+    def prepare_resource(self, obj):
+        resources=[]
+        if self.ocve:
+            resources.append("OCVE")
+        if self.cfeo:
+            resources.append("CFEO")
+        return resources
+
+
     def prepare_url(self, obj):
-        mode = "ocve"
-        return "/" + mode + "/browse/work/" + str(obj.id) + "/"
+        return "/browse/work/" + str(obj.id) + "/"
 
     def get_model(self):
         return Work
@@ -40,7 +49,7 @@ class WorkIndex(indexes.SearchIndex, indexes.Indexable):
         return [g.genre for g in Genre.objects.filter(work__id=obj.id).distinct()]
 
     def index_queryset(self, using=None):
-        return self.get_model().objects.filter().order_by('orderno')
+        return self.get_model().objects.order_by('orderno')
 
 
 class SourceIndex(indexes.SearchIndex, indexes.Indexable):
@@ -50,6 +59,7 @@ class SourceIndex(indexes.SearchIndex, indexes.Indexable):
     ocve = indexes.BooleanField(default=False, model_attr="ocve")
     cfeo = indexes.BooleanField(default=False, model_attr="cfeo")
     live = indexes.BooleanField(default=False, model_attr="live")
+    resource =indexes.FacetMultiValueField()
     orderno = indexes.IntegerField(model_attr="orderno")
     url = indexes.CharField(indexed=False, null=True)
     title = indexes.CharField()
@@ -61,13 +71,18 @@ class SourceIndex(indexes.SearchIndex, indexes.Indexable):
             return obj.cfeolabel
 
     def prepare_url(self, obj):
-        mode = "cfeo"
-        if obj.ocve == True:
-            mode = "ocve"
-        return "/" + mode + "/browse/source/" + str(obj.id) + "/"
+        return "/browse/source/" + str(obj.id) + "/"
 
     def get_model(self):
         return Source
 
     def index_queryset(self, using=None):
         return self.get_model().objects.filter(live=True).order_by('orderno')
+
+    def prepare_resource(self, obj):
+        resources=[]
+        if obj.ocve:
+            resources.append("OCVE")
+        if obj.cfeo:
+            resources.append("CFEO")
+        return resources
