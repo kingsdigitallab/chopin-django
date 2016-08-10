@@ -4,8 +4,8 @@
 {{object.genres}}
 {%endif%}
 {%if object.workinformation%}
-{{ object.workinformation.generalinfo |add_special_characters}}
-{{ object.workinformation.relevantmanuscripts |add_special_characters}}
-{{ object.workinformation.analysis |add_special_characters}}
-{{ object.workinformation.OCVE |add_special_characters}}
+{{ object.workinformation.generalinfo |clean}}
+{{ object.workinformation.relevantmanuscripts |clean}}
+{{ object.workinformation.analysis |clean}}
+{{ object.workinformation.OCVE |clean}}
 {% endif%}

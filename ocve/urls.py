@@ -10,7 +10,8 @@ from haystack.query import SearchQuerySet, SQ
 from catalogue.views import FacetedSearchView
 
 
-sqs = SearchQuerySet().filter(SQ(document='Source') | SQ(document='Opus')).filter(ocve=True).filter(live=True).order_by('orderno').facet('document')
+#sqs = SearchQuerySet().filter(SQ(document='Source') | SQ(document='Opus')).filter(ocve=True).filter(live=True).order_by('orderno').facet('document')
+sqs = SearchQuerySet().order_by('orderno').facet('resource').facet('document')
 
 urlpatterns = patterns('',
                        # DBMI
@@ -78,5 +79,5 @@ urlpatterns = patterns('',
                            FacetedSearchView(form_class=FacetedSearchForm,
                                              load_all=True,
                                              searchqueryset=sqs),
-                           name='haystack_search')
+                           name='ocve_haystack_search')
                        )
