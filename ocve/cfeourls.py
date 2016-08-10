@@ -23,7 +23,7 @@ urlpatterns = patterns('',
                        url(r'^browse/workinformation/(?P<id>\d+)/$', cfeoWorkInformation,name='cfeo_workinformation'),
                        url(r'^search/',FacetedSearchView(form_class=FacetedSearchForm,  load_all=True,
                                              searchqueryset=sqs),
-                           name='haystack_search')
+                           name='cfeo_haystack_search')
 
 
 )
