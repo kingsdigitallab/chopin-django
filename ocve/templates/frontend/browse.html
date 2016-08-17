@@ -140,7 +140,7 @@
                 <h1>Browse sources</h1>
 
                 <div class="row">
-                    <div class="large-9 columns">
+                    <div class="large-12 columns">
 
                         <dl class="show-filters">
                             <dt class="filters-header">Selected filters
@@ -155,9 +155,23 @@
 
                         <div id="selectedFilters"></div>
                     </div>
+                </div>
 
+                <div class="updating">
+                    <img id="loading" class="spinner" src="{{ STATIC_URL }}images/spinner.svg" alt="Updating results">
+                </div>
+
+                <div class="clear"></div>
+                <div class="row">
+                    <div class="large-9 columns">
+                        <div id="results-section">
+                            <div id="results">
+
+                            </div>
+                        </div>
+                    </div>
                     <div class="large-3 columns">
-                        <div id="instrumentFilterControl">
+                        <div id="instrumentFilterControl" class="sticky-widget">
                             {% if instruments.count > 1 %}
                                 <a href="#" id="instrumentToggle" data-dropdown="instrumentFilters" aria-controls="instrumentFilters" aria-expanded="false" class="small radius button dropdown right" data-options="is_hover:true; hover_timeout:1000">Filter by instrument</a>
                                 <ul id="instrumentFilters" data-dropdown-content class="f-dropdown" aria-hidden="true">
@@ -173,19 +187,6 @@
                             {% endif %}
                         </div>
                     </div>
-                </div>
-
-                <div class="updating">
-                    <img id="loading" class="spinner" src="{{ STATIC_URL }}images/spinner.svg" alt="Updating results">
-                </div>
-
-                <div class="clear"></div>
-
-                <div id="results-section">
-                    <div id="results">
-
-                    </div>
-                </div>
             </div>
         </div>
     </section>

@@ -65,6 +65,11 @@ a:focus {
     z-index: 0;
 }
 
+.sticky-widget {
+    position: relative;
+    top: 0;
+}
+
 /* comments */
 .comment.panel {
     max-width: 600px;
