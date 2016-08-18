@@ -1302,3 +1302,11 @@ b.top-spacing {
 .source h5 span.label {
     vertical-align: text-top !important;
 }
+
+/** Some media queries **/
+
+@media screen and (max-width: 920px) {
+    .header-search {
+        display: none !important;
+    }
+}

@@ -25,11 +25,30 @@ $(window).load(function(){
             <nav class="tab-bar" role="navigation" data-topbar>
                 <section class="tab-bar-section">
                     <ul class="left inline-list contextual-menu">
-
                         <li>
                             <div class="menu-item">
-                                <a href="{% url 'cfeo_browse' %}"><i class="fa fa-arrow-circle-left"></i> Back to results</a>
+                                <a href="#" data-dropdown="more"><i class="fa fa-bars"></i></a>
                             </div>
+                            <ul id="more" class="f-dropdown" data-dropdown-content>
+                            <li>
+                                <div class="menu-item">
+                                    <a href="{% url 'cfeo_browse' %}"><i class="fa fa-arrow-circle-left"></i> Back to results</a>
+                                </div>
+                            </li>
+                                {% load catalogue_tags %}
+                                {% get_impression_exists achash as impression_exists %}
+                                {% if  impression_exists %}
+                                <li>
+                                    <a href="/aco/catalogue/impression/{{ achash }}/">Catalogue</a>
+                                </li>
+                                {% endif %}
+                                <li>
+                                    <a href="#" class="cfeo-add-to-compare">Add to Compare</a>
+                                </li>
+                                <li class="cfeo-compare">
+                                    <a href="/cfeo/browse/comparepageview">Compare pages</a>
+                                </li>
+                            </ul>
                         </li>
 
                         <li>
@@ -61,32 +80,14 @@ $(window).load(function(){
 
                         <li>
                             <div class="menu-item">
-                            <a href="#" data-dropdown="more">More <i class="fa fa-caret-down"></i></a>
+                                <a href="#" data-dropdown="available-pages">Jump to page <i class="fa fa-caret-down"></i></a>
                             </div>
-                            <ul id="more" class="f-dropdown" data-dropdown-content>
-                                {% load catalogue_tags %}
-                                {% get_impression_exists achash as impression_exists %}
-                                {% if  impression_exists %}
+                            <ul id="available-pages" class="f-dropdown" data-dropdown-content="">
+                                {% for pi in pageimages %}
                                 <li>
-                                    <a href="/aco/catalogue/impression/{{ achash }}/">Catalogue</a>
+                                    <a href="/{{ mode|lower }}/browse/pageview/{{ pi.id }}/">{{ pi.textlabel }}</a>
                                 </li>
-                                {% endif %}
-                                <li>
-                                    <a href="#" data-dropdown="available-pages">Jump to page <i class="fa fa-caret-right"></i></a>
-                                    <ul id="available-pages" class="f-dropdown" data-dropdown-content="">
-                                        {% for pi in pageimages %}
-                                        <li>
-                                            <a href="/{{ mode|lower }}/browse/pageview/{{ pi.id }}/">{{ pi.textlabel }}</a>
-                                        </li>
-                                        {% endfor %}
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a href="#" class="cfeo-add-to-compare">Add to Compare</a>
-                                </li>
-                                <li class="cfeo-compare">
-                                    <a href="/cfeo/browse/comparepageview">Compare pages</a>
-                                </li>
+                                {% endfor %}
                             </ul>
                         </li>
                     </ul>
