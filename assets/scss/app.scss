@@ -1305,8 +1305,14 @@ b.top-spacing {
 
 /** Some media queries **/
 
-@media screen and (max-width: 920px) {
-    .header-search {
-        display: none !important;
+@media #{$small-only} {
+    .footer {
+        background: #000 !important;
     }
 }
+
+// @media screen and (max-width: 600px) {
+//     .footer {
+//         background: #000 !important;
+//     }
+// }
