@@ -52,6 +52,9 @@ a:focus {
 }
 
 #copyright {
+    display: block;
+    clear: both;
+    float: none;
     color: #666;
     font-size: .875rem;
     padding: 1rem 0;
@@ -63,6 +66,10 @@ a:focus {
 
 #pageimage {
     z-index: 0;
+    width: 95%;
+    margin-left: 2.5%;
+    float: left;
+    clear: both;
 }
 
 .sticky-widget {
