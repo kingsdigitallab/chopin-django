@@ -31,9 +31,7 @@ $(window).load(function(){
                             </div>
                             <ul id="more" class="f-dropdown" data-dropdown-content>
                             <li>
-                                <div class="menu-item">
-                                    <a href="{% url 'cfeo_browse' %}"><i class="fa fa-arrow-circle-left"></i> Back to results</a>
-                                </div>
+                                <a href="{% url 'cfeo_browse' %}"><i class="fa fa-arrow-circle-left"></i> Back to results</a>
                             </li>
                                 {% load catalogue_tags %}
                                 {% get_impression_exists achash as impression_exists %}
