@@ -82,7 +82,15 @@ $(window).load(function(){
                         </li>
 
                         <li class="cfeo-compare">
-                            <a href="/cfeo/browse/comparepageview" class="small button expand">Compare pages</a>
+                            <a href="/cfeo/browse/comparepageview" class="small button expand">View compared pages</a>
+                            <p>Preview</p>
+                            {# TODO: Dynamically replace thumbnails with added ones #}
+                            <ul class="small-block-grid-2 compare-thumb">
+                                <li>Left
+                                    <img src="/static/media/images/chopin-placeholder.original.png" alt="Added thumb left"></li>
+                                <li>Right
+                                    <img src="/static/media/images/chopin-placeholder.original.png" alt="Added thumb left"></li>
+                            </ul>
                         </li>
                     </ul>
                 </section>

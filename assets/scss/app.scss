@@ -1014,6 +1014,30 @@ b.top-spacing {
     .side-nav li {
         margin: 0;
     }
+
+    .next {
+        text-align: right;
+    }
+
+    .cfeo-compare {
+        p {
+            padding-top: .5rem;
+            font-style: italic;
+        }
+    }
+
+    .compare-thumb {
+        li {
+            //margin-top: 1rem;
+            padding: .5rem;
+            background: lighten($secondary-color, 3%);
+            border: 1px solid darken($secondary-color, 20%);
+
+            &:last-child {
+                border-left: none;
+            }
+        }
+    }
 }
 
 .tab-bar {
