@@ -21,65 +21,45 @@ $(window).load(function(){
 {% block content %}
 <section class="main content-section page-view">
     <div class="row">
-        <div class="large-12 columns">
-            <nav class="tab-bar" role="navigation" data-topbar>
+        <div class="large-9 large-offset-3 columns">
+            <h4>
+                <a href="#" data-reveal-ajax="/{{ mode|lower }}/browse/workinformation/{{ work.id }}/" title="Work overview" data-reveal-id="opus-info">{{ work.label | add_special_characters }}</a>,
+                <a href="#" data-tooltip data-reveal-id="witness-info" data-reveal-ajax="/{{ mode|lower }}/browse/sourceinformation/{{ source.id }}/" title="Witness overview">{{ source.getAcCode | add_special_characters }}</a>,
+                {{ pageimage.textlabel }}
+            </h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="large-3 columns">
+            <nav class="tab-bar cfeo-sub-nav" role="navigation" data-topbar>
                 <section class="tab-bar-section">
-                    <ul class="left inline-list contextual-menu">
+                    <ul class="side-nav">
                         <li>
-                            <div class="menu-item">
-                                <a href="#" data-dropdown="more"><i class="fa fa-bars"></i></a>
-                            </div>
-                            <ul id="more" class="f-dropdown" data-dropdown-content>
-                            <li>
-                                <a href="{% url 'cfeo_browse' %}"><i class="fa fa-arrow-circle-left"></i> Back to results</a>
-                            </li>
-                                {% load catalogue_tags %}
-                                {% get_impression_exists achash as impression_exists %}
-                                {% if  impression_exists %}
+                            <a href="{% url 'cfeo_browse' %}" class="small button expand"><i class="fa fa-arrow-circle-left"></i> Back to results</a>
+                        </li>
+
+                        <li>
+                            <ul class="button-group even-2">
+                                {% if prev %}
+
                                 <li>
-                                    <a href="/aco/catalogue/impression/{{ achash }}/">Catalogue</a>
+                                    <a href="/{{ mode|lower }}/browse/pageview/{{ prev.id }}/" class="ctrl prev small button">
+                                        <i class="fa fa-caret-left"></i> Prev
+                                    </a>
                                 </li>
                                 {% endif %}
+                                {% if next %}
                                 <li>
-                                    <a href="#" class="cfeo-add-to-compare">Add to Compare</a>
+                                    <a href="/{{ mode|lower }}/browse/pageview/{{ next.id }}/" class="ctrl next small button">
+                                        Next <i class="fa fa-caret-right"></i>
+                                    </a>
                                 </li>
-                                <li class="cfeo-compare">
-                                    <a href="/cfeo/browse/comparepageview">Compare pages</a>
-                                </li>
+                                {% endif %}
                             </ul>
                         </li>
 
                         <li>
-                            <div class="menu-item opus-title">
-                                <a href="#" data-reveal-ajax="/{{ mode|lower }}/browse/workinformation/{{ work.id }}/" title="Work overview" data-reveal-id="opus-info">{{ work.label | add_special_characters }}</a>,
-                                <a href="#" data-tooltip data-reveal-id="witness-info" data-reveal-ajax="/{{ mode|lower }}/browse/sourceinformation/{{ source.id }}/" title="Witness overview">{{ source.getAcCode | add_special_characters }}</a>,
-                                {{ pageimage.textlabel }}
-                            </div>
-                        </li>
-                        <!-- TODO: Bar Ids? -->
-                        {% if prev %}
-                        <li>
-                            <div class="menu-item">
-                                <a href="/{{ mode|lower }}/browse/pageview/{{ prev.id }}/" class="ctrl prev">
-                                    <span class="fa fa-caret-left"></span>
-                                </a>
-                            </div>
-                        </li>
-                        {% endif %}
-                        {% if next %}
-                        <li>
-                            <div class="menu-item">
-                                <a href="/{{ mode|lower }}/browse/pageview/{{ next.id }}/" class="ctrl next">
-                                    <span class="fa fa-caret-right"></span>
-                                </a>
-                            </div>
-                        </li>
-                        {% endif %}
-
-                        <li>
-                            <div class="menu-item">
-                                <a href="#" data-dropdown="available-pages">Jump to page <i class="fa fa-caret-down"></i></a>
-                            </div>
+                            <a href="#" data-dropdown="available-pages" class="small button expand">Jump to page <i class="fa fa-caret-down"></i></a>
                             <ul id="available-pages" class="f-dropdown" data-dropdown-content="">
                                 {% for pi in pageimages %}
                                 <li>
@@ -87,6 +67,22 @@ $(window).load(function(){
                                 </li>
                                 {% endfor %}
                             </ul>
+                        </li>
+
+                        {% load catalogue_tags %}
+                        {% get_impression_exists achash as impression_exists %}
+                        {% if  impression_exists %}
+                        <li>
+                            <a href="/aco/catalogue/impression/{{ achash }}/" class="small button expand">Catalogue</a>
+                        </li>
+                        {% endif %}
+
+                        <li>
+                            <a href="#" class="cfeo-add-to-compare small button expand">Add to Compare</a>
+                        </li>
+
+                        <li class="cfeo-compare">
+                            <a href="/cfeo/browse/comparepageview" class="small button expand">Compare pages</a>
                         </li>
                     </ul>
                 </section>
@@ -107,10 +103,7 @@ $(window).load(function(){
                 </div>
             </nav>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="large-12 columns">
+        <div class="large-9 columns">
             <div id="pageimage">
                 <img src="{{ IIP_URL }}?FIF={{ pageimage.getJP2Path }}&CVT=JPG" height="800" width="600" id="image_one" class="osd-iip">
             </div>

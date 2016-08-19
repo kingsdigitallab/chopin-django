@@ -25,3 +25,4 @@ bower_components
 thumbnails/*
 .hgrc
 .hgignore
+*.original
