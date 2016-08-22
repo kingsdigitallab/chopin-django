@@ -1007,7 +1007,7 @@ b.top-spacing {
         a {
             margin-bottom: 0;
             text-align: left;
-            padding-left: 16px !important;
+            padding-left: 8px !important;
         }
     }
 
@@ -1017,18 +1017,21 @@ b.top-spacing {
 
     .next {
         text-align: right;
+        &.button {
+            padding-right: rem-calc(8) !important;
+        }
     }
 
     .cfeo-compare {
         p {
-            padding-top: .5rem;
+            padding-top: .25rem;
             font-style: italic;
         }
     }
 
     .compare-thumb {
         li {
-            //margin-top: 1rem;
+            // margin-top: 1rem;
             padding: .5rem;
             background: lighten($secondary-color, 3%);
             border: 1px solid darken($secondary-color, 20%);
