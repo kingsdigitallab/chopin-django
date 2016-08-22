@@ -2,15 +2,16 @@ $primary-color: #2a86ad;
 
 /** CFEO Compare */
 .add-to-compare-bar {
+    position: relative;
     display: none;
-    padding: 20px 0;
+    // padding: 20px 0;
     z-index: 998;
 
     .columns {
-        margin-top: 2rem;
+        // margin-top: 2rem;
         z-index: 997;
         a {
-            padding: 0 1rem !important;
+            padding: 1rem !important;
         }
     }
 }
@@ -24,19 +25,21 @@ $primary-color: #2a86ad;
 }
 
 .add-to-compare-bar a:hover {
-    background-color: rgb(212, 212, 212);
+    // background-color: rgb(212, 212, 212);
+    background-color: $primary-color !important;
+    color: #fff !important;
 }
 
 .add-to-compare-notification {
     display: none;
     
     .columns {
-        margin-top: 3rem;
+        // margin-top: 3rem;
         z-index: 996;
     }
 
     .alert-box {
-        padding: 0 1rem !important;
+        padding: 1rem !important;
     }
 
 }
