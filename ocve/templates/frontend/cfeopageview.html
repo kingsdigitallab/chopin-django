@@ -44,14 +44,14 @@ $(window).load(function(){
 
                                 <li>
                                     <a href="/{{ mode|lower }}/browse/pageview/{{ prev.id }}/" class="ctrl prev small button">
-                                        <i class="fa fa-caret-left"></i> Prev
+                                        <i class="fa fa-caret-left"></i> Prev p.
                                     </a>
                                 </li>
                                 {% endif %}
                                 {% if next %}
                                 <li>
                                     <a href="/{{ mode|lower }}/browse/pageview/{{ next.id }}/" class="ctrl next small button">
-                                        Next <i class="fa fa-caret-right"></i>
+                                        Next p. <i class="fa fa-caret-right"></i>
                                     </a>
                                 </li>
                                 {% endif %}
@@ -79,6 +79,21 @@ $(window).load(function(){
 
                         <li>
                             <a href="#" class="cfeo-add-to-compare small button expand">Add to Compare</a>
+
+                            <div class="row add-to-compare-bar" data-page-id="{{pageimage.id}}">
+                                <div class="large-6 columns ">
+                                    <a href="#" data-cookie="left" data-page-id="{{pageimage.id}}">On left</a>
+                                </div>
+                                <div class="large-6 columns ">
+                                    <a href="#" data-cookie="right" data-page-id="{{pageimage.id}}">On right</a>
+                                </div>
+                            </div>
+
+                            <div class="row add-to-compare-notification">
+                                <div class="large-12 columns ">
+                                    <span class="alert-box success"><i class="fa fa-check fa-lg"></i> Added to comparison.</span>
+                                </div>
+                            </div>
                         </li>
 
                         <li class="cfeo-compare">
@@ -95,21 +110,6 @@ $(window).load(function(){
                         </li>
                     </ul>
                 </section>
-
-                <div class="row add-to-compare-bar" data-page-id="{{pageimage.id}}">
-                    <div class="large-6 columns ">
-                        <a href="#" data-cookie="left" data-page-id="{{pageimage.id}}">Compare on left</a>
-                    </div>
-                    <div class="large-6 columns ">
-                        <a href="#" data-cookie="right" data-page-id="{{pageimage.id}}">Compare on right</a>
-                    </div>
-                </div>
-
-                <div class="row add-to-compare-notification">
-                    <div class="large-12 columns ">
-                        <span class="alert-box success">Added to comparison.</span>
-                    </div>
-                </div>
             </nav>
         </div>
         <div class="large-9 columns">
