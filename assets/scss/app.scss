@@ -1374,10 +1374,8 @@ b.top-spacing {
     .footer {
         background: #000 !important;
     }
-}
 
-// @media screen and (max-width: 600px) {
-//     .footer {
-//         background: #000 !important;
-//     }
-// }
+    .tab-bar {
+        position: relative !important;
+    }
+}
