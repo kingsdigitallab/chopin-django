@@ -12,8 +12,12 @@
 <script type="text/javascript" src="{{ STATIC_URL }}vendor/garand-sticky/jquery.sticky.js"></script>
 <script>
 $(window).load(function(){
-  $(".tab-bar").sticky();
-  // $(".add-to-compare-bar").sticky({ topSpacing: 30 });
+    var windowW = $(window).innerWidth();
+
+    if (windowW >= 768) {
+        $(".tab-bar").sticky();
+        // $(".add-to-compare-bar").sticky({ topSpacing: 30 });
+    }
 });
 </script>
 {% endblock header_scripts %}
