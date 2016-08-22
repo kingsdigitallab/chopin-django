@@ -164,7 +164,7 @@ def importXLS(request):
     workid = int(request.POST['workid'])
     work = Work.objects.get(id=workid)
     cursor = connection.cursor()
-    result = "File Uploaded"
+    result = "<h2>Log</h2>"
     if request.method == 'POST':
         try:
             workid = int(request.POST['workid'])
@@ -210,8 +210,8 @@ def importXLS(request):
                                             # bs.save()
                                             spines.append([orderno,cell['bar_id'],orderno,source_id,implied,cell['sourcecomponent_id']])
                                         else:
-                                            result += "<p>Bar at row " + str(row) + " col " + str(
-                                                col) + " not found in source, ignored</p>"
+                                            result += "<p>Bar value "+str(value)+" at row " + str(row) + " col " + str(
+                                                col) + " not found in source "+str(source_id)+", ignored</p>"
                                     except IndexError:
                                         col
                             except ObjectDoesNotExist:
