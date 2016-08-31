@@ -85,6 +85,21 @@ a:focus {
     top: 0;
 }
 
+.instr {
+    button,
+    .button {
+        padding: .5rem 2rem .5rem .5rem;
+
+        &:after {
+            top: 37.5%;
+            padding-right: 0;
+            border: none !important;
+            content: "\f0d7";
+            font-family: "FontAwesome";
+        }
+    }
+}
+
 /* comments */
 .comment.panel {
     max-width: 600px;
@@ -1386,12 +1401,8 @@ b.top-spacing {
 
 /** Some media queries **/
 
-@media #{$small-only} {
-    .footer {
-        background: #000 !important;
-    }
-
-    .tab-bar {
-        position: relative !important;
-    }
-}
+// @media #{$small-only} {
+//     .pageview-sub-nav {
+//         position: relative !important;
+//     }
+// }

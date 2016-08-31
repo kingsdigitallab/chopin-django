@@ -916,6 +916,13 @@ $(document).ready(function() {
   /* Sticky widget for filtering by instrument
   **/
 
+  $(window).resize(function () {
+      var viewportWidth = $(window).width();
+      if (viewportWidth < 641) {
+              $(".sticky-widget").removeClass("sticky-widget");
+      }
+  });
+
   var stickySidebar = $('.sticky-widget');
 
   if (stickySidebar.length > 0) { 
