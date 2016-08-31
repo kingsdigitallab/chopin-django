@@ -9,17 +9,6 @@
 {% endblock custom_stylesheets %}
 
 {% block header_scripts %}
-<script type="text/javascript" src="{{ STATIC_URL }}vendor/garand-sticky/jquery.sticky.js"></script>
-<script>
-$(window).load(function(){
-    var windowW = $(window).innerWidth();
-
-    if (windowW >= 768) {
-        $(".tab-bar").sticky();
-        // $(".add-to-compare-bar").sticky({ topSpacing: 30 });
-    }
-});
-</script>
 {% endblock header_scripts %}
 
 {% block content %}
@@ -35,85 +24,83 @@ $(window).load(function(){
     </div>
     <div class="row">
         <div class="large-3 columns">
-            <nav class="tab-bar cfeo-sub-nav" role="navigation" data-topbar>
-                <section class="tab-bar-section">
-                    <ul class="side-nav">
-                        <li>
-                            <a href="{% url 'cfeo_browse' %}" class="small button expand"><i class="fa fa-arrow-circle-left"></i> Back to results</a>
-                        </li>
+            <nav class="pageview-sub-nav sticky-widget" role="navigation">
+                <ul class="side-nav">
+                    <li>
+                        <a href="{% url 'cfeo_browse' %}" class="small button expand"><i class="fa fa-arrow-circle-left"></i> Back to results</a>
+                    </li>
 
-                        <li>
-                            <ul class="button-group even-2">
-                                {% if prev %}
+                    <li>
+                        <ul class="button-group even-2">
+                            {% if prev %}
 
-                                <li>
-                                    <a href="/{{ mode|lower }}/browse/pageview/{{ prev.id }}/" class="ctrl prev small button">
-                                        <i class="fa fa-caret-left"></i> Prev
-                                    </a>
-                                </li>
-                                {% endif %}
-                                {% if next %}
-                                <li>
-                                    <a href="/{{ mode|lower }}/browse/pageview/{{ next.id }}/" class="ctrl next small button">
-                                        Next <i class="fa fa-caret-right"></i>
-                                    </a>
-                                </li>
-                                {% endif %}
-                            </ul>
-                        </li>
+                            <li>
+                                <a href="/{{ mode|lower }}/browse/pageview/{{ prev.id }}/" class="ctrl prev small button">
+                                    <i class="fa fa-caret-left"></i> Prev
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% if next %}
+                            <li>
+                                <a href="/{{ mode|lower }}/browse/pageview/{{ next.id }}/" class="ctrl next small button">
+                                    Next <i class="fa fa-caret-right"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </li>
 
-                        <li>
-                            <a href="#" data-dropdown="available-pages" class="small button expand">Jump to page <i class="fa fa-caret-down"></i></a>
-                            <ul id="available-pages" class="f-dropdown" data-dropdown-content="">
-                                {% for pi in pageimages %}
-                                <li>
-                                    <a href="/{{ mode|lower }}/browse/pageview/{{ pi.id }}/">{{ pi.textlabel }}</a>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </li>
+                    <li>
+                        <a href="#" data-dropdown="available-pages" class="small button expand">Jump to page <i class="fa fa-caret-down"></i></a>
+                        <ul id="available-pages" class="f-dropdown" data-dropdown-content="">
+                            {% for pi in pageimages %}
+                            <li>
+                                <a href="/{{ mode|lower }}/browse/pageview/{{ pi.id }}/">{{ pi.textlabel }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
 
-                        {% load catalogue_tags %}
-                        {% get_impression_exists achash as impression_exists %}
-                        {% if  impression_exists %}
-                        <li>
-                            <a href="/aco/catalogue/impression/{{ achash }}/" class="small button expand">Catalogue</a>
-                        </li>
-                        {% endif %}
+                    {% load catalogue_tags %}
+                    {% get_impression_exists achash as impression_exists %}
+                    {% if  impression_exists %}
+                    <li>
+                        <a href="/aco/catalogue/impression/{{ achash }}/" class="small button expand">Catalogue</a>
+                    </li>
+                    {% endif %}
 
-                        <li>
-                            <a href="#" class="cfeo-add-to-compare small button expand">Add to Compare</a>
+                    <li>
+                        <a href="#" class="cfeo-add-to-compare small button expand">Add to Compare</a>
 
-                            <div class="row add-to-compare-bar" data-page-id="{{pageimage.id}}">
-                                <div class="large-6 columns ">
-                                    <a href="#" data-cookie="left" data-page-id="{{pageimage.id}}">On left</a>
-                                </div>
-                                <div class="large-6 columns ">
-                                    <a href="#" data-cookie="right" data-page-id="{{pageimage.id}}">On right</a>
-                                </div>
+                        <div class="row add-to-compare-bar" data-page-id="{{pageimage.id}}">
+                            <div class="large-6 columns ">
+                                <a href="#" data-cookie="left" data-page-id="{{pageimage.id}}">On left</a>
                             </div>
-
-                            <div class="row add-to-compare-notification">
-                                <div class="large-12 columns ">
-                                    <span class="alert-box success"><i class="fa fa-check fa-lg"></i> Added to comparison.</span>
-                                </div>
+                            <div class="large-6 columns ">
+                                <a href="#" data-cookie="right" data-page-id="{{pageimage.id}}">On right</a>
                             </div>
-                        </li>
+                        </div>
 
-                        <li class="cfeo-compare">
-                            <a href="/cfeo/browse/comparepageview" class="small button expand success">View compared pages</a>
-                            <p>Preview<br>
-                            <strong>[This is static content!]</strong></p>
-                            {# TODO: Dynamically replace thumbnails with added ones #}
-                            <ul class="small-block-grid-2 compare-thumb">
-                                <li>Left
-                                    <img src="/static/media/images/chopin-placeholder.original.png" alt="Added thumb left"></li>
-                                <li>Right
-                                    <img src="/static/media/images/chopin-placeholder.original.png" alt="Added thumb left"></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </section>
+                        <div class="row add-to-compare-notification">
+                            <div class="large-12 columns ">
+                                <span class="alert-box success"><i class="fa fa-check fa-lg"></i> Added to comparison.</span>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="cfeo-compare">
+                        <a href="/cfeo/browse/comparepageview" class="small button expand success">View compared pages</a>
+                        <p>Preview<br>
+                        <strong>[This is static content!]</strong></p>
+                        {# TODO: Dynamically replace thumbnails with added ones #}
+                        <ul class="small-block-grid-2 compare-thumb">
+                            <li>Left
+                                <img src="/static/media/images/chopin-placeholder.original.png" alt="Added thumb left"></li>
+                            <li>Right
+                                <img src="/static/media/images/chopin-placeholder.original.png" alt="Added thumb left"></li>
+                        </ul>
+                    </li>
+                </ul>
             </nav>
         </div>
         <div class="large-9 columns">

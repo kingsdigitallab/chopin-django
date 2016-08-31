@@ -72,13 +72,13 @@ a:focus {
     margin: 0 !important;
 }
 
-#pageimage {
-    z-index: 0;
-    width: 95%;
-    margin-left: 2.5%;
-    float: left;
-    clear: both;
-}
+// #pageimage {
+//     z-index: 0;
+//     width: 95%;
+//     margin-left: 2.5%;
+//     float: left;
+//     clear: both;
+// }
 
 .sticky-widget {
     position: relative;
@@ -107,7 +107,7 @@ a:focus {
 
 /* General styles and AC-specific styles */
 .main.content-section {
-    overflow: hidden;
+    // overflow: hidden;
     margin-top: rem-calc(20px);
     a.exit-off-canvas {
         box-shadow: none !important;
@@ -986,7 +986,28 @@ b.top-spacing {
 /* contextual menus */
 /* bar menu */
 
-.cfeo-sub-nav {
+.side-nav {
+    // background: $primary-color;
+
+    .f-dropdown {
+        z-index: 1000;
+
+        li {
+            margin: 0 !important;
+            border-bottom: 1px solid #d8d8d8;
+
+            &:first-child {
+                padding: 0 !important;
+            }
+
+            a {
+                padding: 10px !important;
+            }
+        }
+    }
+}
+
+.pageview-sub-nav {
     display: block;
     background: #fff;
     margin: 0;
@@ -1011,10 +1032,6 @@ b.top-spacing {
         }
     }
 
-    .side-nav li {
-        margin: 0;
-    }
-
     .next {
         text-align: right;
         &.button {
@@ -1031,7 +1048,6 @@ b.top-spacing {
 
     .compare-thumb {
         li {
-            // margin-top: 1rem;
             padding: .5rem;
             background: lighten($secondary-color, 3%);
             border: 1px solid darken($secondary-color, 20%);
