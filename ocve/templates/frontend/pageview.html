@@ -10,98 +10,88 @@
 {% endblock custom_stylesheets %}
 
 {% block header_scripts %}
-<script type="text/javascript" src="{{ STATIC_URL }}vendor/garand-sticky/jquery.sticky.js"></script>
-<script>
-$(window).load(function(){
-  $(".tab-bar").sticky();
-  $(".fixed-image").sticky({ topSpacing: 50, bottomSpacing: 180 });
-});
-</script>
 {% endblock header_scripts %}
 
 {% block content %}
 <section class="main content-section page-view">
     <div class="row">
+        <div class="large-3 columns">
+            <p>
+                <a href="#" onclick="$(document).foundation('joyride', 'start');" title="Help text">
+                    <i class="fa fa-question-circle"></i> Help
+                </a>
+            </p>
+        </div>
+        <div class="large-9 columns">
+            <h4>
+                <div class="opus-title">
+                    {% if workinfoexists %}<a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview" id="zero">{{ work.label | add_special_characters }}</a>{% else %}{{ work.label | add_special_characters }}{% endif %},
+                    <a href="#" data-reveal-id="witness-info" data-reveal-ajax="/ocve/browse/sourceinformation/{{ source.id }}/" title="Witness overview" id="zerob">{{ source.getAcCode | add_special_characters }}</a>,
+                    {{ pageimage.textlabel | add_special_characters}}
+                </div>
+            </h4>
+        </div>
+    </div>
+    <div class="row">
         <div class="large-12 columns">
             <div id="messages">
                 {% include 'frontend/messages.html' %}
             </div>
+        </div>
 
-            <nav class="tab-bar">
-                <section class="tab-bar-section">
-                    <ul class="right inline-list">
+        <div class="large-3 columns">
+            <nav class="pageview-sub-nav sticky-widget">
+                    <ul class="side-nav">
                         <li>
-                            <a href="#" onclick="$(document).foundation('joyride', 'start');" title="Help text">
-                                <i class="fa fa-question-circle help"></i>
-                            </a>
-                        </li>
-                    </ul>
-                    <ul class="left inline-list contextual-menu">
-                        <li>
-                            <div class="menu-item">
-                                <a href="{% url 'ocve_browse' %}"><i class="fa fa-arrow-circle-left"></i> Back to results</a>
-                            </div>
+                            <a href="{% url 'ocve_browse' %}" class="small button expand"><i class="fa fa-arrow-circle-left"></i> Back to results</a>
                         </li>
 
                         <li>
-                            <div class="menu-item opus-title">
-                                {% if workinfoexists %}<a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview" id="zero">{{ work.label | add_special_characters }}</a>{% else %}{{ work.label | add_special_characters }}{% endif %},
-                                <a href="#" data-reveal-id="witness-info" data-reveal-ajax="/ocve/browse/sourceinformation/{{ source.id }}/" title="Witness overview" id="zerob">{{ source.getAcCode | add_special_characters }}</a>,
-                                {{ pageimage.textlabel | add_special_characters}}
-                            </div>
+                            <ul class="button-group even-2">
+                                {% if prev %}
+                                <li id="uno">
+                                    <a href="/{{ mode|lower }}/browse/pageview/{{ prev.id }}/" class="ctrl prev small button"><i class="fa fa-caret-left"></i> Prev</a>
+                                </li>
+                                {% endif %}
+
+                                {% if next %}
+                                <li id="due">
+                                    <a href="/{{ mode|lower }}/browse/pageview/{{ next.id }}/" class="ctrl next small button">Next <i class="fa fa-caret-right"></i></a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+
+                        <li id="tre">
+                            <a href="#" data-dropdown="available-pages" class="small button expand">Jump to page <i class="fa fa-caret-down"></i></a>
+                            <ul id="available-pages" class="f-dropdown" data-dropdown-content="">
+                                {% for pi in pageimages %}
+                                <li>
+                                    <a href="/{{ mode|lower }}/browse/pageview/{{ pi.id }}/">{{ pi.textlabel | add_special_characters }}</a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+
+                        <li id="quattro">
+                            {% if view == 'annotations' %}
+                            <a href="?view=full" class="small button expand">Hide annotations</a>
+                            {% else %}
+                            <a  href="?view=annotations" class="small button expand">Annotations</a>
+                            {% endif %}
                         </li>
 
                         {% get_impression_exists achash as impression_exists %}
                         {% if  impression_exists %}
                         <li>
-                            <div class="menu-item">
-                                <a href="/aco/catalogue/impression/{{ achash }}/">Catalogue</a>
-                            </div>
+                            <a href="/aco/catalogue/impression/{{ achash }}/" class="small button expand">Catalogue</a>
                         </li>
                         {% endif %}
-
-                        {% if prev %}
-                        <li id="uno">
-                            <div class="menu-item">
-                                <a href="/{{ mode|lower }}/browse/pageview/{{ prev.id }}/" class="ctrl prev"><span class="fa fa-caret-left"></span></a>
-                            </div>
-                        </li>
-                        {% endif %}
-
-                        {% if next %}
-                        <li id="due">
-                            <div class="menu-item">
-                                <a href="/{{ mode|lower }}/browse/pageview/{{ next.id }}/" class="ctrl next"><span class="fa fa-caret-right"></span></a>
-                            </div>
-                        </li>
-                        {% endif %}
-
-                        <li id="tre">
-                            <div class="menu-item">
-                                <a href="#" data-dropdown="available-pages">Jump to page <i class="fa fa-caret-down"></i></a>
-                                <ul id="available-pages" class="f-dropdown" data-dropdown-content="">
-                                    {% for pi in pageimages %}
-                                    <li>
-                                        <a href="/{{ mode|lower }}/browse/pageview/{{ pi.id }}/">{{ pi.textlabel | add_special_characters }}</a>
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </li>
-
-                        <li id="quattro">
-                            <div class="menu-item">
-                                {% if view == 'annotations' %}
-                                <a href="?view=full">Hide annotations</a>
-                                {% else %}
-                                <a  href="?view=annotations">Annotations</a>
-                                {% endif %}
-                            </div>
-                        </li>
                     </ul>
-                </section>
             </nav>
+        </div>
 
+        <div class="large-9 columns">
             <div class="row">
                 {% if view != 'annotations' %}
                 <div class="large-12 columns">
@@ -173,8 +163,6 @@ $(window).load(function(){
             </div>
         </div>
     </div>
-
-
 </section>
 {% endblock %}
 
