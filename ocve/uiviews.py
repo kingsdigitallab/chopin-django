@@ -284,6 +284,14 @@ def ocvePageImageview(request, id,selectedregionid=0):
     mode = "OCVE"
     noteURL = "/ocve/getAnnotationRegions/" + id + "/"
     regionURL = "/ocve/getBarRegions/" + id + "/"
+    template="frontend/pageview.html"
+
+    try:
+        useol3 = int(request.GET['ol3'])
+        if useol3 == 1:
+            template = "frontend/ol3-pageview.html"
+    except MultiValueDictKeyError:
+        pass
 
     view = request.GET.get('view')
 
@@ -336,7 +344,7 @@ def ocvePageImageview(request, id,selectedregionid=0):
 
     request.session['page_image'] = id
 
-    return render_to_response('frontend/pageview.html', {
+    return render_to_response(template, {
         'workinfoexists':workinfoexists,
         'selectedregionid':selectedregionid,
         'achash': achash, 'annotationForm': annotationForm, 'notes': notes,
