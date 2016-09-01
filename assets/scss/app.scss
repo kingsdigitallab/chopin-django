@@ -86,6 +86,11 @@ a:focus {
     height: 100%;
 }
 
+#image_one,
+#image_two {
+    width: 100% !important;
+}
+
 .sticky-widget {
     position: relative;
     top: 0;
