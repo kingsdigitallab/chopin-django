@@ -72,13 +72,19 @@ a:focus {
     margin: 0 !important;
 }
 
-// #pageimage {
-//     z-index: 0;
-//     width: 95%;
-//     margin-left: 2.5%;
-//     float: left;
-//     clear: both;
-// }
+#pageimage {
+    z-index: 0;
+    // width: 95%;
+    // margin-left: 2.5%;
+    float: left;
+    clear: both;
+}
+
+.osd-iip {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
 
 .sticky-widget {
     position: relative;

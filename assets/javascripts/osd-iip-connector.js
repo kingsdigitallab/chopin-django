@@ -60,7 +60,9 @@ function imgToOSD()
 		jQuery('<div/>', {
 		    id: $(this).attr("id"),
 			class: $(this).attr("class"),
-			// style: 'height: ' + height + '; width: ' + width + ';' // Removed style because it messes up the responsiveness, it only works for large screens
+			style: 'height: ' + height + '; width: ' + width + ';'	// This messes up responsiveness,
+																	// but if removed it collapse and
+																	// doesn't show anything
 		}).insertAfter(this);
 
 		// Remove the img element
