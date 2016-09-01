@@ -4,7 +4,12 @@
     <title>Import Result</title>
 </head>
 <body>
-<h1>{{ result }}</h1>
-Return to <a href="/ocve/editspine/{{ work.id }}/">{{ work }}</a>
+<h1>Import result</h1>
+{% autoescape off %}
+{{ result }}
+{% endautoescape %}
+<p>
+<h4>Return to <a href="/ocve/editspine/{{ work.id }}/">{{ work }}</a></h4>
+</p>
 </body>
 </html>

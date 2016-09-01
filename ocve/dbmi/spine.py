@@ -61,7 +61,7 @@ def exportXLS(request, id):
         mvtFormatIndex = 0
         curSourceComponent = 0
         #Write all spines for source
-        sql="SELECT DISTINCT ocve_bar.barlabel,ocve_barspine.bar_id,ocve_barspine.orderno,ocve_barspine.source_id,ocve_barspine.implied,ocve_barspine.sourcecomponent_id FROM ocve_bar,ocve_barspine where ocve_bar.id=ocve_barspine.bar_id and source_id="+str(s.id)
+        sql="SELECT DISTINCT ocve_bar.barlabel,ocve_barspine.bar_id,ocve_barspine.orderno,ocve_barspine.source_id,ocve_barspine.implied,ocve_barspine.sourcecomponent_id FROM ocve_bar,ocve_barspine where ocve_bar.id=ocve_barspine.bar_id and source_id="+str(s.id)+" order by ocve_barspine.orderno"
         cursor.execute(sql)
         for row in cursor.fetchall():
             bar=row[0]
@@ -153,8 +153,10 @@ def getCellFromMap(barvalue, implied, barmap, lastindex):
     startIndex=0
     for index in range(startIndex,len(barmap)):
         cell= barmap[index]
-        if cell['barlabel'] == barvalue and cell['assigned'] == False:
-            cell['assigned'] = True
+        if cell['barlabel'] == barvalue and (cell['assigned'] == False or implied == 1):
+            #Don't count as assigned if implied
+            if implied == 0:
+                cell['assigned'] = True
             return [index, cell]
     return None
 
@@ -164,7 +166,7 @@ def importXLS(request):
     workid = int(request.POST['workid'])
     work = Work.objects.get(id=workid)
     cursor = connection.cursor()
-    result = "File Uploaded"
+    result = "<h2>Log</h2>"
     if request.method == 'POST':
         try:
             workid = int(request.POST['workid'])
@@ -210,8 +212,8 @@ def importXLS(request):
                                             # bs.save()
                                             spines.append([orderno,cell['bar_id'],orderno,source_id,implied,cell['sourcecomponent_id']])
                                         else:
-                                            result += "<p>Bar at row " + str(row) + " col " + str(
-                                                col) + " not found in source, ignored</p>"
+                                            result += "<p>Bar value "+str(value)+" at row " + str(row) + " col " + str(
+                                                col) + " not found in source "+str(source_id)+", ignored</p>"
                                     except IndexError:
                                         col
                             except ObjectDoesNotExist:
