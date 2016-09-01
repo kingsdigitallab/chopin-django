@@ -20,7 +20,6 @@ import_pdf
 pdfs
 .idea/*
 testupload/*
-@material
 bower_components
 thumbnails/*
 .hgrc
