@@ -61,7 +61,7 @@ def exportXLS(request, id):
         mvtFormatIndex = 0
         curSourceComponent = 0
         #Write all spines for source
-        sql="SELECT DISTINCT ocve_bar.barlabel,ocve_barspine.bar_id,ocve_barspine.orderno,ocve_barspine.source_id,ocve_barspine.implied,ocve_barspine.sourcecomponent_id FROM ocve_bar,ocve_barspine where ocve_bar.id=ocve_barspine.bar_id and source_id="+str(s.id)
+        sql="SELECT DISTINCT ocve_bar.barlabel,ocve_barspine.bar_id,ocve_barspine.orderno,ocve_barspine.source_id,ocve_barspine.implied,ocve_barspine.sourcecomponent_id FROM ocve_bar,ocve_barspine where ocve_bar.id=ocve_barspine.bar_id and source_id="+str(s.id)+" order by ocve_barspine.orderno"
         cursor.execute(sql)
         for row in cursor.fetchall():
             bar=row[0]
@@ -153,8 +153,10 @@ def getCellFromMap(barvalue, implied, barmap, lastindex):
     startIndex=0
     for index in range(startIndex,len(barmap)):
         cell= barmap[index]
-        if cell['barlabel'] == barvalue and cell['assigned'] == False:
-            cell['assigned'] = True
+        if cell['barlabel'] == barvalue and (cell['assigned'] == False or implied == 1):
+            #Don't count as assigned if implied
+            if implied == 0:
+                cell['assigned'] = True
             return [index, cell]
     return None
 
