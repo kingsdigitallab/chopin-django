@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load staticfiles ocve_tags %}
+{% load staticfiles ocve_tags catalogue_tags %}
 
 {% block meta_title %}View{% if mode == "OCVE" %} OCVE{% else %} CFEO{% endif %}{% endblock %}
 
@@ -25,8 +25,8 @@
         // Authority List arrays for filters
         'works':[0, {{ works|pick:'id'|join:',' }}],
         'workinfos': [0, {{ workinfos|join:',' }}],
-        'work_names': [{{ works|join_and_quote:',' }}],
 
+        'work_names':[{% for w in works %}"{{ w.getSpecialLabel|escapejs }}",{% endfor %}""],
         'genres': [ {{ genres|pick:'id'|join:',' }} ],
         'publishers': [ {{ publishers|pick:'id'|join:',' }} ],
         'years': [ {{ years|join:',' }} ],
@@ -45,11 +45,12 @@
         'defaultFilters': {{defaultFilters | to_json }}
     }
     </script>
-
     <script type="text/javascript" src="{% static 'javascripts/browse.js' %}"></script>
 {% endblock header_scripts %}
 
 {% block content %}
+    
+    
     <section class="main content-section">
         <div class="row">
             <div class="large-3 columns">
@@ -66,7 +67,7 @@
                                     <li>
                                         <a class="ctrl filterCtrl" title="{{ w }}" data-criteria="Work"
                                            data-key="{{ w.id }}"
-                                           href="#">{{ w }}</a>
+                                           href="#">{{ w.label | add_special_characters }}</a>
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -85,7 +86,7 @@
                                         <li>
                                             <a class="ctrl filterCtrl" title="{{ g }}" data-criteria="Genre"
                                                data-key="{{ g.id }}"
-                                               href="#">{{ g }}</a>
+                                               href="#">{{ g.genre | add_special_characters}}</a>
                                         </li>
                                     {% endif %}
                                 {% endfor %}
@@ -139,11 +140,11 @@
                 <h1>Browse sources</h1>
 
                 <div class="row">
-                    <div class="large-9 columns">
+                    <div class="large-12 columns">
 
                         <dl class="show-filters">
                             <dt class="filters-header">Selected filters
-                                <a class="ctrl refresh" href="#" id="filters-refresh"><i class="fa fa-refresh" data-tooltip="" title="Clear all filters"></i>
+                                <a class="ctrl refresh" href="#" id="filters-refresh"><i class="fa fa-refresh" data-tooltip="" title="Start new search"></i>
                                 </a>
                             </dt>
                             <dd id="no-filters" class="no-filters-message">No filters are currently selected: showing all results
@@ -154,9 +155,23 @@
 
                         <div id="selectedFilters"></div>
                     </div>
+                </div>
 
+                <div class="updating">
+                    <img id="loading" class="spinner" src="{{ STATIC_URL }}images/spinner.svg" alt="Updating results">
+                </div>
+
+                <div class="clear"></div>
+                <div class="row">
+                    <div class="large-9 columns">
+                        <div id="results-section">
+                            <div id="results">
+
+                            </div>
+                        </div>
+                    </div>
                     <div class="large-3 columns">
-                        <div id="instrumentFilterControl">
+                        <div id="instrumentFilterControl" class="sticky-widget">
                             {% if instruments.count > 1 %}
                                 <a href="#" id="instrumentToggle" data-dropdown="instrumentFilters" aria-controls="instrumentFilters" aria-expanded="false" class="small radius button dropdown right" data-options="is_hover:true; hover_timeout:1000">Filter by instrument</a>
                                 <ul id="instrumentFilters" data-dropdown-content class="f-dropdown" aria-hidden="true">
@@ -172,19 +187,6 @@
                             {% endif %}
                         </div>
                     </div>
-                </div>
-
-                <div class="updating">
-                    <img id="loading" class="spinner" src="{{ STATIC_URL }}images/spinner.svg" alt="Updating results">
-                </div>
-
-                <div class="clear"></div>
-
-                <div id="results-section">
-                    <div id="results">
-
-                    </div>
-                </div>
             </div>
         </div>
     </section>

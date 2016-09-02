@@ -42,7 +42,7 @@ def newsourceeditor(request, id=0):
         sourcelegacy = SourceLegacy(source=source, cfeoKey=0, witnessKey=0, sourceDesc='', editstatus=EditStatus.objects.get(id=2), mellon=0, needsBarLines=1)
         sourcelegacy.save()
         sourceInformation = SourceInformation(source=source)
-        sourceInformation.sourcecode = newS.sourcecode
+        #sourceInformation.sourcecode = newS.sourcecode
         newS.sourcecreated=source.id
         newS.save()
 
@@ -53,12 +53,12 @@ def newsourceeditor(request, id=0):
     newpages=None
     if newS is not None:
         newpages = NewPageImage.objects.filter(source=newS)
-    if sourceInformation.accode is None:
-        try:
-            accode = AcCode.objects.get(accode=newS.sourcecode)
-        except ObjectDoesNotExist:
-            accode = AcCode.objects.create(accode=newS.sourcecode)
-            accode.save()
+    # if sourceInformation.accode is None:
+    #     try:
+    #         accode = AcCode.objects.get(accode=newS.sourcecode)
+    #     except ObjectDoesNotExist:
+    #         accode = AcCode.objects.create(accode=newS.sourcecode)
+    #         accode.save()
     if accode is not None:
         sourceInformation.accode = accode
         sourceInformation.save()
@@ -206,10 +206,10 @@ def editsourcecomponent(request,sc):
     if comps.count() > 0:
         currentwc=comps[0]
     scf=SourceComponentForm(instance=sc)
-    curinstrument=None
+    curinstrument=Instrument.objects.get(instrument='Piano')
     if Instrument.objects.filter(sourcecomponent=sc).count() > 0:
         curinstrument=Instrument.objects.filter(sourcecomponent=sc)[0]
-    instruments=Instrument.objects.filter(id__gt=2)
+    instruments=Instrument.objects.filter()
     #If changed
         #return existingsourceeditor(request, id)
     return render_to_response('dbmi/sourcecomponent.html',{'sc':sc,'scf':scf,'workcomponents':workcomponents,'currentwc':currentwc,'instruments':instruments,'curinstrument':curinstrument}, context_instance=RequestContext(request))
@@ -438,6 +438,7 @@ def savePage(request):
     is_textlabel=str(request.POST['is_textlabel'])
     if is_textlabel == 'true':
         #Update the text label for a page
+        msg=msg.replace(u'-',u'\u2013')
         spageimage = PageImage.objects.get(id=int(request.POST['id']))
         spageimage.textlabel=msg
         spageimage.save()

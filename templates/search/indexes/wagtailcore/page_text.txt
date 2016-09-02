@@ -1,6 +1,6 @@
 {{ object.title }}
 {% if object.specific.content %}
-{{ object.specific.content|striptags }}
+{{ object.specific.content|striptags|safe }}
 {% else %}
-{{ object.specific.introduction|striptags }}
+{{ object.specific.introduction|striptags|safe }}
 {% endif %}
