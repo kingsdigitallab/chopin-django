@@ -5,6 +5,14 @@ from annotationviews import *
 from dbmi.uploader import newsourcefiles, posth
 from views import *
 
+from haystack.forms import FacetedSearchForm
+from haystack.query import SearchQuerySet, SQ
+from catalogue.views import FacetedSearchView
+
+
+#sqs = SearchQuerySet().filter(SQ(document='Source') | SQ(document='Opus')).filter(ocve=True).filter(live=True).order_by('orderno').facet('document')
+sqs = SearchQuerySet().order_by('orderno').facet('resource').facet('document')
+
 urlpatterns = patterns('',
                        # DBMI
                        (r'^', include('ocve.dbmi.dbmi_urls')),
@@ -15,6 +23,8 @@ urlpatterns = patterns('',
                        (r'^browse/acview/(?P<acHash>[\d|\w]+)/$', acview),
                        (r'^browse/sourcejs/$', sourcejs),
                        url(r'^browse/$', browse, name='ocve_browse'),
+                       url(r'^browse/source/(?P<id>\d+)/$', browse_source, name='ocve_browse_source'),
+                       url(r'^browse/work/(?P<id>\d+)/$', browse_work, name='ocve_browse_work'),
                        url(r'^browse/pageview/(?P<id>\d+)/$',
                            ocvePageImageview, name='ocve_pageview'),
                        (r'^browse/pageview/(?P<id>\d+)/(?P<selectedregionid>\d+)/$',
@@ -62,6 +72,12 @@ urlpatterns = patterns('',
 
                        # User account management - required for OCVE UI
                        (r'^accounts/profile/$', user_profile),
+                       (r'^accounts/login-page/$', login_page),
                        (r'^accounts/',
                         include('registration.backends.default.urls')),
+                       url(r'^search/',
+                           FacetedSearchView(form_class=FacetedSearchForm,
+                                             load_all=True,
+                                             searchqueryset=sqs),
+                           name='ocve_haystack_search')
                        )

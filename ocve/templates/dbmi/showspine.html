@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Spine Editor (Test mode)</title>
+    <title>Spine Editor</title>
     <style type="text/css">
         .barList{
             list-style:none;
@@ -23,11 +23,11 @@
 <h1>{% if work != None %}{{ work.label }}{% else %}Posthumous{% endif %}</h1>
 <ul class="barList">
     {% if prev > 0 %}
-    <li><a href="spine?work_id={% if work != None %}{{ work.id }}{% else %}posthumous{% endif %}&orderNo={{ prev }}">{{ prev }}</a></li>
+    <li><a href="spine?work_id={% if work != None %}{{ work.id }}{% else %}posthumous{% endif %}&orderno={{ prev }}">{{ prev }}</a></li>
     {% endif %}
-    <li>Spine {{ orderNo}}</li>
+    <li>Spine {{ orderno}}</li>
     {% if next > 0 %}
-        <li><a href="spine?work_id={% if work != None %}{{ work.id }}{% else %}posthumous{% endif %}&orderNo={{ next }}">{{ next }}</a></li>
+        <li><a href="spine?work_id={% if work != None %}{{ work.id }}{% else %}posthumous{% endif %}&orderno={{ next }}">{{ next }}</a></li>
     {% endif %}
 </ul>
 <a href="/ocve/editspine/{% if work != None %}{{ work.id }}{% else %}posthumousspine{% endif %}/">Return to Spine overview </a>
@@ -37,7 +37,9 @@
         <span>
         {{ r.getSource.getAcCode }} bar {{ r.br.getHighestBar.barlabel }}</span>
             <a href="editbars/{{ r.pi.id}}/">
-            <img title="{{ r.getSource.label }} page {{ r.pi.page.label}}"  border align="0" src="{{ IMAGE_SERVER_URL }}?FIF={{ r.getURL }}"/>
+                {% for url in r.getBarImageURL %}
+            <img title="{{ r.getSource.label }} page {{ r.pi.page.label}}"  border align="0" src="{{ IMAGE_SERVER_URL }}?FIF={{ url }}"/>
+                    {% endfor %}
             </a>
     </li>
 {% endfor %}

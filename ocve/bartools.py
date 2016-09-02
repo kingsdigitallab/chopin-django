@@ -4,10 +4,10 @@ __author__ = 'Elliot'
 from models import *
 from django.utils.datastructures import MultiValueDictKeyError
 from django.conf import settings
-from django.db import connections
+from django.db import connection
 
 def mergeBarNumbers():
-    cursor = connections['ocve_db'].cursor()
+    cursor = connection.cursor()
     for x in range(0, 1500):
         bars= Bar.objects.filter(barlabel=x).order_by('id')
         master=None
@@ -109,8 +109,10 @@ class BarRegionGeo:
     def __init__(self, br, rx, ry, w, h):
         self.x1 = (br.x * rx)
         self.x2 = ((br.x + br.width) * rx)
-        self.y1 = ((br.y + br.height) * ry) * -1
-        self.y2 = (br.y * ry) * -1
+        self.y1 = h - ((br.y + br.height) * ry)
+        self.y2 = h - (br.y * ry)
+        # self.y1 = ((br.y + br.height) * ry) * -1
+        # self.y2 = (br.y * ry) * -1
         self.id = br.id
         self.anomaly = br.anomaly
         barid=''
@@ -157,14 +159,7 @@ class BarRegionThumbnail:
     def getURL(self,initalparams):
             url= self.pi.getJP2Path()
             urls=[]
-            #Checking for bars split across systems, add them to the range
-            if Bar.objects.filter(barregion=self.br,barlabel__contains='i').exists():
-                extraRegions=BarRegion.objects.filter(bar__barnumber=self.br.getLowestBarNumber(),pageimage=self.br.pageimage)
-                if self.range is not None:
-                    concatlist=list(extraRegions)+list(self.range[1:])
-                    self.range=concatlist
-                else:
-                    self.range=extraRegions
+
 
             if self.range is not None:
                 #Bar range, return multiple urls
@@ -223,10 +218,23 @@ class BarRegionThumbnail:
             self.annotation=1
         else:
             self.annotation=0
+
         if range is not None and len(range) >0:
             self.range=range
-            self.regionlabel="bs "+str(self.br)+u'\u2013'+str(self.range.last())
         else:
             self.range=None
+
+        #Checking for bars split across systems, add them to the range
+            if Bar.objects.filter(barregion=self.br,barlabel__contains='i').exists():
+                extraRegions=BarRegion.objects.filter(bar__barnumber=self.br.getLowestBarNumber(),pageimage=self.br.pageimage)
+                if self.range is not None:
+                    concatlist=list(extraRegions)+list(self.range[1:])
+                    self.range=concatlist
+                else:
+                    self.range=extraRegions
+
+        if self.range is not None:
+            self.regionlabel="bs "+str(self.br)+u'\u2013'+str(self.range.last())
+        else:
             self.regionlabel="b. "+str(self.br)
         #self.URL = self.getURL()

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load catalogue_tags staticfiles %}
 
-{% block meta_title %}Pageview OCVE{% endblock %}
+{% block meta_title %}OCVE {{ source.getAcCode }} {{ pageimage.textlabel }}{% endblock %}
 
 {% block custom_stylesheets %}
 {{ block.super }}
@@ -45,9 +45,9 @@ $(window).load(function(){
 
                         <li>
                             <div class="menu-item opus-title">
-                                {% if workinfoexists %}<a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview" id="zero">{{ work }}</a>{% else %}{{ work }}{% endif %},
-                                <a href="#" data-reveal-id="witness-info" data-reveal-ajax="/ocve/browse/sourceinformation/{{ source.id }}/" title="Witness overview" id="zerob">{{ source.getAcCode }}</a>,
-                                {{ pageimage.textlabel }}
+                                {% if workinfoexists %}<a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview" id="zero">{{ work.label | add_special_characters }}</a>{% else %}{{ work.label | add_special_characters }}{% endif %},
+                                <a href="#" data-reveal-id="witness-info" data-reveal-ajax="/ocve/browse/sourceinformation/{{ source.id }}/" title="Witness overview" id="zerob">{{ source.getAcCode | add_special_characters }}</a>,
+                                {{ pageimage.textlabel | add_special_characters}}
                             </div>
                         </li>
 
@@ -82,7 +82,7 @@ $(window).load(function(){
                                 <ul id="available-pages" class="f-dropdown" data-dropdown-content="">
                                     {% for pi in pageimages %}
                                     <li>
-                                        <a href="/{{ mode|lower }}/browse/pageview/{{ pi.id }}/">{{ pi.textlabel }}</a>
+                                        <a href="/{{ mode|lower }}/browse/pageview/{{ pi.id }}/">{{ pi.textlabel | add_special_characters }}</a>
                                     </li>
                                     {% endfor %}
                                 </ul>
@@ -122,8 +122,11 @@ $(window).load(function(){
                 <div id="annotations" class="large-4 columns">
                     <div id="annotationTools">
                         <p><strong>Annotation tools</strong></p>
-                        {% if notes.count == 0 %}
+                        {% if notes.count == 0 and comments.count == 0 %}
                         <p>This image has no annotations yet.</p>
+                            {% if user.is_authenticated == False%}
+                                <p><a href="/ocve/accounts/login-page/?next={{ request.path }}">Login</a> to add an annotation. </p>
+                                {% endif %}
                         {% endif %}
 
                         <ul class="no-bullet">
@@ -132,8 +135,10 @@ $(window).load(function(){
                             <li id="sei"><a id="newSquareNoteToggle" href="#"><i class="fa fa-square-o"></i> Create square annotation</a></li>
                             <li id="sette"><a id="newCircleNoteToggle" href="#"><i class="fa fa-circle-thin"></i> Create circle annotation</a></li>
                             {% endif %}
+                        {% if notes.count > 0 or comments.count > 0 %}
                             <li id="otto"><a href="#" class="com"><i class="fa fa-eye"></i> Show/hide commentary on the image</a></li>
                             <li id="nove"><a href="#" class="not"><i class="fa fa-eye"></i> Show/hide notes on the image</a></li>
+                            {% endif %}
                         </ul>
 
                     </div>
@@ -156,9 +161,9 @@ $(window).load(function(){
                                     </tr>
                                 </table>
                                 <button id="createNote" type="submit" class="tiny radius">Save</button>
-                                <input type="hidden" id="annotation_id" name="annotation_id" value="0"/>
-                                <input type="hidden" id="featureid" name="featureid" value="0"/>
-                                <input type="hidden" id="noteBars" name="noteBars" value=""/>
+                                <input type="hidden" id="annotation_id" name="annotation_id" value="0">
+                                <input type="hidden" id="featureid" name="featureid" value="0">
+                                <input type="hidden" id="noteBars" name="noteBars" value="">
                                 <button id="cancelNote" type="submit" class="tiny radius">Cancel</button>
                             </form>
                         </div>
@@ -229,8 +234,8 @@ $(window).load(function(){
 {% block footer_scripts %}
 {{ block.super }}
 <script src="{{ STATIC_URL }}javascripts/slick.min.js" type="text/javascript" charset="utf-8"></script>
-<!--<script src="{{ STATIC_URL }}vendor/OpenLayers/OpenLayers.js"></script>-->
-<script src="http://openlayers.org/en/v3.13.1/build/ol.js"></script>
+<script src="{{ STATIC_URL }}vendor/OpenLayers/OpenLayers.js"></script>
+
 <script type="text/javascript">
     var map, zoomify;
     var alayer, vlayer;

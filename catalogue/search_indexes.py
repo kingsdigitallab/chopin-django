@@ -1,42 +1,16 @@
 from django.contrib.contenttypes.models import ContentType
-
 from haystack import indexes
-
-from models import (Advert, Impression, Library, Publisher, STP,
-                    Work)
-
+from models import Impression, Library, Publisher, Work
 from wagtail.wagtailcore.models import Page
-
-
-import datetime
-
-
-#class AdvertIndex(indexes.SearchIndex, indexes.Indexable):
-    #text = indexes.CharField(document=True, use_template=True)
-    #document = indexes.FacetCharField(default='Advertisement')
-    #title = indexes.CharField()
-    #url = indexes.CharField(indexed=False)
-
-    #def get_model(self):
-        #return Advert
-
-    #def index_queryset(self, using=None):
-        #return self.get_model().objects.filter(
-            #modified__lte=datetime.datetime.now())
-
-    #def prepare_title(self, advert):
-        #return advert.__unicode__()
-
-    #def prepare_url(self, stp):
-        #return stp.url
 
 
 class ImpressionIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     document = indexes.FacetCharField(default='Impression')
     title = indexes.CharField(boost=100)
+    resource =indexes.FacetMultiValueField(default=["ACO"])
     sort_order = indexes.FloatField()
-    url = indexes.CharField(model_attr='url', indexed=False)
+    url = indexes.CharField(model_attr='url', indexed=False, null=True)
 
     def get_model(self):
         return Impression
@@ -58,8 +32,9 @@ class ImpressionIndex(indexes.SearchIndex, indexes.Indexable):
 class LibraryIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     document = indexes.FacetCharField(default='Library')
+    resource =indexes.FacetMultiValueField(default=["ACO"])
     title = indexes.CharField()
-    url = indexes.CharField(model_attr='url', indexed=False)
+    url = indexes.CharField(model_attr='url', indexed=False, null=True)
 
     def get_model(self):
         return Library
@@ -75,6 +50,7 @@ class PageIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     document = indexes.FacetCharField(default='Contextual material')
     title = indexes.CharField()
+    resource =indexes.FacetMultiValueField(default=["ACO"])
     url = indexes.CharField(model_attr='url', indexed=False, null=True)
 
     def get_model(self):
@@ -99,8 +75,9 @@ class PageIndex(indexes.SearchIndex, indexes.Indexable):
 class PublisherIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     document = indexes.FacetCharField(default='Publisher')
+    resource =indexes.FacetMultiValueField(default=["ACO"])
     title = indexes.CharField()
-    url = indexes.CharField(model_attr='url', indexed=False)
+    url = indexes.CharField(model_attr='url', indexed=False, null=True)
 
     def get_model(self):
         return Publisher
@@ -112,32 +89,13 @@ class PublisherIndex(indexes.SearchIndex, indexes.Indexable):
         return publisher.__unicode__()
 
 
-#class STPIndex(indexes.SearchIndex, indexes.Indexable):
-    #text = indexes.CharField(document=True, use_template=True)
-    #document = indexes.FacetCharField(default='Series title page')
-    #title = indexes.CharField()
-    #url = indexes.CharField(indexed=False)
-
-    #def get_model(self):
-        #return STP
-
-    #def index_queryset(self, using=None):
-        #return self.get_model().objects.filter(
-            #modified__lte=datetime.datetime.now())
-
-    #def prepare_title(self, stp):
-        #return stp.__unicode__()
-
-    #def prepare_url(self, stp):
-        #return stp.url
-
-
 class WorkIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True)
     document = indexes.FacetCharField(default='General information')
     title = indexes.CharField(model_attr='title')
+    resource =indexes.FacetMultiValueField(default=["ACO"])
     sort_order = indexes.FloatField(model_attr='sort_order')
-    url = indexes.CharField(model_attr='url', indexed=False)
+    url = indexes.CharField(model_attr='url', indexed=False, null=True)
 
     def get_model(self):
         return Work
