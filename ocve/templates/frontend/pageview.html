@@ -18,7 +18,7 @@
         <div class="large-3 columns">
             <p>
                 <a href="#" onclick="$(document).foundation('joyride', 'start');" title="Help text">
-                    <i class="fa fa-question-circle"></i> Help
+                    <i class="fa fa-question-circle"></i> Take a quick tour
                 </a>
             </p>
         </div>
@@ -191,7 +191,7 @@
     <p>See witness overview.</p>
   </li>
   <li data-id="zeroc" data-text="Next" data-prev-text="Prev" data-options="tip_location: top">
-    <p>Click on a bar to display all variations of that bar in all available sources.</p>
+    <p>Click on a bar to display the variations of that bar in all available sources.</p>
   </li>
   <li data-id="uno" data-text="Next" data-prev-text="Prev" data-options="tip_location: top">
     <p>Navigate to the previous page.</p>
@@ -206,7 +206,6 @@
     <p>Show / Hide the annotation tools.</p>
   </li>
   {% if view == 'annotations' %}
-    {% if user.is_authenticated %}
     <li data-id="cinque" data-button="Next" data-prev-text="Prev" data-options="tip_location: top">
         <p>Show / Hide bars and click on one to attach an annotation.</p>
     </li>
@@ -222,7 +221,6 @@
     <li data-id="nove" data-button="Start exploring!" data-options="tip_location: top">
         <p>Show / Hide notes on the image.</p>
     </li>
-    {% endif %}
   {% endif %}
 </ol>
 {% endblock %}
