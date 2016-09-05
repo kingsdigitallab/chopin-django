@@ -10,6 +10,7 @@ from django.conf import settings
 import subprocess
 from django.views.decorators.csrf import csrf_exempt
 
+
 logger = logging.getLogger('chopin')
 
 def fix(request):
@@ -24,6 +25,7 @@ def fix(request):
 #Show newly uploaded files taht have not been made into sources yet
 @csrf_exempt
 def newsourcefiles(request):
+
     uploadPath=settings.CONVERTED_UPLOAD_PATH
     uF=os.listdir(uploadPath)
     freedcmd=['df','-h',uploadPath]
@@ -31,9 +33,12 @@ def newsourcefiles(request):
     free='0'
     #'/vol/ocve3/webroot/stg/logs/jp2convertlog.log'
     logfile='/vol/ocve3/webroot/stg/logs/jp2convertlog.log'
+
+    #logfile=settings.BASE_DIR+'/logs/django.log'
     logcmd=['tail','-n','200',logfile]
     logtail=subprocess.check_output(logcmd)
     logtail=logtail.replace('\n','<br/>')
+
     if len(sizes) >0:
         gigs=sizes.split("\n")[1].split("  ")
         free=gigs[3]
@@ -43,7 +48,7 @@ def newsourcefiles(request):
             uploadFolder[str(u)]=os.listdir(uploadPath+'/'+u)
         else:
             uploadFolder[str(u)]=None
-    sources=Source.objects.order_by('sourceinformation__accode__accode').all()
+    sources=Source.objects.filter(sourceinformation__accode_id__gt=1).order_by('sourceinformation__accode__accode').all()
     return render_to_response('dbmi/uploadfolders.html', {'uploadFolder': uploadFolder,'log':logtail,'free':free,'sources':sources },
         context_instance=RequestContext(request))
 
@@ -84,6 +89,8 @@ def convertFolder(request,folderName):
 def convertimage(request):
     source_key=int(request.POST['source_key'])
     source_id=int(request.POST['source_id'])
+    method=str(request.POST['addMethod'])
+
     try:
         imageNames=request.POST['imageName']
         folderName=None
@@ -91,9 +98,9 @@ def convertimage(request):
         folderName=request.POST['folderName']
         imageNames=os.listdir(settings.CONVERTED_UPLOAD_PATH+'/'+folderName.encode('UTF-8'))
     s=None
-    if source_key > 0:
+    if method == 'sourceKey' and source_key > 0:
         s=Source.objects.get(id=source_key)
-    elif source_id > 0:
+    elif method == 'sourceSelect' and source_id > 0:
         s=Source.objects.get(id=source_id)
     if s is not None:
         try:
