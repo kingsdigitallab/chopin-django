@@ -7,6 +7,15 @@
 {{ block.super }}
 <link rel="stylesheet" href="{{ STATIC_URL }}custom_css/bareditor.css" type="text/css">
    <link rel="stylesheet" href="{{ STATIC_URL }}vendor/OpenLayers/3.18.2/ol.css" type="text/css">
+   <style type="text/css">
+   /*Hide the OpenLayers logo*/
+       .ol-attribution.ol-logo-only{
+        display: none;
+       }
+       #map{
+        height:100%;
+       }
+   </style>
    {% endblock custom_stylesheets %}
 
 {% block header_scripts %}
@@ -245,8 +254,8 @@ $(window).load(function(){
 </script>
 <script data-main="{{ STATIC_URL }}javascripts/pageview-main.js" type="text/javascript" src="{{ STATIC_URL }}javascripts/require.min.js"></script>
 
-<!-- <script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview.js"></script>
-<script type="text/javascript">
+<script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview.js"></script>
+<!--<script type="text/javascript">
     $(document).ready(function () {
         //TODO: Hidden until annotations update
         {% if view == 'annotations' %}

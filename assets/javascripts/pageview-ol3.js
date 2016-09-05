@@ -109,10 +109,21 @@ define(["jquery", "ol3"], function($, ol) {
 
     //Load the map(page of music)
     initMap = function() {
-        var imgWidth = pageimage.zoomify_width;
-        var imgHeight = pageimage.zoomify_height;
         var url = pageimage.zoomify_url;
         var crossOrigin = 'anonymous';
+
+        var imgWidth = pageimage.zoomify_width;
+        var imgHeight = pageimage.zoomify_height;      
+
+        //Set div width/height as proprortion of available screen
+        var sf = imgHeight / imgWidth;
+        var docWidth = parseInt($('body').width());
+        var docHeight = parseInt($(window).height());
+        var fullWidth = parseInt($('#pageimage').width());
+        var fullHeight = fullWidth * sf;
+
+        $("#map").css('width', fullWidth + "px").css("height", fullHeight + "px");
+        console.log(fullWidth+'::'+fullHeight);
 
         var imgCenter = [imgWidth / 2, -imgHeight / 4];
 
