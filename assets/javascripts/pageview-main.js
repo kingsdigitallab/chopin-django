@@ -12,7 +12,7 @@ requirejs.config({
     //the paths config could be for a directory.
     paths: {
         vendor: '../vendor',
-        ol3: '../vendor/ol v3.13.1/build/ol',
+        ol3: '../vendor/OpenLayers/3.18.2/ol',
         jquery: '../vendor/jquery/dist/jquery'
     }
 });
