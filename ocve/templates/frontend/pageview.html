@@ -96,12 +96,17 @@
                 {% if view != 'annotations' %}
                 <div class="large-12 columns">
                     <div data-alert class="alert-box radius secondary">
-                        <i class="fa fa-info-circle"></i> <strong>User tip:</strong> Hover over the image to see bar numbers.
+                        <i class="fa fa-info-circle"></i> <strong>User tips:</strong>
+                        <ul class="compact-list">
+                            <li>Hover over the image to see bar numbers.</li>
+                            <li>Click on a bar to display the variations of that bar in all available sources.</li>
+                        </ul>
                         <a href="#" class="close">&times;</a>
                     </div>
                 </div>
                 {% endif %}
                 <div id="pageimage" class="large-{% if view == 'annotations' %}8{% else %}12{% endif %} columns{% if view == 'annotations' %} fixed-image{% endif %}">
+                    <span id="zeroc"></span>{# Do not remove. Needed for helptext #}
                     <div id="map"></div>
                     <div id="copyright">
                     {{ source.getSourceInformation.copyright|safe }}
@@ -184,6 +189,9 @@
   </li>
   <li data-id="zerob" data-text="Next" data-prev-text="Prev" data-options="tip_location: top">
     <p>See witness overview.</p>
+  </li>
+  <li data-id="zeroc" data-text="Next" data-prev-text="Prev" data-options="tip_location: top">
+    <p>Click on a bar to display all variations of that bar in all available sources.</p>
   </li>
   <li data-id="uno" data-text="Next" data-prev-text="Prev" data-options="tip_location: top">
     <p>Navigate to the previous page.</p>
