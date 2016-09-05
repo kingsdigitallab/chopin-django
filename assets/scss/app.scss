@@ -51,6 +51,15 @@ a:focus {
     display: none;
 }
 
+.compact-list {
+    margin-top: .25rem;
+    margin-bottom: 0;
+    li {
+        margin-left: 1rem;
+        margin-bottom: 0;
+    }
+}
+
 #copyright {
     display: block;
     clear: both;
