@@ -379,6 +379,20 @@ a:focus {
     -webkit-transform: translate3d(0, 0, 0);
 }
 
+.zoom-preview {
+    position: absolute;
+    color: darken($secondary-color, 40%);
+    padding: .25rem .5rem;
+    border: 1px solid $secondary-color;
+    bottom: 26px;
+    right: 3px;
+    background: white;
+}
+
+.flag .zoom-preview {
+    bottom: -8px !important;
+}
+
 /* collection area */
 
 .collection-section {
