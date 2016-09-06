@@ -246,7 +246,7 @@ $(window).load(function(){
 <script type="text/javascript">
 
     pageimage= {workid:{{ work.id }},pageID:{{ pageimage.id }},zoomify_width:{{ pageimage.width }}, zoomify_height:{{ pageimage.height }}
-        ,zoomify_url:"{{ zoomifyURL }}",regionURL:"{{ regionURL }}",noteURL :"{{ noteURL }}"
+        ,zoomify_url:"{{ zoomifyURL }}",regionURL:"{{ regionURL }}",noteURL :"{{ noteURL }}",annotation_mode:{% if view == annotations %}1{% else %}0{% endif %}
     };
 
     {% if selectedregionid > 0 %}selectedregionid={{ selectedregionid }};
