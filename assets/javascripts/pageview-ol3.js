@@ -173,7 +173,8 @@ define(["jquery", "ol3"], function ($, ol) {
         //Get the bar boxes
         barLayer = initBarLayer();
         //Get any annotations
-        noteLayer = initAnnotationLayer();
+        //TODO add toggle
+        noteLayer = initAnnotationLayer(false);
         olpage = new ol.Map({
             controls: ol.control.defaults({
                 attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
@@ -242,7 +243,7 @@ define(["jquery", "ol3"], function ($, ol) {
 
     }
 
-    initAnnotationLayer = function () {
+    initAnnotationLayer = function (visible) {
 
         var vectorSource = new ol.source.Vector({
             url: pageimage.noteURL,
@@ -252,7 +253,8 @@ define(["jquery", "ol3"], function ($, ol) {
          //All bar boxes drawn invisible by default
         var vectorLayer = new ol.layer.Vector({
             source: vectorSource,
-            style: styles.visibleNote
+            style: styles.visibleNote,
+            visible:visible
         });
         return vectorLayer;
     }
