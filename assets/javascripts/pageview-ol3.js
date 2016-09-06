@@ -224,9 +224,26 @@ define(["jquery", "ol3"], function ($, ol) {
 
     initAnnotationInteractions = function () {
 
+        var finishDraw = function(e) {
+            
+        }
+
+        drawAnnotationPolygon = new ol.interaction.Draw({
+          features: features,
+          type: ol.geom.Polygon
+
+        });
+        drawAnnotationPolygon.on('drawend',finishDraw);
+
+        drawAnnotationCircle = new ol.interaction.Draw({
+          features: features,
+          type: ol.geom.Polygon
+        });
+
     }
 
     initAnnotationLayer = function () {
+
         var vectorSource = new ol.source.Vector({
             url: pageimage.noteURL,
             format: new ol.format.GeoJSON()
