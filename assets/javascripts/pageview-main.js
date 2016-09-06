@@ -12,12 +12,12 @@ requirejs.config({
     //the paths config could be for a directory.
     paths: {
         vendor: '../vendor',
-        ol3: '../vendor/ol v3.13.1/build/ol',
+        ol3: '../vendor/OpenLayers/3.18.2/ol',
         jquery: '../vendor/jquery/dist/jquery'
     }
 });
 
-requirejs(["jquery","ol3","pageview-ol3","annotations-ol3"], function($,ol,pageview) {
+requirejs(["jquery","ol3","pageview-ol3"], function($,ol,pageview) {
     //This function is called when scripts/helper/util.js is loaded.
     //If util.js calls define(), then this function is not fired until
     //util's dependencies have loaded, and the util argument will hold
