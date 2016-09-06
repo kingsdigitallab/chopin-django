@@ -356,6 +356,12 @@ def addImageDimensions(pi):
         path="jp2/"+path
     verifyImageDimensions(pi, path)
 
+def imagePreview(request,id):
+    pi=PageImage.objects.get(id=id)
+
+    return render_to_response('frontend/image-preview.html', {'pageimage': pi,'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL})
+
+
 def ocveViewInPage(request,id,barid):
     regionURL = "/ocve/getBarRegions/" + id + "/" + barid + "/"
     pi=PageImage.objects.get(id=id)
