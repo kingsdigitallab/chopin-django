@@ -5,9 +5,9 @@
 
 {% block custom_stylesheets %}
 {{ block.super }}
-<link rel="stylesheet" href="{{ STATIC_URL }}vendor/ol v3.13.1/css/ol.css" type="text/css">
 <link rel="stylesheet" href="{{ STATIC_URL }}custom_css/bareditor.css" type="text/css">
-{% endblock custom_stylesheets %}
+   <link rel="stylesheet" href="{{ STATIC_URL }}vendor/OpenLayers/3.18.2/ol.css" type="text/css">
+   {% endblock custom_stylesheets %}
 
 {% block header_scripts %}
 <script type="text/javascript" src="{{ STATIC_URL }}vendor/garand-sticky/jquery.sticky.js"></script>
@@ -45,9 +45,9 @@ $(window).load(function(){
 
                         <li>
                             <div class="menu-item opus-title">
-                                {% if workinfoexists %}<a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview" id="zero">{{ work | add_special_characters }}</a>{% else %}{{ work | add_special_characters }}{% endif %},
-                                <a href="#" data-reveal-id="witness-info" data-reveal-ajax="/ocve/browse/sourceinformation/{{ source.id }}/" title="Witness overview" id="zerob">{{ source.getAcCode  | add_special_characters }}</a>,
-                                {{ pageimage.textlabel | add_special_characters }}
+                                {% if workinfoexists %}<a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview" id="zero">{{ work.label | add_special_characters }}</a>{% else %}{{ work.label | add_special_characters }}{% endif %},
+                                <a href="#" data-reveal-id="witness-info" data-reveal-ajax="/ocve/browse/sourceinformation/{{ source.id }}/" title="Witness overview" id="zerob">{{ source.getAcCode | add_special_characters }}</a>,
+                                {{ pageimage.textlabel | add_special_characters}}
                             </div>
                         </li>
 
@@ -122,8 +122,11 @@ $(window).load(function(){
                 <div id="annotations" class="large-4 columns">
                     <div id="annotationTools">
                         <p><strong>Annotation tools</strong></p>
-                        {% if notes.count == 0 %}
+                        {% if notes.count == 0 and comments.count == 0 %}
                         <p>This image has no annotations yet.</p>
+                            {% if user.is_authenticated == False%}
+                                <p><a href="/ocve/accounts/login-page/?next={{ request.path }}">Login</a> to add an annotation. </p>
+                                {% endif %}
                         {% endif %}
 
                         <ul class="no-bullet">
@@ -132,8 +135,10 @@ $(window).load(function(){
                             <li id="sei"><a id="newSquareNoteToggle" href="#"><i class="fa fa-square-o"></i> Create square annotation</a></li>
                             <li id="sette"><a id="newCircleNoteToggle" href="#"><i class="fa fa-circle-thin"></i> Create circle annotation</a></li>
                             {% endif %}
+                        {% if notes.count > 0 or comments.count > 0 %}
                             <li id="otto"><a href="#" class="com"><i class="fa fa-eye"></i> Show/hide commentary on the image</a></li>
                             <li id="nove"><a href="#" class="not"><i class="fa fa-eye"></i> Show/hide notes on the image</a></li>
+                            {% endif %}
                         </ul>
 
                     </div>
@@ -229,7 +234,6 @@ $(window).load(function(){
 {% block footer_scripts %}
 {{ block.super }}
 <script src="{{ STATIC_URL }}javascripts/slick.min.js" type="text/javascript" charset="utf-8"></script>
-<!--<script src="{{ STATIC_URL }}vendor/OpenLayers/OpenLayers.js"></script>-->
 <script type="text/javascript">
 
     pageimage= {workid:{{ work.id }},pageID:{{ pageimage.id }},zoomify_width:{{ pageimage.width }}, zoomify_height:{{ pageimage.height }}
@@ -242,19 +246,17 @@ $(window).load(function(){
 <script data-main="{{ STATIC_URL }}javascripts/pageview-main.js" type="text/javascript" src="{{ STATIC_URL }}javascripts/require.min.js"></script>
 
  <script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview.js"></script>
-
 <script type="text/javascript">
     $(document).ready(function () {
-        //Removed until ol3 decision made
+
         {% if view == 'annotations' %}
-        //showAnnotationTools();
+        showAnnotationTools();
         {% else %}
-        //hideAnnotationTools();
+        hideAnnotationTools();
         {% endif %}
     });
 </script>
 
-    <!--
 <script src="{{ STATIC_URL }}vendor/foundation/js/vendor/jquery.cookie.js"></script>
 
 <script type="text/javascript">
@@ -265,6 +267,8 @@ $(window).load(function(){
 
         cookie_set('joyride', 'ridden', 30);
     });
-</script>-->
+</script>
 
 {% endblock %}
+
+
