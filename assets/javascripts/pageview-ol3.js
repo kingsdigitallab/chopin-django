@@ -173,8 +173,12 @@ define(["jquery", "ol3"], function ($, ol) {
         //Get the bar boxes
         barLayer = initBarLayer();
         //Get any annotations
-        //TODO t
-        noteLayer = initAnnotationLayer(false);
+        //todo fix later when annotations done
+        var showNotes=false;
+        if (pageimage.annotation_mode == 1) {
+            showNotes=true;
+        }
+        noteLayer = initAnnotationLayer(showNotes);
         olpage = new ol.Map({
             controls: ol.control.defaults({
                 attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
