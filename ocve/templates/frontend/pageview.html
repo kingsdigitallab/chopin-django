@@ -261,13 +261,18 @@
 </script>
 
 <script src="{{ STATIC_URL }}vendor/foundation/js/vendor/jquery.cookie.js"></script>
-
+-->
 <script type="text/javascript">
 
- $(document).ready( function() {
+//TODO until added to require
+   $(document).ready( function() {
+        if (cookie_get('joyride') != 'ridden') {
+            $(document).foundation('joyride', 'start');
+        }
 
+        cookie_set('joyride', 'ridden', 30);
     });
-</script>-->
+</script>
 
 {% endblock %}
 

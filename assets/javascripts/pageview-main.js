@@ -28,11 +28,7 @@ requirejs(["jquery","ol3","pageview-ol3"], function($,ol,pageview) {
     // load map
     //pageview.initMap(ol);
       //joyride
-      if (cookie_get('joyride') != 'ridden') {
-            $(document).foundation('joyride', 'start');
-        }
 
-        cookie_set('joyride', 'ridden', 30);
   });
 
 
