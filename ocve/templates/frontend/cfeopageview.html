@@ -32,21 +32,25 @@
 
                     <li>
                         <ul class="button-group even-2">
-                            {% if prev %}
-
                             <li>
+                                {% if prev %}
                                 <a href="/{{ mode|lower }}/browse/pageview/{{ prev.id }}/" class="ctrl prev small button">
                                     <i class="fa fa-caret-left"></i> Prev
                                 </a>
+                                {% else %}
+                                <a class="small button disabled"></a>
+                                {% endif %}
                             </li>
-                            {% endif %}
-                            {% if next %}
+
                             <li>
+                                {% if next %}
                                 <a href="/{{ mode|lower }}/browse/pageview/{{ next.id }}/" class="ctrl next small button">
                                     Next <i class="fa fa-caret-right"></i>
                                 </a>
+                                {% else %}
+                                <a class="small button disabled"></a>
+                                {% endif %}
                             </li>
-                            {% endif %}
                         </ul>
                     </li>
 
@@ -104,11 +108,11 @@
             </nav>
         </div>
         <div class="large-9 columns">
-            <div id="pageimage">
-                <img src="{{ IIP_URL }}?FIF={{ pageimage.getJP2Path }}&CVT=JPG" height="800" width="600" id="image_one" class="osd-iip">
-            </div>
             <div id="copyright">
             {{ source.getSourceInformation.copyright|safe }}
+            </div>
+            <div id="pageimage">
+                <img src="{{ IIP_URL }}?FIF={{ pageimage.getJP2Path }}&CVT=JPG" height="800" width="600" id="image_one" class="osd-iip">
             </div>
         </div>
     </div>
