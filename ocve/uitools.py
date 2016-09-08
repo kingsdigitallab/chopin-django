@@ -297,7 +297,7 @@ def serializeCFEOSourceJson():
         sourcecomponents = SourceComponent.objects.filter(source__cfeo=True, source__live=True).distinct()
     else:
         sourcecomponents = SourceComponent.objects.filter(source__cfeo=True).distinct()
-    serializeSourceJson(sourcecomponents, 'CFEOsourceJSON', 'CFEO', [])
+    serializeSourceJson(sourcecomponents, 'CFEOsourceJSON', 'CFEO')
 
 
 def serializeSourceJson(sourcecomponents, filename, mode):
