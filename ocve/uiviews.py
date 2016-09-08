@@ -356,10 +356,12 @@ def addImageDimensions(pi):
         path="jp2/"+path
     verifyImageDimensions(pi, path)
 
-def imagePreview(request,id):
-    pi=PageImage.objects.get(id=id)
+def cfeoImagePreview(request,id):
+    return imagePreview(request,id,"CFEO")
 
-    return render_to_response('frontend/image-preview.html', {'pageimage': pi,'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL})
+def imagePreview(request,id,mode="OCVE"):
+    pi=PageImage.objects.get(id=id)
+    return render_to_response('frontend/image-preview.html', {'mode':mode,'pageimage': pi,'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL})
 
 
 def ocveViewInPage(request,id,barid):
