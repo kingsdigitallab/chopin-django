@@ -95,9 +95,11 @@ a:focus {
     height: 100%;
 }
 
-#image_one,
-#image_two {
-    width: 100% !important;
+.compare-block {
+    #image_one,
+    #image_two {
+        width: 100% !important;
+    }
 }
 
 .sticky-widget {
