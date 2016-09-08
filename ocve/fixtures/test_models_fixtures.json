@@ -1,0 +1,499 @@
+
+[
+     {
+  "fields": {
+    "instrument":"Piano"
+  },
+  "model": "ocve.instrument",
+  "pk": 1
+},
+
+     {
+  "fields": {
+    "type":"test"
+  },
+  "model": "ocve.pagetype",
+  "pk": 3
+},
+    {
+  "fields": {
+    "type":"test"
+  },
+  "model": "ocve.sourcecomponenttype",
+  "pk": 1
+},
+    {
+  "fields": {
+    "keypitch":"test"
+  },
+  "model": "ocve.keypitch",
+  "pk": 1518
+},
+    {
+  "fields": {
+    "keymode":"test"
+  },
+  "model": "ocve.keymode",
+  "pk": 1
+},
+    {
+  "fields": {
+    "type":"test"
+  },
+  "model": "ocve.collectiontype",
+  "pk": 1
+},
+    {
+  "fields": {
+    "label":"work c",
+     "overridelabel":"",
+     "collectiontype":1
+  },
+  "model": "ocve.workcollection",
+  "pk": 2
+},
+    {
+  "fields": {
+    "publisher":"test p",
+     "notes":"",
+     "publisherAbbrev":"tp"
+  },
+  "model": "ocve.publisher",
+  "pk": 1
+},
+     {
+  "fields": {
+    "dedicatee":"test d"
+  },
+  "model": "ocve.dedicatee",
+  "pk": 1
+},
+    {
+  "fields": {
+    "country":"test country",
+     "countryabbrev":"tc"
+  },
+  "model": "ocve.country",
+  "pk": 1
+},
+{
+  "fields": {
+    "city":"test city",
+      "country":1
+  },
+  "model": "ocve.city",
+  "pk": 1
+},
+{
+  "fields": {
+    "name":"test archive",
+    "siglum":"",
+     "notes":"",
+     "city":1
+  },
+  "model": "ocve.archive",
+  "pk": 1
+},
+{
+  "fields": {
+    "type":"test"
+  },
+  "model": "ocve.sourcetype",
+  "pk": 1
+},
+    {
+  "fields": {
+    "relevantmanuscripts": "<p>Autograph, <em>Stichvorlage</em> to <strong>F</strong> and <strong>E</strong>: F-Pn: Ms. 107; Gutmann copy with Chopin's corrections, <em>Stichvorlage</em> to <strong>G</strong>: S-Smf</p>",
+    "OCVE": "<p>The OCVE sources for Op. 38 consist of two manuscripts, three first editions, and several corrected reprints of one of the latter.</p><p>Both Chopin's autograph manuscript (<strong>A</strong>) and the copy thereof apparently prepared by Adolf Gutmann (<strong>CGut</strong>) were used as <em>Stichvorlagen</em>, the latter for the German first edition and the former for both the French and the English first editions.</p><p>The text of the French first edition was modified to a greater extent than that of the German or English prints. Three distinct stages in its evolution are represented by the OCVE sources: uncorrected proof (<strong>F0</strong>), first impression (<strong>F1</strong>), and definitive version (<strong>F2</strong>). In addition to these, there are three exemplars containing rare handwritten corrections: J&#281;drzejewicz score (<strong>J-F1</strong>), Stirling score (<strong>S-F2</strong>) and Dubois score (<strong>D-F2</strong>).</p><p>Two separate engravings of the German edition of Op. 38 were undertaken by Breitkopf & H&#228;rtel. The first edition (<strong>G</strong>) was not modified after its initial publication. The second edition, released around 1864, does not form part of the OCVE resource, nor the corrected reprint dating from c. 1872&#150;73.</p><p>To date, few copies have been located of the English first edition of Op. 38 (<strong>E</strong>), and this lack of documentation makes it impossible to trace the evolution of the edition after 1851. It is nevertheless likely that Ashdown & Parry corrected Op. 38 after acquiring Wessel's list in 1860, given that nearly all of the Wessel Chopin scores were revised by the successor firm.</p><p>The analysis of the sources for this work highlights the principal characteristics of each one.</p><p></p>",
+    "analysis": "<p>The music text of <strong>F</strong> is confined to six pages which are densely laid out. In <strong>G</strong>, the same text fills nine pages, with as many as ten in <strong>E</strong>. Given these differences, the similarities between the layouts of the respective editions are very limited: indeed, only p. 8 (in toto) and the first system on p. 9 correspond to one another in <strong>G</strong> and <strong>E</strong>. </p><p>The publication process proposed for this work is as follows. <strong>G</strong> was based on a copy most likely prepared by Gutmann, which was corrected by Chopin before its dispatch to Leipzig. <strong>F</strong> and <strong>E</strong> were based on the same autograph manuscript, which is quite exceptional. The fact that Chopin allowed Troupenas to make his own arrangements with Wessel (see his letter to Julian Fontana of 23 April 1840) means that the existence of a third manuscript source can be more or less ruled out. It would appear that after using the manuscript to prepare the French proofs, Troupenas sent Chopin's autograph to London where it was used in turn by Wessel. Each edition was reviewed and corrected by its respective publisher prior to release; in both London and Leipzig, this was done by professional correctors, whereas in Paris Chopin himself would have participated in this process. As for the various corrections evident in the definitive version, their provenance is less certain: some musicologists doubt their authenticity and have attributed them not to the composer but to an unidentified professional corrector. CFEO reproduces the first known version of <strong>F</strong>, which forms part of the D&#233;p&#244;t l&#233;gal; this is generally regarded as an uncorrected proof. In view of the considerable differences between the three first editions, a passage of the work has been selected for comparative analysis, i.e. the coda in bs 169&#150;204 (pp. 10 & 11 in <strong>E</strong>).</p><p>The following features are exclusive to <strong>F</strong>:</p><ul><li>b. 169: no expressive or dynamic indications (i.e. no 'agitato' or '<em>f</em>')</li><li>b. 171: erroneous LH chord 1</li><li>b. 173: wedge staccato to LH chords 1 & 4; short slurs to LH chords 2&#150;3, 5&#150;6</li><li>b. 176: LH presented as groups of three notes (i.e. no separate quaver flag to LH chords 1 & 4); no slur to RH beats 4&#150;6; no short slur to LH chords 5&#150;6</li><li>b. 178 LH chord 5: no sharp to f<sup>1</sup></li><li>b. 179: no accent to RH chords 9 & 10; LH slurs start LH chords 2 & 5</li><li>b. 182 LH chord 5: no sharp to f</li><li>bs 183&#150;184: two RH ties over barline (cf. <strong>G</strong> and <strong>E</strong>)</li><li>b. 184: erroneous B<sub>1</sub> in LH chord 3; accent to RH chord 5</li><li>b. 187: pedal release after LH chord 3</li><li>b. 189: no RH slur</li><li>bs 188&#150;189: RH slur ends RH chord 12</li><li>bs 193, 194: LH slur ends LH chord 4; no slur to LH chords 5 & 6</li><li>b. 195: accents to LH chords 2 & 4 shifted to right because of lack of space</li><li>b. 196: no flats to b<sup>2</sup> in RH chord 4 or to a<sup>2</sup> in RH chord 10</li><li>b. 197: short slur to RH notes 1&#150;3 (appoggiaturas)</li><li>bs 197&#150;201: LH slur</li><li>b. 203: erroneous RH c<sup>1</sup></li><li>b. 204: pedal release situated after beat 1.</li></ul><p><strong>G</strong> differs from the other first editions as follows: </p><ul><li>b. 169: 'Agitato.' but no '<em>f</em>'; erroneous e in LH chord 3</li><li>bs 169, 173: RH slurs start RH notes 1 & 6</li><li>bs 170, 174, 185, 186, 187: RH slur starts RH note 1</li><li>bs 171, 177, 178, 179&#150;180, 181, 182, 183, 184: RH phrasing</li><li>b. 172: slur to LH chords 4&#150;6</li><li>b. 173: slurs to LH chords 1&#150;3, 4&#150;6; naturals to RH chord 6 and to b in LH chord 5 (those to the bs are redundant; the one to d<sup>2</sup> is undoubtedly incorrect)</li><li>b. 176: short slur below LH chords 5&#150;6</li><li>b. 179: LH slur starts LH chords 1 & 4 </li><li>bs 179&#150;180: no tie over barline to RH g-sharp<sup>2</sup>s</li><li>b. 180: pedalling starts LH chord 2</li><li>b. 183: erroneous f<sup>1</sup> in RH chord; staccato dot to LH chord 4; redundant natural to b in RH chord 10</li><li>bs 183&#150;184: no ties over barline to RH chord </li><li>b. 184: erroneous c in LH chord 1; LH slur ends LH chord 2; no accents to RH chords 4, 5 & 6</li><li>b. 185: diminuendo hairpin or long accent to RH chords 1&#150;2; erroneous flat to b<sup>1</sup> in RH chord 7</li><li>b. 186: erroneous flat to b in RH chord 1 and natural to c<sup>2</sup> in RH chord 7; erroneous RH chord 12 (i.e. f<sup>1</sup>&#150;f<sup>2</sup> instead of e<sup>1</sup>&#150;e<sup>2</sup>)</li><li>b. 188: LH slur ends LH chord 3; no slur to LH chords 4&#150;6</li><li>b. 189: no short slur or diminuendo hairpin to LH chords 5&#150;6</li><li>b. 190: no short slur to LH chords 5&#150;6</li><li>b. 191: sharp to f<sup>1</sup> in RH chord 6</li><li>b. 194: no diminuendo hairpin to LH chords 5&#150;6</li><li>b. 195: no arpeggiation sign to LH chords 2 & 4</li><li>b. 197: precautionary natural to b<sup>1</sup> in RH chord 2 (appoggiatura)</li><li>b. 203: grace note tied to RH chord; RH and LH chords differ (cf. <strong>F</strong> and <strong>E</strong>)</li><li>bs 203&#150;204: no pedalling</li><li>b. 204: different LH chord; arpeggiation sign (cf. <strong>F</strong> and <strong>E</strong>).</li></ul><p><strong>E</strong> has the following distinctive features:</p><ul><li>b. 169: '<em>AGITATO.</em>' and '<em>f</em>'; no staccato to LH chord 4; erroneous natural to d<sup>1</sup> in RH chord 6</li><li>bs 169, 173, 178, 179: no LH slurring</li><li>b. 170: LH note 1 E (cf. <strong>F</strong> and <strong>E</strong>)</li><li>b. 175: separate quaver flag to LH chords 1 & 3</li><li>b. 176: short slur above LH chords 5&#150;6</li><li>b. 177: staccato dot to LH chords 1 & 4; short slurs above LH chords 2&#150;3, 5&#150;6</li><li>b. 178: staccato dot to LH chord 1</li><li>b. 179: no flat to d(-flat)<sup>2</sup> in RH chord 7; precautionary natural to f<sup>1</sup> in LH chord 2</li><li>b. 180: no short slur to RH chords 1&#150;2; accent to RH chord 2</li><li>b. 183: no redundant flat to d(-flat)<sup>1</sup> in RH chord 7</li><li>bs 183&#150;184: no tie over barline to RH bs; LH slur in b. 183 not continued in b. 184</li><li>b. 184: staccato dot to LH chord 3</li><li>b. 185: RH chord 2 notated only on lower staff</li><li>b. 191: no c<sup>1</sup> in LH chord 4</li><li>bs 192, 196: bass clef applies to LH chords 2 & 4 (i.e. no change of clef)</li><li>b. 193: slur to LH chords 3&#150;6</li><li>bs 195, 196: accent to LH chords 2 & 4 notated with '&#94;'</li><li>b. 196: naturals to b<sup>1</sup> in RH chord 8, b<sup>2</sup> in RH chord 10 and b in LH chord 4; arpeggiation sign to LH chord 2</li><li>b. 197: no arpeggiation sign to LH chord 1</li><li>b. 203: pedal release situated at end of bar (under barline).</li></ul><p>A further stage of analysis comparing all of the editions with their respective <em>Stichvorlagen</em> would be required to determine the exact nature of the differences that have been noted. Such a comparison is beyond the scope of this study, although OCVE reproduces a significant amount of the primary source material currently available for this work.</p><p>The later evolution of the first editions can be inferred from the Annotated Catalogue Online, which provides full details of subsequent impressions.</p><p></p></p>",
+    "generalinfo": "<p>Like the Scherzos and the Fantasy Op. 49, Chopin's four Ballades &#150; Opp. 23, 38, 47 and 52, respectively published in 1836, 1840, 1842 and 1843 &#150; belong to the most sophisticated and expressively potent works composed for piano during the romantic era. Claims that Mickiewicz's Ballades were their source of inspiration have been voiced almost from the moment they were finished, which explains the innumerable attempts of critics to find a poetic programme within each one. Even if their formal structures invite diverse interpretation, one discerns within each Ballade a sonata-derived framework freely developed by Chopin, sometimes in tandem with a theme-and-variations approach (Op. 52). It is noteworthy that all four Ballades are written in a compound duple metre (6/8) and that they derive much of their rhythmic impulse and, to some extent, character from the dance. In expressive language, however, they are extremely diverse, although each has a powerful narrative drive in which gentle and melancholic elements are ingeniously juxtaposed with often violent dramatic outbursts.</p>"
+  },
+  "model": "ocve.workinformation",
+  "pk": 6348
+},
+     {
+  "fields": {
+    "opusno": 38
+  },
+  "model": "ocve.opus",
+  "pk": 6611
+},
+     {
+  "fields": {
+    "accode": "38–1-B&H",
+      "accode_hash":"b1bd59a700f7943c61abbda0779b5bcd"
+  },
+  "model": "ocve.accode",
+  "pk": 2887
+},
+     {
+  "fields": {
+    "sourcetype": 1,
+    "cfeolabel": "Ballade pour le Piano, Op. 38",
+    "label": "GFE: first impression (G)",
+    "cfeo": true,
+    "ocve": true,
+    "live": true,
+    "orderno": 50
+  },
+  "model": "ocve.source",
+  "pk": 17890
+},
+    {
+  "fields": {
+    "accode": 2887,
+    "dedicatee": 1,
+    "publicationtitle": "Ballade pour le Piano, Oeuvr. 38",
+    "archive": 1,
+    "contents": "",
+    "seriestitle": "none",
+    "copyright": "University of Chicago Library",
+    "title": "Ballade pour le Piano, Op. 38",
+    "source": 17890,
+    "placepublication": 1,
+    "platenumber": "6330",
+    "volume": "",
+    "contentssummary": "11 pages",
+    "sourcecode": "",
+    "locationsimilarcopies": "D-Dl: Mus. 5565-T-501. <strong>Copies without original cover</strong>: A-Wgm: VII 41733; D-Mmb: Rara 5103 (6); GB-Ob: Deneke 58 (5); F-Ppo: F.N. 15827; PL-Wn: Mus.III.127.501 Cim.; PL-Wnifc: 2668/n",
+    "keyFeatures": "The German first edition differs from its <em>Stichvorlage</em> in many respects. The missing notes in bs 28 and 42 of <strong>CGut</strong> were dealt with in <strong>G</strong> by changing the rhythm. Numerous accidentals whose absence from <strong>CGut</strong> was obvious were added in the printed edition; the bar-level commentary refers only to the few accidentals that the otherwise vigilant German corrector overlooked (bs 72&ndash;78, 136). Some of the accidentals that were added are clearly erroneous, however (bs 173, 185, 186). Note too that <strong>G</strong> contains three unique mistakes (bs 69, 110, 169), a number of omissions (bs 169, 122&ndash;123, 203&ndash;204) and an inauthentic tie.",
+    "publisher": 1,
+    "displayedcopy": "US-Cu: M25.C54 B21 c.1",
+    "notes": "",
+    "reprints": "- reprints with modified price on title page, 1841&ndash;58 - Titelauflage, c. 1860 - lithographic transfer, c. 1860 Note: In c.1864 Breitkopf &amp; H&auml;rtel published the second edition of this work with original plate number but with additional imprint 'Stich, Druck und Verlag von Breitkopf &amp; H&auml;rtel in Leipzig.' (footline p. 3).",
+    "shelfmark": "US-Cu: M25.C54 B21 c.1<br />",
+    "leaves": "16 pages",
+    "imagesource": "",
+    "additionalInformation": "- See <em>Annotated Catalogue</em> for detailed description of contents and for information about the following: details of similar copies; subsequent reprints with identical music text; and second edition published by Breitkopf &amp; H&Atilde;&curren;rtel c. 1864",
+    "datepublication": "10/1840"
+  },
+  "model": "ocve.sourceinformation",
+  "pk": 17522
+},
+    {
+  "fields": {
+    "workinformation": 6348,
+    "workcollection": 2,
+    "orderno": 38,
+    "complete": false,
+    "label": "Ballade Op. 38"
+  },
+  "model": "ocve.work",
+  "pk": 6337
+},
+
+   {
+  "fields": {
+    "keypitch": 1518,
+    "work": 6337,
+    "keymode": 1,
+    "opus": 6611,
+    "music": 1,
+    "orderno": 1,
+    "label": "Music"
+  },
+  "model": "ocve.workcomponent",
+  "pk": 9303
+},
+    {
+  "fields": {
+    "sourcecomponenttitle": "",
+    "label": "Music",
+    "source": 17890,
+    "instrumentnumber": null,
+    "instrumentkey": "",
+    "overridelabel": "Score",
+    "orderno": 2,
+    "sourcecomponenttype": 1
+  },
+  "model": "ocve.sourcecomponent",
+  "pk": 36496
+},
+    {
+  "fields": {
+    "sourcecomponent": 36496,
+    "instrument": 1
+  },
+  "model": "ocve.sourcecomponent_instrument",
+  "pk": 1
+},
+    {
+  "fields": {
+    "workcomponent": 9303,
+    "sourcecomponent": 36496
+  },
+  "model": "ocve.sourcecomponent_workcomponent",
+  "pk": 30404
+},
+   {
+  "fields": {
+    "pagetype": 3,
+    "orderno": 5,
+    "sourcecomponent": 36496,
+    "preferredversion": 1,
+    "label": "3"
+  },
+  "model": "ocve.page",
+  "pk": 61533
+},
+{
+  "fields": {
+    "pagetype": 3,
+    "orderno": 6,
+    "sourcecomponent": 36496,
+    "preferredversion": 1,
+    "label": "4"
+  },
+  "model": "ocve.page",
+  "pk": 61534
+},
+{
+  "fields": {
+    "pagetype": 3,
+    "orderno": 7,
+    "sourcecomponent": 36496,
+    "preferredversion": 1,
+    "label": "5"
+  },
+  "model": "ocve.page",
+  "pk": 61535
+},
+{
+  "fields": {
+    "pagetype": 3,
+    "orderno": 8,
+    "sourcecomponent": 36496,
+    "preferredversion": 1,
+    "label": "6"
+  },
+  "model": "ocve.page",
+  "pk": 61536
+},
+{
+  "fields": {
+    "pagetype": 3,
+    "orderno": 9,
+    "sourcecomponent": 36496,
+    "preferredversion": 1,
+    "label": "7"
+  },
+  "model": "ocve.page",
+  "pk": 61537
+},
+{
+  "fields": {
+    "pagetype": 3,
+    "orderno": 10,
+    "sourcecomponent": 36496,
+    "preferredversion": 1,
+    "label": "8"
+  },
+  "model": "ocve.page",
+  "pk": 61538
+},
+{
+  "fields": {
+    "pagetype": 3,
+    "orderno": 11,
+    "sourcecomponent": 36496,
+    "preferredversion": 1,
+    "label": "9"
+  },
+  "model": "ocve.page",
+  "pk": 61539
+},
+{
+  "fields": {
+    "pagetype": 3,
+    "orderno": 12,
+    "sourcecomponent": 36496,
+    "preferredversion": 1,
+    "label": "10"
+  },
+  "model": "ocve.page",
+  "pk": 61540
+},
+{
+  "fields": {
+    "pagetype": 3,
+    "orderno": 13,
+    "sourcecomponent": 36496,
+    "preferredversion": 1,
+    "label": "11"
+  },
+  "model": "ocve.page",
+  "pk": 61541
+},
+    {
+  "fields": {
+    "startbar": "156",
+    "permission": true,
+    "corrected": null,
+    "surrogate": 0,
+    "textlabel": "p. 9 Music,  bs 156\u2013171",
+    "height": 6412,
+    "width": 4664,
+    "versionnumber": 1,
+    "permissionnote": "",
+    "endbar": "171",
+    "page": 61539
+  },
+  "model": "ocve.pageimage",
+  "pk": 61539
+},
+{
+  "fields": {
+    "startbar": "172",
+    "permission": true,
+    "corrected": null,
+    "surrogate": 0,
+    "textlabel": "p. 10 Music,  bs 172\u2013186",
+    "height": 6407,
+    "width": 4606,
+    "versionnumber": 1,
+    "permissionnote": "",
+    "endbar": "186",
+    "page": 61540
+  },
+  "model": "ocve.pageimage",
+  "pk": 61540
+},
+{
+  "fields": {
+    "startbar": "187",
+    "permission": true,
+    "corrected": null,
+    "surrogate": 0,
+    "textlabel": "p. 11 Music,  bs 187\u2013204",
+    "height": 6497,
+    "width": 4779,
+    "versionnumber": 1,
+    "permissionnote": "",
+    "endbar": "204",
+    "page": 61541
+  },
+  "model": "ocve.pageimage",
+  "pk": 61541
+},
+{
+  "fields": {
+    "height": 823,
+    "width": 1050,
+    "barid_old": 186,
+    "pageimage": 61540,
+    "y": 3929,
+    "x": 3046,
+    "anomaly": 0,
+    "page": 61540
+  },
+  "model": "ocve.barregion",
+  "pk": 269389
+},
+{
+  "fields": {
+    "height": 823,
+    "width": 1045,
+    "barid_old": 185,
+    "pageimage": 61540,
+    "y": 3929,
+    "x": 2001,
+    "anomaly": 0,
+    "page": 61540
+  },
+  "model": "ocve.barregion",
+  "pk": 269390
+},
+{
+  "fields": {
+    "height": 823,
+    "width": 1066,
+    "barid_old": 184,
+    "pageimage": 61540,
+    "y": 3929,
+    "x": 935,
+    "anomaly": 0,
+    "page": 61540
+  },
+  "model": "ocve.barregion",
+  "pk": 269391
+},
+    {
+  "fields": {
+    "barnumber": 183,
+    "barlabel": "183"
+  },
+  "model": "ocve.bar",
+  "pk": 183
+},
+{
+  "fields": {
+    "barnumber": 184,
+    "barlabel": "184"
+  },
+  "model": "ocve.bar",
+  "pk": 184
+},
+{
+  "fields": {
+    "barnumber": 185,
+    "barlabel": "185"
+  },
+  "model": "ocve.bar",
+  "pk": 185
+},
+{
+  "fields": {
+    "barnumber": 186,
+    "barlabel": "186"
+  },
+  "model": "ocve.bar",
+  "pk": 186
+},
+{
+  "fields": {
+    "height": 833,
+    "width": 1011,
+    "barid_old": 183,
+    "pageimage": 61540,
+    "y": 3113,
+    "x": 3079,
+    "anomaly": 0,
+    "page": 61540
+  },
+  "model": "ocve.barregion",
+  "pk": 269392
+},
+
+    {
+  "fields": {
+    "bar": 186,
+    "barregion": 269389
+  },
+  "model": "ocve.bar_barregion",
+  "pk": 31308
+},
+    {
+  "fields": {
+    "bar": 185,
+    "barregion": 269390
+  },
+  "model": "ocve.bar_barregion",
+  "pk": 31204
+},
+    {
+  "fields": {
+    "bar": 184,
+    "barregion": 269391
+  },
+  "model": "ocve.bar_barregion",
+  "pk": 31100
+},
+    {
+  "fields": {
+    "bar": 183,
+    "barregion": 269392
+  },
+  "model": "ocve.bar_barregion",
+  "pk": 30996
+}
+    ]
