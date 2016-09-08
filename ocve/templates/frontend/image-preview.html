@@ -1,7 +1,7 @@
 {% load ocve_tags catalogue_tags wagtailcore_tags %}
 
 <div class="text-center">
-    <p><a href="{% if mode == "CFEO"%}/cfeo/{% else %}/ocve/{% endif %}#" class="button">Link to pageview</a></p>
+    <p><a href="pageview/{{ pageimage.id }}" class="button">Link to pageview</a></p>
     <!-- WID is width in pixels, height auto scaled if not present -->
     <img src="{{ IMAGE_SERVER_URL }}?FIF={{ pageimage.getJP2Path }}&cnt=1&WID=800&QLT=100&CVT=JPG" alt="Loading image">
     <a class="close-reveal-modal" aria-label="Close">&#215;</a>
