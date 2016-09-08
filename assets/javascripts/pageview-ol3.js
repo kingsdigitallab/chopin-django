@@ -19,6 +19,7 @@ define(["jquery", "ol3"], function ($, ol) {
     var noteLayer;
     var olpage;
     var styles;
+    var annotationInteraction;
 
     //The Open Layers bar styles
     // invisible: default setting for bar regions
@@ -174,9 +175,9 @@ define(["jquery", "ol3"], function ($, ol) {
         barLayer = initBarLayer();
         //Get any annotations
         //todo fix later when annotations done
-        var showNotes=false;
+        var showNotes = false;
         if (pageimage.annotation_mode == 1) {
-            showNotes=true;
+            showNotes = true;
         }
         noteLayer = initAnnotationLayer(showNotes);
         olpage = new ol.Map({
@@ -189,7 +190,7 @@ define(["jquery", "ol3"], function ($, ol) {
             layers: [
                 new ol.layer.Tile({
                     source: pageimagesource
-                }), barLayer,noteLayer
+                }), barLayer, noteLayer
             ],
 
             target: 'map',
@@ -201,7 +202,7 @@ define(["jquery", "ol3"], function ($, ol) {
         });
         olpage.addControl(new ol.control.ZoomSlider());
         //For debug only
-        //olpage.addControl(new ol.control.MousePosition());
+        olpage.addControl(new ol.control.MousePosition());
         //Add interactions depending on mode
         var interactions;
         if (pageimage.annotation_mode == 1) {
@@ -227,41 +228,102 @@ define(["jquery", "ol3"], function ($, ol) {
      Notes can be attached to three different shapes: a bar region, a drawn square and a drawn circle
      */
 
-    initAnnotationInteractions = function () {
-
-        var finishDraw = function(e) {
-
-        }
-
-        drawAnnotationPolygon = new ol.interaction.Draw({
-          features: features,
-          type: ol.geom.Polygon
-
-        });
-        drawAnnotationPolygon.on('drawend',finishDraw);
-
-        drawAnnotationCircle = new ol.interaction.Draw({
-          features: features,
-          type: ol.geom.Polygon
-        });
-
-    }
 
     initAnnotationLayer = function (visible) {
-
         var vectorSource = new ol.source.Vector({
             url: pageimage.noteURL,
             format: new ol.format.GeoJSON()
         });
 
-         //All bar boxes drawn invisible by default
-        var vectorLayer = new ol.layer.Vector({
+        //All bar boxes drawn invisible by default
+        return new ol.layer.Vector({
             source: vectorSource,
             style: styles.visibleNote,
-            visible:visible
+            visible: visible
         });
-        return vectorLayer;
+
     }
+
+    initAnnotationInteractions = function () {
+        //Bind annotation events to elements
+        if ($(newNoteForm).length > 0) {
+            $(pageimage.barAttachToggle).click(function () {
+                initDrawInteraction("Bar");
+            });
+
+            $(newSquareNoteToggle).click(function () {
+                initDrawInteraction("Polygon");
+            });
+            $(newCircleNoteToggle).click(function () {
+                initDrawInteraction("Circle");
+            });
+        }
+    }
+
+    endDrawInteraction = function () {
+        //remove any existing interaction
+        olpage.removeInteraction(annotationInteraction);
+        //TODO Clean form?
+    }
+
+    initDrawInteraction = function (noteType) {
+        endDrawInteraction();
+        //Create annotation
+        var type;
+        var drawOptions;
+        if (noteType == "Polygon" || noteType == "Circle") {
+            type = 'Circle';
+            if (noteType == "Polygon") {
+                //type = ol.geom.Polygon;
+                var geometryFunction = ol.interaction.Draw.createRegularPolygon(4);
+                drawOptions = {
+                    type: (type),
+                    layers: [noteLayer],
+                    geometryFunction: geometryFunction,
+
+                }
+
+            } else if (noteType == "Circle") {
+                // type = ol.geom.Polygon;
+                drawOptions = {
+                    layers: [noteLayer],
+                    type: (type)
+                }
+            }
+            annotationInteraction = new ol.interaction.Draw(drawOptions);
+            annotationInteraction.on('drawend', finishDraw);
+
+        } else if (noteType == "Bar") {
+            //todo: Actually a select, not draw
+            initInteractions();
+            jQuery('#map').click(function () {
+                var features = hover.getFeatures().getArray();
+                if (features.length > 0) {
+                    var feature = features[0];
+                    console.log(feature.get('label'));
+                    finishDraw(feature);
+                }
+            });
+
+        }
+        olpage.addInteraction(annotationInteraction);
+        //todo Check if form is visible, make visible if not
+
+    }
+
+    finishDraw = function (event) {
+        console.log(this);
+        var feature=event.feature
+        var format=new ol.format.GeoJSON();
+        console.log(format.writeFeature(feature));
+        console.log(feature.getGeometry());
+        //Add shape id to note form
+        $('#id_noteregions').val(feature.geometry.toString());
+        $('#featureid').val(feature.id);
+       // alert(feature);
+
+    }
+
 
     return initMap(ol);
 });
