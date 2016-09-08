@@ -389,8 +389,21 @@ a:focus {
     background: white;
 }
 
-.flag .zoom-preview {
-    bottom: -8px !important;
+.flag {
+    .zoom-preview {
+        bottom: -8px !important;
+    }
+
+    .it-has-annotations {
+        bottom: -1px !important;
+    }
+}
+
+.it-has-annotations {
+    position: absolute;
+    bottom: 0;
+    left: 13px;
+    bottom: 33px;
 }
 
 /* collection area */
