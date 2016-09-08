@@ -147,12 +147,10 @@
             var fullWidth = parseInt($('#pageimage').width());
             var fullHeight = fullWidth * sf;
             $("#image_one").attr('width', fullWidth).attr("height", fullHeight);
-            //This delay added because dom change not happening fast enough
-            setTimeout(function () {
-                        console.log(fullWidth);
+
+
                         imgToOSD();
-                    }, 500
-            );
+
 
         });
     </script>
