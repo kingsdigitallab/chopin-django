@@ -270,11 +270,9 @@
 
       output = output.concat(["<a class=\"pageView th\" data-sourcekey=\"", sourcePages[x].id, "\"",
         " href=\"", options.pageviewURL, "/", sourcePages[x].id, "/\">",
-        "<img", " class=\"lazy\" data-original=\"", options.thumbnails_url,  sourcePages[x].id, ".jpg\" />",
+        "<img", " class=\"lazy\" data-original=\"", options.thumbnails_url, sourcePages[x].id, ".jpg\" />",
         "</a>",
-        "<a class=\"zoom-preview\" href=\"/ocve/browse/image-preview/",
-        sourcePages[x].id,
-        "/\" data-reveal-id=\"show-zoom\"",
+        "<a class=\"zoom-preview\" href=\"/ocve/browse/image-preview/", sourcePages[x].id, "\" data-reveal-id=\"show-zoom\"",
         " data-reveal-ajax=\"true\" title=\"Click to preview\"><i class=\"fa fa-search-plus\"></i></a></li>"
       ]);
 
