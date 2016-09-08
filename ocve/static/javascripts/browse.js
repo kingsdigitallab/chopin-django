@@ -198,6 +198,8 @@
       return _.contains(validSelections,
         $(filterControl).data('key'));
     }).parent('li').show();
+     //reset instrument
+      $("li.page[data-instrument_id=0]").click();
 
   };
 
@@ -479,6 +481,7 @@
       options.filters = [];
       //Restore all filter choices
       $('a.ctrl:hidden').parent('li').show();
+      $("li.page[data-instrument_id=0]").click();
 
     });
 
