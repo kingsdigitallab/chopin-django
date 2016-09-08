@@ -1080,6 +1080,7 @@ b.top-spacing {
         li {
             margin: 0;
             border-bottom: 1px solid #fff;
+            background: $secondary-color;
         }
 
         li li {
@@ -1090,6 +1091,18 @@ b.top-spacing {
             margin-bottom: 0;
             text-align: left;
             padding-left: 8px !important;
+            background: $secondary-color;
+            color: darken($secondary-color, 80%);
+
+            &:hover {
+                background: $primary-color;
+                color: white;
+            }
+
+            &.disabled,
+            &.disabled:hover {
+                background: none;
+            }
         }
     }
 
