@@ -234,7 +234,7 @@ class PageSearchItem:
         self.keymode = 0
         genres = []
         try:
-            if noteList[self.id] == 1:
+            if noteList[str(self.id)] == 1:
                 self.annotation = 1
         except KeyError:
             self.annotation = 0
@@ -284,7 +284,7 @@ def serializeOCVESourceJson():
     with connection.cursor() as cursor:
         cursor.execute("select distinct pageimage_id from ocve_annotation;")
         for row in cursor.fetchall():
-            noteKeys[row[0]] = 1
+            noteKeys[str(row[0])] = 1
     serializeSourceJson(sourcecomponents,'OCVEsourceJSON','OCVE',noteKeys)
 
 def serializeCFEOSourceJson():
