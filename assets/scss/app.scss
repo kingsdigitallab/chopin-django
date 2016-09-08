@@ -66,7 +66,7 @@ a:focus {
     float: none;
     color: #666;
     font-size: .875rem;
-    padding: 1rem 0;
+    padding: 0 0 1rem;
 }
 
 #copyright:before {
@@ -389,8 +389,21 @@ a:focus {
     background: white;
 }
 
-.flag .zoom-preview {
-    bottom: -8px !important;
+.flag {
+    .zoom-preview {
+        bottom: -8px !important;
+    }
+
+    .it-has-annotations {
+        bottom: -1px !important;
+    }
+}
+
+.it-has-annotations {
+    position: absolute;
+    bottom: 0;
+    left: 13px;
+    bottom: 33px;
 }
 
 /* collection area */
@@ -1067,6 +1080,7 @@ b.top-spacing {
         li {
             margin: 0;
             border-bottom: 1px solid #fff;
+            background: $secondary-color;
         }
 
         li li {
@@ -1077,6 +1091,18 @@ b.top-spacing {
             margin-bottom: 0;
             text-align: left;
             padding-left: 8px !important;
+            background: $secondary-color;
+            color: darken($secondary-color, 80%);
+
+            &:hover {
+                background: $primary-color;
+                color: white;
+            }
+
+            &.disabled,
+            &.disabled:hover {
+                background: none;
+            }
         }
     }
 
