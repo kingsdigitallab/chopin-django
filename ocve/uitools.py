@@ -1,3 +1,5 @@
+from django.utils.datastructures import MultiValueDictKeyError
+
 __author__ = 'Elliott Hall'
 #Various queries and reusable functions that will be employed in the ui.
 #Kept here for the sake of hygiene, and hopefully resuability
@@ -10,6 +12,8 @@ from django.db import connection
 from catalogue.templatetags.catalogue_tags import get_impression_exists,add_special_characters
 import urllib
 import re
+from django.db import connection
+
 
 import hashlib
 
@@ -110,7 +114,8 @@ class SourceComponentItem:
 
 #s.id,s.sourcetype_id,s.label,s.cfeolabel,w.id
 class SourceSearchItem:
-    def  __init__(self, row, orderno,mode):
+    def  __init__(self, row, orderno,mode,noteList):
+        self.noteList=noteList
         self.orderno = orderno
         self.id = row[0]
         self.mode=mode
@@ -187,6 +192,7 @@ class SourceSearchItem:
         sourcejson +=  "'Publisher': " + str(self.publisher) + ","
         sourcejson +=  "'Type': " + str(self.type) + ","
         sourcejson +=  "'Pages': ["
+        notes=[]
         if self.mode == 'OCVE':
             #Filter out non-musical pages like blanks, title pages etc.
             #musicpage=PageType.objects.get(type='music')
@@ -195,13 +201,15 @@ class SourceSearchItem:
             #nonmusic=SourceComponentType.objects.get(type="Non-music")
             #.exclude(page__sourcecomponent__sourcecomponenttype=blank)
             #.exclude(page__sourcecomponent__sourcecomponenttype=nonmusic)
+
             pages = PageImage.objects.filter(page__sourcecomponent__source_id=self.id).exclude(page__pagetype_id__lt=2).exclude(page__pagetype=blank).order_by("page__sourcecomponent","page")
+
         else:
             pages = PageImage.objects.filter(page__sourcecomponent__source_id=self.id).order_by("page__sourcecomponent","page")
         for pi in pages:
             if pi != pages[0]:
                 sourcejson +=  ','
-            sourcejson +=  PageSearchItem(self.id,self.work, pi,self.dedicatee,self.publisher,self.years).toJson()
+            sourcejson +=  PageSearchItem(self.id,self.work, pi,self.dedicatee,self.publisher,self.years,self.noteList).toJson()
         sourcejson +=  "]"
         sourcejson +=  ", 'orderno':" + json.dumps(self.orderno)
         sourcejson +=  "}"
@@ -210,7 +218,7 @@ class SourceSearchItem:
 
 #(page no with bar range)
 class PageSearchItem:
-    def __init__(self, source,work, pageimage,dedicatee,publisher,years):
+    def __init__(self, source,work, pageimage,dedicatee,publisher,years,noteList):
         self.id = pageimage.id
         self.source_id = source
         self.thumbnail_url = pageimage.getJP2Path()
@@ -225,6 +233,11 @@ class PageSearchItem:
         self.keypitch = 0
         self.keymode = 0
         genres = []
+        try:
+            if noteList[self.id] == 1:
+                self.annotation = 1
+        except KeyError:
+            self.annotation = 0
 
         if work > 0:
             wc = WorkComponent.objects.filter(sourcecomponent_workcomponent__sourcecomponent__page__pageimage=pageimage)
@@ -248,6 +261,7 @@ class PageSearchItem:
         pagejson +=  "'sourcecomponent_orderno': " + json.dumps(self.sourcecomponent_orderno) + ", "
         pagejson +=  "'Genre': " + json.dumps(self.genres) + ", "
         pagejson +=  "'Year': " + json.dumps(self.years) + ", "
+        pagejson +=  "'annotation': " + json.dumps(self.annotation) + ", "
         pagejson +=  "'Dedicatee': " + json.dumps(self.dedicatee) + ", 'Work':" + json.dumps(self.work)
         pagejson +=  ", 'Publisher': " + json.dumps(self.publisher)
         pagejson +=  ", 'thumbnail_url':" + json.dumps(self.thumbnail_url)
@@ -265,7 +279,13 @@ def serializeOCVESourceJson():
         sourcecomponents = SourceComponent.objects.filter(source__ocve=True,source__live=True).distinct()
     else:
         sourcecomponents = SourceComponent.objects.filter(source__ocve=True).distinct()
-    serializeSourceJson(sourcecomponents,'OCVEsourceJSON','OCVE')
+    #Get list of pages for this source that have annotations
+    noteKeys={}
+    with connection.cursor() as cursor:
+        cursor.execute("select distinct pageimage_id from ocve_annotation;")
+        for row in cursor.fetchall():
+            noteKeys[row[0]] = 1
+    serializeSourceJson(sourcecomponents,'OCVEsourceJSON','OCVE',noteKeys)
 
 def serializeCFEOSourceJson():
     #sources = Source.objects.filter(cfeo=True).order_by(
@@ -274,9 +294,9 @@ def serializeCFEOSourceJson():
         sourcecomponents = SourceComponent.objects.filter(source__cfeo=True,source__live=True).distinct()
     else:
         sourcecomponents = SourceComponent.objects.filter(source__cfeo=True).distinct()
-    serializeSourceJson(sourcecomponents,'CFEOsourceJSON','CFEO')
+    serializeSourceJson(sourcecomponents,'CFEOsourceJSON','CFEO',[])
 
-def serializeSourceJson(sourcecomponents,filename,mode):
+def serializeSourceJson(sourcecomponents,filename,mode,noteList):
     #sources=Source.objects.filter(sourcelegacy__witnessKey__gt=0).order_by('sourcecomponent__sourcecomponent_workcomponent__workcomponent__work__orderno','label').distinct()
     #all sources with bar info
     destination = open(settings.SOURCEJSONPATH+'/'+filename+'.js', 'w')
@@ -301,7 +321,7 @@ def serializeSourceJson(sourcecomponents,filename,mode):
     for row in cursor.fetchall():
         if orderno >1:
             destination.write(',\n')
-        destination.write(SourceSearchItem(row, orderno,mode).toJson())
+        destination.write(SourceSearchItem(row, orderno,mode,noteList).toJson())
         orderno += 1
     destination.write(']')
     destination.close()

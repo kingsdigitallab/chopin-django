@@ -274,11 +274,13 @@
         "</a>",
         // Preview bigger image in lightbox
         "<a class=\"zoom-preview\" href=\"image-preview/", sourcePages[x].id, "\" data-reveal-id=\"show-zoom\"",
-        " data-reveal-ajax=\"true\" title=\"Click to preview\"><i class=\"fa fa-search-plus\"></i></a>",
+        " data-reveal-ajax=\"true\" title=\"Click to preview\"><i class=\"fa fa-search-plus\"></i></a>"]);
         // If the image has annotations, display icon
-        "<i class=\"fa fa-comments it-has-annotations\"></i>",
-        "</li>"
-      ]);
+        if (sourcePages[x].annotation == 1) {
+            output = output.concat(["<i class=\"fa fa-comments it-has-annotations\"></i>"]);
+        }
+        output = output.concat(["</li>"]);
+
 
     }
     return output.join("");
