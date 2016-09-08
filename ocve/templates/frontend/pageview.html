@@ -48,17 +48,21 @@
 
                         <li>
                             <ul class="button-group even-2">
-                                {% if prev %}
                                 <li id="uno">
+                                    {% if prev %}
                                     <a href="/{{ mode|lower }}/browse/pageview/{{ prev.id }}/" class="ctrl prev small button"><i class="fa fa-caret-left"></i> Prev</a>
+                                    {% else %}
+                                    <a class="small button disabled"></a>
+                                    {% endif %}
                                 </li>
-                                {% endif %}
 
-                                {% if next %}
                                 <li id="due">
+                                    {% if next %}
                                     <a href="/{{ mode|lower }}/browse/pageview/{{ next.id }}/" class="ctrl next small button">Next <i class="fa fa-caret-right"></i></a>
+                                    {% else %}
+                                    <a class="small button disabled"></a>
+                                    {% endif %}
                                 </li>
-                                {% endif %}
                             </ul>
                         </li>
 
@@ -191,7 +195,7 @@
     <p>See witness overview.</p>
   </li>
   <li data-id="zeroc" data-text="Next" data-prev-text="Prev" data-options="tip_location: top">
-    <p>Click on a bar to display the variations of that bar in all available sources.</p>
+    <p>Click on a bar to display the variants of that bar in all available sources.</p>
   </li>
   <li data-id="uno" data-text="Next" data-prev-text="Prev" data-options="tip_location: top">
     <p>Navigate to the previous page.</p>
