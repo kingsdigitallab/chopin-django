@@ -281,6 +281,9 @@
         if (sourcePages[x].annotation == 1) {
             output = output.concat(["<i class=\"fa fa-comments it-has-annotations\"></i>"]);
         }
+        output = output.concat(["<span class=\"page-label\" title=\"", sourcePages[x].label, "\">",
+        source_pages_label_display,
+        "</span>"]);
         output = output.concat(["</li>"]);
 
 
