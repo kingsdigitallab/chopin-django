@@ -154,7 +154,7 @@ define(["jquery", "ol3"], function ($, ol) {
         $("#map").css('width', fullWidth + "px").css("height", fullHeight + "px");
 
         //TODO Debug only remove
-        console.log(fullWidth + '::' + fullHeight);
+
 
         initStyles();
 
@@ -171,6 +171,7 @@ define(["jquery", "ol3"], function ($, ol) {
             size: [imgWidth, imgHeight],
             crossOrigin: crossOrigin
         });
+
         //Get the bar boxes
         barLayer = initBarLayer();
         //Get any annotations
@@ -200,14 +201,14 @@ define(["jquery", "ol3"], function ($, ol) {
                 zoom: 2
             })
         });
+        console.log(fullWidth + '::' + fullHeight);
         olpage.addControl(new ol.control.ZoomSlider());
         //For debug only
         olpage.addControl(new ol.control.MousePosition());
         //Add interactions depending on mode
-        var interactions;
-        if (pageimage.annotation_mode == 1) {
-            interactions = initAnnotationInteractions()
-        } else {
+        var interactions = null;
+        if (pageimage.annotation_mode == 0) {
+
             interactions = initInteractions();
             //Extra click event for clickthrough to bars
             jQuery('#map').click(function () {
@@ -218,14 +219,18 @@ define(["jquery", "ol3"], function ($, ol) {
                     window.location = '/ocve/browse/barview?workid=' + pageimage.workid + '&pageimageid=' + pageimage.pageID + '&barid=' + feature.get("barid");
                 }
             });
+            olpage.addInteraction(interactions);
+        } else {
+            //Links on right
+            initAnnotationTriggers();
         }
-        olpage.addInteraction(interactions);
+
         return olpage;
     }
 
 
     /* ************************************************************
-    Annotation Functions
+     Annotation Functions
      Notes can be attached to three different shapes: a bar region, a drawn square and a drawn circle
      */
 
@@ -245,11 +250,13 @@ define(["jquery", "ol3"], function ($, ol) {
 
     }
 
-    initAnnotationInteractions = function () {
+    initAnnotationTriggers = function () {
         //Bind annotation events to elements
         if ($(newNoteForm).length > 0) {
+
+            //Annoation draw tools
             $(pageimage.barAttachToggle).click(function () {
-                initDrawInteraction("Bar");
+                 initDrawInteraction("Bar");
             });
 
             $(newSquareNoteToggle).click(function () {
@@ -258,13 +265,24 @@ define(["jquery", "ol3"], function ($, ol) {
             $(newCircleNoteToggle).click(function () {
                 initDrawInteraction("Circle");
             });
+
+
+            //Form triggers
+            $('#cancelNote').click(function () {
+                resetPage();
+                return false;
+            });
+
         }
+
+
     }
 
     endDrawInteraction = function () {
         //remove any existing interaction
+        console.log(olpage.getInteractions().length);
         olpage.removeInteraction(annotationInteraction);
-        //TODO Clean form?
+
     }
 
     initDrawInteraction = function (noteType) {
@@ -280,7 +298,7 @@ define(["jquery", "ol3"], function ($, ol) {
                 drawOptions = {
                     type: (type),
                     layers: [noteLayer],
-                    geometryFunction: geometryFunction,
+                    geometryFunction: geometryFunction
 
                 }
 
@@ -310,8 +328,9 @@ define(["jquery", "ol3"], function ($, ol) {
             });
 
         }
-        olpage.addInteraction(annotationInteraction);
         //todo Check if form is visible, make visible if not
+        console.log(annotationInteraction);
+        olpage.addInteraction(annotationInteraction);
 
     }
 
@@ -374,6 +393,24 @@ define(["jquery", "ol3"], function ($, ol) {
         }
     }
 
+    showNewAnnotationWindow = function () {
+        if ($('#newNote').is(':visible') == false) {
+            $('#newNote').fadeIn();
+            $('#notes').hide();
+            $('#commentary').hide()
+        }
+    };
 
+    resetPage = function(){
+        endDrawInteraction();
+    }
+
+    hideNewAnnotationWindow = function () {
+        if ($('#newNote').is(':visible')){
+            $('#newNote').fadeOut();
+            $('#notes').show();
+            $('#commentary').show();
+        }
+    };
     return initMap(ol);
 });
