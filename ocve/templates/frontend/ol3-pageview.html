@@ -5,9 +5,9 @@
 
 {% block custom_stylesheets %}
 {{ block.super }}
-<link rel="stylesheet" href="{{ STATIC_URL }}vendor/ol v3.13.1/css/ol.css" type="text/css">
 <link rel="stylesheet" href="{{ STATIC_URL }}custom_css/bareditor.css" type="text/css">
-{% endblock custom_stylesheets %}
+   <link rel="stylesheet" href="{{ STATIC_URL }}vendor/OpenLayers/3.18.2/ol.css" type="text/css">
+   {% endblock custom_stylesheets %}
 
 {% block header_scripts %}
 <script type="text/javascript" src="{{ STATIC_URL }}vendor/garand-sticky/jquery.sticky.js"></script>
@@ -45,7 +45,7 @@ $(window).load(function(){
 
                         <li>
                             <div class="menu-item opus-title">
-                                {% if workinfoexists %}<a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview" id="zero">{{ work  }}</a>{% else %}{{ work }}{% endif %},
+                                {% if workinfoexists %}<a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/" data-reveal-id="opus-info" title="Work overview" id="zero">{{ work | add_special_characters }}</a>{% else %}{{ work | add_special_characters }}{% endif %},
                                 <a href="#" data-reveal-id="witness-info" data-reveal-ajax="/ocve/browse/sourceinformation/{{ source.id }}/" title="Witness overview" id="zerob">{{ source.getAcCode  | add_special_characters }}</a>,
                                 {{ pageimage.textlabel | add_special_characters }}
                             </div>
