@@ -279,6 +279,7 @@ CELERYBEAT_SCHEDULE = {
         'task': 'catalogue.tasks.haystack_update_index',
         'schedule': crontab(minute=0, hour=2),
     },
+
 }
 
 # -----------------------------------------------------------------------------
