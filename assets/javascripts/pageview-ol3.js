@@ -224,7 +224,8 @@ define(["jquery", "ol3"], function ($, ol) {
     }
 
 
-    /* Annotation Functions
+    /* ************************************************************
+    Annotation Functions
      Notes can be attached to three different shapes: a bar region, a drawn square and a drawn circle
      */
 
@@ -295,13 +296,16 @@ define(["jquery", "ol3"], function ($, ol) {
 
         } else if (noteType == "Bar") {
             //todo: Actually a select, not draw
-            initInteractions();
+            annotationInteraction = initInteractions();
             jQuery('#map').click(function () {
-                var features = hover.getFeatures().getArray();
-                if (features.length > 0) {
-                    var feature = features[0];
-                    console.log(feature.get('label'));
-                    finishDraw(feature);
+                if (hover && hover.getFeatures().length > 0) {
+
+                    var features = hover.getFeatures().getArray();
+                    if (features.length > 0) {
+                        var feature = features[0];
+                        console.log(feature.get('label'));
+                        finishDraw(feature);
+                    }
                 }
             });
 
@@ -312,16 +316,62 @@ define(["jquery", "ol3"], function ($, ol) {
     }
 
     finishDraw = function (event) {
-        console.log(this);
-        var feature=event.feature
-        var format=new ol.format.GeoJSON();
+        var feature = event.feature
+        var format = new ol.format.GeoJSON();
         console.log(format.writeFeature(feature));
-        console.log(feature.getGeometry());
         //Add shape id to note form
-        $('#id_noteregions').val(feature.geometry.toString());
+        $('#id_noteregions').val(format.writeFeature(feature));
         $('#featureid').val(feature.id);
-       // alert(feature);
 
+
+    }
+
+    attachDeleteNote = function (selector) {
+        $(selector).click(function () {
+            var sure = confirm('Delete This Note?');
+            if (sure == true) {
+                var noteid = $(this).data('noteid');
+                $.post('/ocve/deleteNote/' + noteid, function (data) {
+                    $('#comment-' + noteid).fadeOut();
+                    $('#comment-' + noteid).next('hr').fadeOut();
+                    $('#messages').html(data.messages);
+                    noteFeatures = alayer.getFeaturesByAttribute('noteid', noteid);
+                    alayer.removeFeatures(noteFeatures);
+                    incrementNoteCount(-1);
+                }, 'json');
+            }
+            return false;
+        });
+    }
+
+    attachUpdateNote = function (selector) {
+        $(selector).click(function () {
+            var noteid = $(this).data('noteid');
+            nTest = noteid;
+            var oldText = $('#comment-' + noteid + ' div.annotation p').html();
+            $('#id_notetext').val(oldText);
+            $('#annotation_id').val(noteid);
+            //Select current notes/regions
+            curFeatures = alayer.getFeaturesByAttribute('noteid', noteid);
+            for (var c = 0; c < curFeatures.length; c++) {
+
+                curFeatures[c].renderIntent = 'visibleNote';
+                noteSelectFeature.select(curFeatures[c]);
+            }
+            alayer.redraw();
+            showNewAnnotationWindow();
+
+        });
+    }
+    //Change the user annotation count by inc
+    incrementNoteCount = function (inc) {
+        var count = parseInt($('#note_count').html())
+        count += inc;
+        $('#note_count').html(count)
+        if (count == 0) {
+            //No more notes, hide dropdown
+            $('#notes').hide();
+        }
     }
 
 
