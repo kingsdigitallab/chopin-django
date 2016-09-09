@@ -279,6 +279,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'catalogue.tasks.haystack_update_index',
         'schedule': crontab(minute=0, hour=2),
     },
+    'push-to-live-every-day': {
+        'task': 'ocve.tasks.push_to_liv',
+        'schedule': crontab(minute=0, hour=1),
+    },
 }
 
 # -----------------------------------------------------------------------------
