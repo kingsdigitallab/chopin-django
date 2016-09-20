@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Sources edit view</title>
+</head>
+<body>
+<h1>All sources</h1>
+<h2><a href="/ocve/dbmi/">Back to DBMI</a> </h2>
+<!-- id(this will be a link to the source editor) / accode / shelfmark / work(link to work) / ocve / cfeo/ live-->
+<h4>Order by: </h4>
+<dl>
+    <dt>Orderno</dt>
+    <dd><a href="?order=orderno">Ascending</a> <a href="?order=-orderno">Descending</a></dd>
+</dl>
+<h4>Filter by</h4>
+<a href="?filter=&order={{ order }}">All</a>
+<p><a href="?filter=ocve&order={{ order }}">OCVE only</a>
+<a href="?filter=cfeo&order={{ order }}">CFEO only</a></p>
+<table>
+    <thead>
+    <tr><th>id</th><th>accode</th><th>shelfmark</th><th>work</th><th>ocve</th><th>cfeo</th><th>live</th> </tr>
+    </thead>
+    <tbody>
+    {% for s in sources %}
+        {% autoescape off %}
+    <tr>
+        <td><a href="/ocve/sourceeditor/{{ s.id }}">{{ s.id }}</a></td>
+        <td>{{ s.getAcCode }}</td>
+        <td>{%  if s.getSourceInformation != None%}{{ s.getSourceInformation.shelfmark }}{% endif %}</td>
+        <td>{%  if s.getWork != None %}<a href="/ocve/workadmin/{{ s.getWork.id }}">{{ s.getWork.label }}{% endif %}</a></td>
+        <td>{{ s.ocve }}</td>
+        <td>{{ s.cfeo }}</td>
+        <td>{{ s.live }}</td>
+    </tr>
+        {% endautoescape %}
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>
