@@ -102,7 +102,7 @@ INTERNAL_IPS = ('127.0.0.1', )
 
 
 LOGGING_ROOT = os.path.join(BASE_DIR, 'logs')
-LOGGING_LEVEL = logging.WARN
+LOGGING_LEVEL = logging.INFO
 
 if not os.path.exists(LOGGING_ROOT):
     os.makedirs(LOGGING_ROOT)
@@ -279,6 +279,7 @@ CELERYBEAT_SCHEDULE = {
         'task': 'catalogue.tasks.haystack_update_index',
         'schedule': crontab(minute=0, hour=2),
     },
+
 }
 
 # -----------------------------------------------------------------------------
