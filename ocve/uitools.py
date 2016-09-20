@@ -282,7 +282,7 @@ class PageSearchItem:
 
 
 def serializeOCVESourceJson():
-    if settings.BUILD_LIVE_ONLY == True:
+    if settings.BUILD_LIVE_ONLY:
         sourcecomponents = SourceComponent.objects.filter(source__ocve=True, source__live=True).distinct()
     else:
         sourcecomponents = SourceComponent.objects.filter(source__ocve=True).distinct()
@@ -293,7 +293,7 @@ def serializeOCVESourceJson():
 def serializeCFEOSourceJson():
     #sources = Source.objects.filter(cfeo=True).order_by(
     #    'sourcecomponent__sourcecomponent_workcomponent__workcomponent__work__orderno', 'orderno').distinct()
-    if settings.BUILD_LIVE_ONLY == True:
+    if settings.BUILD_LIVE_ONLY:
         sourcecomponents = SourceComponent.objects.filter(source__cfeo=True, source__live=True).distinct()
     else:
         sourcecomponents = SourceComponent.objects.filter(source__cfeo=True).distinct()
@@ -316,6 +316,10 @@ def serializeSourceJson(sourcecomponents, filename, mode):
         modeSQL = "s.cfeo=True"
     else:
         modeSQL = "s.ocve=True"
+
+    if settings.BUILD_LIVE_ONLY:
+        modeSQL += " and s.live=True"
+
     cursor = connection.cursor()
     sql = "select distinct s.id,s.sourcetype_id,s.label,s.cfeolabel,w.id,si.dedicatee_id,si.publisher_id,si.platenumber,si.sourcecode,ac.accode,si.id,ac.accode_hash,s.orderno,w.orderno"
     sql += " from ocve_source as s,ocve_accode as ac,ocve_sourceinformation as si,ocve_sourcecomponent as sc,ocve_sourcecomponent_workcomponent as scwc, ocve_workcomponent as wc, ocve_work as w"
