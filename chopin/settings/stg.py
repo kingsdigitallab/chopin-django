@@ -18,6 +18,17 @@ DATABASES = {
 
 HAYSTACK_CONNECTIONS['default']['INDEX_NAME'] = PROJECT_NAME + '_stg'
 
+CELERYBEAT_SCHEDULE = {
+    'haystack-update-index-every-day': {
+        'task': 'catalogue.tasks.haystack_update_index',
+        'schedule': crontab(minute=0, hour=2),
+    },
+    'push-to-live-every-day': {
+        'task': 'ocve.tasks.push_to_liv',
+        'schedule': crontab(minute=0, hour=1),
+    },
+}
+
 # -----------------------------------------------------------------------------
 # Local settings
 # -----------------------------------------------------------------------------

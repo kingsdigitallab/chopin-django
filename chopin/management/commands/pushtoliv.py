@@ -43,9 +43,9 @@ class Command(BaseCommand):
         else:
 
             #todo Postgres pg_dump -h db-pg-1.cch.kcl.ac.uk -U app_ocve -t 'ocve_*' app_ocve_merged_stg > ocve_only.sql
-            mysqlstgdumpcmd = ['pg_dump','-w','-c','-O', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'app_ocve', '-t', 'ocve_*',  'app_ocve_merged_stg', '>', stg_dump]
+            stgdumpcmd = ['pg_dump','-w','-c','-O', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'app_ocve', '-t', 'ocve_*',  'app_ocve_merged_stg', '>', stg_dump]
             #' '.join(pushstat)
-            proc = subprocess.Popen(' '.join(mysqlstgdumpcmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            proc = subprocess.Popen(' '.join(stgdumpcmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             err = proc.communicate()[1]
             if err:
                 logger.error('Dump from stg failed with error:' + str(err))
