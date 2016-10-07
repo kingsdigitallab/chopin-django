@@ -153,12 +153,14 @@ define(["jquery", "ol3"], function ($, ol) {
         var fullHeight = fullWidth * sf;
         $("#map").css('width', fullWidth + "px").css("height", fullHeight + "px");
 
-        //TODO Debug only remove
-
+    
 
         initStyles();
+        var cHeight =imgHeight / 2;
 
-        var imgCenter = [imgWidth / 2, -imgHeight / 4];
+        var imgCenter = [imgWidth / 2, -cHeight];
+
+        
 
         var proj = new ol.proj.Projection({
             code: 'ZOOMIFY',
@@ -171,7 +173,6 @@ define(["jquery", "ol3"], function ($, ol) {
             size: [imgWidth, imgHeight],
             crossOrigin: crossOrigin
         });
-
         //Get the bar boxes
         barLayer = initBarLayer();
         //Get any annotations
@@ -201,14 +202,16 @@ define(["jquery", "ol3"], function ($, ol) {
                 zoom: 2
             })
         });
-        console.log(fullWidth + '::' + fullHeight);
+        //TODO Debug only remove
+        
         olpage.addControl(new ol.control.ZoomSlider());
         //For debug only
         olpage.addControl(new ol.control.MousePosition());
         //Add interactions depending on mode
-        var interactions = null;
-        if (pageimage.annotation_mode == 0) {
-
+        var interactions;
+        if (pageimage.annotation_mode == 1) {
+            interactions = initAnnotationInteractions()
+        } else {
             interactions = initInteractions();
             //Extra click event for clickthrough to bars
             jQuery('#map').click(function () {
@@ -220,17 +223,13 @@ define(["jquery", "ol3"], function ($, ol) {
                 }
             });
             olpage.addInteraction(interactions);
-        } else {
-            //Links on right
-            initAnnotationTriggers();
         }
-
+        
         return olpage;
     }
 
 
-    /* ************************************************************
-     Annotation Functions
+    /* Annotation Functions
      Notes can be attached to three different shapes: a bar region, a drawn square and a drawn circle
      */
 
@@ -250,39 +249,26 @@ define(["jquery", "ol3"], function ($, ol) {
 
     }
 
-    initAnnotationTriggers = function () {
+    initAnnotationInteractions = function () {
         //Bind annotation events to elements
         if ($(newNoteForm).length > 0) {
-
-            //Annoation draw tools
-            $(pageimage.barAttachToggle).click(function () {
-                 initDrawInteraction("Bar");
+           $(pageimage.barAttachToggle).click(function () {
+                initDrawInteraction("Bar");
             });
 
-            $(newSquareNoteToggle).click(function () {
+           $(newSquareNoteToggle).click(function () {
                 initDrawInteraction("Polygon");
             });
             $(newCircleNoteToggle).click(function () {
                 initDrawInteraction("Circle");
             });
-
-
-            //Form triggers
-            $('#cancelNote').click(function () {
-                resetPage();
-                return false;
-            });
-
         }
-
-
     }
 
     endDrawInteraction = function () {
         //remove any existing interaction
-        console.log(olpage.getInteractions().length);
         olpage.removeInteraction(annotationInteraction);
-
+        //TODO Clean form?
     }
 
     initDrawInteraction = function (noteType) {
@@ -294,11 +280,22 @@ define(["jquery", "ol3"], function ($, ol) {
             type = 'Circle';
             if (noteType == "Polygon") {
                 //type = ol.geom.Polygon;
-                var geometryFunction = ol.interaction.Draw.createRegularPolygon(4);
+                maxPoints = 2;
+            geometryFunction = function(coordinates, geometry) {
+              if (!geometry) {
+                geometry = new ol.geom.Polygon(null);
+              }
+              var start = coordinates[0];
+              var end = coordinates[1];
+              geometry.setCoordinates([
+                [start, [start[0], end[1]], end, [end[0], start[1]], start]
+              ]);
+              return geometry;
+            };
                 drawOptions = {
-                    type: (type),
+                    type: ('LineString'),
                     layers: [noteLayer],
-                    geometryFunction: geometryFunction
+                    geometryFunction: geometryFunction,
 
                 }
 
@@ -314,103 +311,35 @@ define(["jquery", "ol3"], function ($, ol) {
 
         } else if (noteType == "Bar") {
             //todo: Actually a select, not draw
-            annotationInteraction = initInteractions();
+            initInteractions();
             jQuery('#map').click(function () {
-                if (hover && hover.getFeatures().length > 0) {
-
-                    var features = hover.getFeatures().getArray();
-                    if (features.length > 0) {
-                        var feature = features[0];
-                        console.log(feature.get('label'));
-                        finishDraw(feature);
-                    }
+                var features = hover.getFeatures().getArray();
+                if (features.length > 0) {
+                    var feature = features[0];
+                    console.log(feature.get('label'));
+                    finishDraw(feature);
                 }
             });
 
         }
-        //todo Check if form is visible, make visible if not
-        console.log(annotationInteraction);
         olpage.addInteraction(annotationInteraction);
+        //todo Check if form is visible, make visible if not
 
     }
 
     finishDraw = function (event) {
-        var feature = event.feature
-        var format = new ol.format.GeoJSON();
+        console.log(this);
+        var feature=event.feature
+        var format=new ol.format.GeoJSON();
         console.log(format.writeFeature(feature));
+        console.log(feature.getGeometry());
         //Add shape id to note form
         $('#id_noteregions').val(format.writeFeature(feature));
         $('#featureid').val(feature.id);
-
+       // alert(feature);
 
     }
 
-    attachDeleteNote = function (selector) {
-        $(selector).click(function () {
-            var sure = confirm('Delete This Note?');
-            if (sure == true) {
-                var noteid = $(this).data('noteid');
-                $.post('/ocve/deleteNote/' + noteid, function (data) {
-                    $('#comment-' + noteid).fadeOut();
-                    $('#comment-' + noteid).next('hr').fadeOut();
-                    $('#messages').html(data.messages);
-                    noteFeatures = alayer.getFeaturesByAttribute('noteid', noteid);
-                    alayer.removeFeatures(noteFeatures);
-                    incrementNoteCount(-1);
-                }, 'json');
-            }
-            return false;
-        });
-    }
 
-    attachUpdateNote = function (selector) {
-        $(selector).click(function () {
-            var noteid = $(this).data('noteid');
-            nTest = noteid;
-            var oldText = $('#comment-' + noteid + ' div.annotation p').html();
-            $('#id_notetext').val(oldText);
-            $('#annotation_id').val(noteid);
-            //Select current notes/regions
-            curFeatures = alayer.getFeaturesByAttribute('noteid', noteid);
-            for (var c = 0; c < curFeatures.length; c++) {
-
-                curFeatures[c].renderIntent = 'visibleNote';
-                noteSelectFeature.select(curFeatures[c]);
-            }
-            alayer.redraw();
-            showNewAnnotationWindow();
-
-        });
-    }
-    //Change the user annotation count by inc
-    incrementNoteCount = function (inc) {
-        var count = parseInt($('#note_count').html())
-        count += inc;
-        $('#note_count').html(count)
-        if (count == 0) {
-            //No more notes, hide dropdown
-            $('#notes').hide();
-        }
-    }
-
-    showNewAnnotationWindow = function () {
-        if ($('#newNote').is(':visible') == false) {
-            $('#newNote').fadeIn();
-            $('#notes').hide();
-            $('#commentary').hide()
-        }
-    };
-
-    resetPage = function(){
-        endDrawInteraction();
-    }
-
-    hideNewAnnotationWindow = function () {
-        if ($('#newNote').is(':visible')){
-            $('#newNote').fadeOut();
-            $('#notes').show();
-            $('#commentary').show();
-        }
-    };
     return initMap(ol);
 });

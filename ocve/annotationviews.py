@@ -11,7 +11,8 @@ from bartools import toGeos
 from ocve.forms import AnnotationForm
 from ocve.models import Annotation, Annotation_BarRegion, Bar, BarRegion
 from ocve.models import AnnotationType
-
+from ocve.uiviews import ocvePageImageview
+import re
 
 # Note edit views
 
@@ -79,11 +80,15 @@ def saveNote(request):
 
     # Transform POLYGON feature def for later GeoJSON export
     # POLYGON((1426 2368,1170 2036,1358 1824,1350 2084,1526 2152,1426 2368))
+    #"[{"type":"Feature"],["geometry":{"type":"Polygon"],["coordinates":[[[3493.5947265625],[-1089.8223876953125]],[[3422.8916015625],[-312.08801269531256]],[[2645.1572265625],[-382.7911376953124]],[[2715.8603515625],[-1160.5255126953125]],[[3493.5947265625],[-1089.8223876953125]]]}],["properties":null}]"
     geotext = new_annotation.noteregions
     if len(geotext) > 0:
-        geotext = geotext.replace('POLYGON((', '').replace('))', '').replace(
-            ',', '],[').replace(' ', ',')
-        new_annotation.noteregions = '[' + geotext + ']'
+        # geotext = geotext.replace('POLYGON((', '').replace('))', '').replace(
+        #     ',', '],[').replace(' ', ',')
+        # new_annotation.noteregions = '[' + geotext + ']'
+        m=re.search("coordinates\"\:\[\[\[(.*)\]\]\]", geotext)
+        if m != None:
+            new_annotation.noteregions=m.group(1)
         new_annotation.save()
 
     # Recalculate which bar regions intersect with this note
@@ -112,8 +117,7 @@ def saveNote(request):
         'messages': rendered_messages
     }
 
-    return render_to_response('frontend/ajax/updatenote.html', data,
-                              RequestContext(request))
+    return ocvePageImageview(request, new_annotation.pageimage_id)
 
 
 @csrf_exempt
