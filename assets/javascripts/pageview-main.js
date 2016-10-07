@@ -14,6 +14,10 @@ requirejs.config({
         vendor: '../vendor',
         ol3: '../vendor/OpenLayers/3.18.2/ol',
         jquery: '../vendor/jquery/dist/jquery'
+    },
+    shim: {
+        "pageview-ol3": ["jquery","ol3"]
+
     }
 });
 
