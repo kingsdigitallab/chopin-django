@@ -20,6 +20,7 @@ define(["jquery", "ol3"], function ($, ol) {
     var olpage;
     var styles;
     var annotationInteraction;
+    var noteSource;
 
     //The Open Layers bar styles
     // invisible: default setting for bar regions
@@ -90,9 +91,15 @@ define(["jquery", "ol3"], function ($, ol) {
 
         var visibleNoteStyle = new ol.style.Style({
             stroke: new ol.style.Stroke({
-                color: 'yellow',
-                width: 1
+                color: 'red',
+                width: 5
+            }),
+            image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+              color: '#ffcc33'
             })
+          })
         });
 
         var selectedNoteStyle = new ol.style.Style({
@@ -235,16 +242,31 @@ define(["jquery", "ol3"], function ($, ol) {
 
 
     initAnnotationLayer = function (visible) {
-        var vectorSource = new ol.source.Vector({
+        noteSource = new ol.source.Vector({
             url: pageimage.noteURL,
             format: new ol.format.GeoJSON()
         });
 
         //All bar boxes drawn invisible by default
+        //visible: visible
         return new ol.layer.Vector({
-            source: vectorSource,
-            style: styles.visibleNote,
-            visible: visible
+            source: noteSource,
+            style: new ol.style.Style({
+          fill: new ol.style.Fill({
+            color: 'rgba(255, 255, 255, 0.2)'
+          }),
+          stroke: new ol.style.Stroke({
+            color: '#ffcc33',
+            width: 2
+          }),
+          image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+              color: '#ffcc33'
+            })
+          })
+        })
+            
         });
 
     }
@@ -271,13 +293,18 @@ define(["jquery", "ol3"], function ($, ol) {
         //TODO Clean form?
     }
 
+
+    /**
+     * Ends any existing interactions, instantiates an ol.interaction.Draw event to add a note shape.
+     * Adds new interation to map.
+     * @param noteType Circle or Polygon (for box)
+     */
     initDrawInteraction = function (noteType) {
         endDrawInteraction();
         //Create annotation
         var type;
         var drawOptions;
-        if (noteType == "Polygon" || noteType == "Circle") {
-            type = 'Circle';
+        if (noteType == "Polygon" || noteType == "Circle") {            
             if (noteType == "Polygon") {
                 //type = ol.geom.Polygon;
                 maxPoints = 2;
@@ -293,22 +320,28 @@ define(["jquery", "ol3"], function ($, ol) {
               return geometry;
             };
                 drawOptions = {
-                    type: ('LineString'),
+                    type: 'LineString',
                     layers: [noteLayer],
-                    geometryFunction: geometryFunction
+                    geometryFunction: geometryFunction,
+                    source: noteSource,
+                    maxPoints: maxPoints,
+                    geometryName:"Box"
 
                 }
 
             } else if (noteType == "Circle") {
-                // type = ol.geom.Polygon;
+                type = 'Circle';
                 drawOptions = {
                     layers: [noteLayer],
-                    type: (type)
+                    type: (type),
+                    source: noteSource,
+                    geometryName:"Circle"
                 }
             }
             annotationInteraction = new ol.interaction.Draw(drawOptions);
-            annotationInteraction.on('drawend', finishDraw);
+            
 
+            annotationInteraction.on('drawend', finishDraw);
         } else if (noteType == "Bar") {
             //todo: Actually a select, not draw
             initInteractions();
@@ -327,17 +360,33 @@ define(["jquery", "ol3"], function ($, ol) {
 
     }
 
-    finishDraw = function (event) {
-        console.log(this);
+    /**
+     * When ol.interaction.Draw triggers draw end, this event finds the geometry
+     * of the drawn shape and adds it to the note form.
+     * @param event event object passed by Draw
+     */
+    finishDraw = function (event) {        
         var feature=event.feature
         var format=new ol.format.GeoJSON();
-        console.log(format.writeFeature(feature));
-        console.log(feature.getGeometry());
-        //Add shape id to note form
-        $('#id_noteregions').val(format.writeFeature(feature));
+        var geometryName=feature.getGeometryName();
+        console.log(geometryName);
+        if (geometryName == "Circle"){
+            console.log(feature.getGeometry().getRadius());
+            console.log(feature.getGeometry().getCenter());
+            $('#id_noteregions').val(feature.getGeometry().getRadius()+"::"+eature.getGeometry().getCenter() );
+        }else if (geometryName == "Box"){
+            console.log(format.writeFeature(feature));
+            $('#id_noteregions').val(format.writeFeature(feature));
+        }        
+        
+        //Add shape id to note form        
         $('#featureid').val(feature.id);
-       // alert(feature);
+       
 
+    }
+
+    toggleExistingNotes = function(){
+        console.log(noteLayer.getOpacity());
     }
 
 
