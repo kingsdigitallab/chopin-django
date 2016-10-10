@@ -286,22 +286,31 @@ define(["jquery", "ol3"], function ($, ol) {
                 initDrawInteraction("Circle");
             });
         }
-        noteSelectInteraction = ol3.interaction.Select(
-            {
-                layers:[noteLayer],
-                condition: ol.events.condition.click
-            }
-        )
+        noteSelectInteraction = new ol.interaction.Select({
+            condition: ol.events.condition.click
+            });
         olpage.addInteraction(noteSelectInteraction);
-        select.on('select', function(e) {
-            console.log(e.selected)
+        
+        noteSelectInteraction.on('select', function(e) {
+            var feature=e.selected[0];  
+            var noteid = feature.getProperties().noteid;
+            $('.annotation-box').css('border','none');
+            $('#comment-'+noteid).css('border','1px solid red');          
+            if (!$('#comment-'+noteid).is(':visible')){
+                if ($(!$('#comment-'+noteid).attr('class').includes('commentary'))) {
+                    $('#commentary h4').click();
+                } else {
+                    $('#notes h4').click();
+                }
+            }
+            console.log(feature.getProperties().noteid );
           });
     }
 
     endDrawInteraction = function () {
         //remove any existing interaction
         olpage.removeInteraction(annotationInteraction);
-
+        olpage.addInteraction(noteSelectInteraction);
     }
 
 
@@ -311,7 +320,8 @@ define(["jquery", "ol3"], function ($, ol) {
      * @param noteType Circle or Polygon (for box)
      */
     initDrawInteraction = function (noteType) {
-        endDrawInteraction();
+        olpage.removeInteraction(annotationInteraction);
+        olpage.removeInteraction(noteSelectInteraction);
         //Create annotation
         var type;
         var drawOptions;
