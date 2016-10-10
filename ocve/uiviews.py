@@ -330,8 +330,8 @@ def getPageImageWork(pi,source):
 @csrf_exempt
 def ocvePageImageview(request, id,selectedregionid=0):
     mode = "OCVE"
-    noteURL = "/ocve/getAnnotationRegions/" + id + "/"
-    regionURL = "/ocve/getBarRegions/" + id + "/"
+    noteURL = "/ocve/getAnnotationRegions/" + str(id) + "/"
+    regionURL = "/ocve/getBarRegions/" + str(id) + "/"
     template="frontend/pageview.html"
 
     try:
