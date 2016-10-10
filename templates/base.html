@@ -8,9 +8,12 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" type="text/css" href="/static/CACHE/css/main.2e6feefa4972.css"/>
+<!--<link rel="stylesheet" type="text/css" href="/static/CACHE/css/main.2e6feefa4972.css"/>-->
 
-
+    {% compress css %}
+    {# SCSS compilation relies on django compressor #}
+    <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main-'|add:BASE_URL|add:'.scss' %}">
+    {% endcompress %}
 
     {% block custom_stylesheets %}
 
