@@ -295,7 +295,7 @@ define(["jquery", "ol3"], function ($, ol) {
                 drawOptions = {
                     type: ('LineString'),
                     layers: [noteLayer],
-                    geometryFunction: geometryFunction,
+                    geometryFunction: geometryFunction
 
                 }
 
