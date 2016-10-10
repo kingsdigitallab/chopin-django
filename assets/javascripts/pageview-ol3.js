@@ -20,6 +20,7 @@ define(["jquery", "ol3"], function ($, ol) {
     var olpage;
     var styles;
     var annotationInteraction;
+    var noteSelectInteraction;
     var noteSource;
 
     //The Open Layers bar styles
@@ -285,12 +286,22 @@ define(["jquery", "ol3"], function ($, ol) {
                 initDrawInteraction("Circle");
             });
         }
+        noteSelectInteraction = ol3.interaction.Select(
+            {
+                layers:[noteLayer],
+                condition: ol.events.condition.click
+            }
+        )
+        olpage.addInteraction(noteSelectInteraction);
+        select.on('select', function(e) {
+            console.log(e.selected)
+          });
     }
 
     endDrawInteraction = function () {
         //remove any existing interaction
         olpage.removeInteraction(annotationInteraction);
-        //TODO Clean form?
+
     }
 
 
@@ -373,7 +384,7 @@ define(["jquery", "ol3"], function ($, ol) {
         if (geometryName == "Circle"){
             console.log(feature.getGeometry().getRadius());
             console.log(feature.getGeometry().getCenter());
-            $('#id_noteregions').val(feature.getGeometry().getRadius()+"::"+eature.getGeometry().getCenter() );
+            $('#id_noteregions').val(feature.getGeometry().getRadius()+"::"+feature.getGeometry().getCenter() );
         }else if (geometryName == "Box"){
             console.log(format.writeFeature(feature));
             $('#id_noteregions').val(format.writeFeature(feature));
