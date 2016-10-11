@@ -163,8 +163,8 @@ define(["jquery", "ol3"], function ($, ol) {
 
 
 
-        initStyles();
-        var cHeight =imgHeight / 2;
+        initStyles();        
+        var cHeight =imgHeight /2 ;
 
         var imgCenter = [imgWidth / 2, -cHeight];
 
@@ -211,6 +211,15 @@ define(["jquery", "ol3"], function ($, ol) {
             })
         });
         //TODO Debug only remove
+        //Set center
+        var view=olpage.getView();
+        var viewerFullHeight = olpage.getSize()[1] * view.getResolution();
+         var imageFullHeight = view.getProjection().getExtent()[3];                
+                var x = view.getCenter()[0];
+                var y = -1 * (viewerFullHeight / 2);
+                if (viewerFullHeight < imageFullHeight) {
+                    view.setCenter([x, y]);
+                }
 
         olpage.addControl(new ol.control.ZoomSlider());
         //For debug only
@@ -298,7 +307,7 @@ define(["jquery", "ol3"], function ($, ol) {
             $('.annotation-box').css('border','none');
             $('#comment-'+noteid).css('border','1px solid red');
             if (!$('#comment-'+noteid).is(':visible')){
-                if ($(!$('#comment-'+noteid).attr('class').includes('commentary'))) {
+                if ($('#comment-'+noteid).attr('class').includes('commentary')) {
                     $('#commentary h4').click();
                 } else {
                     $('#notes h4').click();
@@ -403,11 +412,14 @@ define(["jquery", "ol3"], function ($, ol) {
     }
 
     toggleExistingNotes = function(){
-       /* if (noteLayer.getVisible() == false ){
+       
+        
+       console.log(olpage.getSize()[1] * olpage.getView().getResolution())
+       if (noteLayer.getVisible() == false ){
             noteLayer.setVisible(true);
         }else {
             noteLayer.setVisible(false);
-        }*/
+        }
         
     }
 
