@@ -56,7 +56,9 @@ urlpatterns = patterns('',
                        (r'^deleteNote/(?P<id>\d+)$', deleteNote),
                        (r'^newsourcefiles/$', newsourcefiles),
                        (r'^getAnnotationRegions/(?P<id>\d+)/$',
-                        getAnnotationRegions),
+                        getNoteRegions),
+                       (r'^getCommentRegions/(?P<id>\d+)/$',
+                        getCommentRegions),
                        (r'^posth/$', posth),
 
                        # Ajax URLS for inline collections
