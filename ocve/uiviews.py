@@ -377,7 +377,7 @@ def ocvePageImageview(request, id,selectedregionid=0):
         and p.sourcecomponent_id=sc.id
         and sc.source_id=""" + str(source.id) + " order by bar.barnumber")
 
-    notes = Annotation.objects.filter(pageimage_id=id, type_id=1)
+    notes = Annotation.objects.filter(pageimage_id=id, type_id__gt=2)
     comments = Annotation.objects.filter(pageimage_id=id, type_id=2)
     [next_page, prev_page] = getNextPrevPages(pi, pageimages)
     work=getPageImageWork(pi,source)

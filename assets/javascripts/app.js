@@ -901,7 +901,7 @@ $(document).ready(function() {
         toggleExistingNotes('notes');
     });*/
     $('a.com').bind("click", function() {
-      toggleExistingNotes('commentary');
+      toggleCommentary();
       $("i", this).toggleClass("fa-eye fa-eye-slash");
       return false;
     });
