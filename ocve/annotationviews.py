@@ -131,8 +131,22 @@ def getAnnotations(request, id):
 
 
 @csrf_exempt
-def getAnnotationRegions(request, id):
-    notes = Annotation.objects.filter(pageimage_id=id)
+def getNoteRegions(request, id):
+    return getAnnotationRegions(request,id,1)
+
+@csrf_exempt
+def getCommentRegions(request, id):
+    return getAnnotationRegions(request,id,2)
+
+
+@csrf_exempt
+def getAnnotationRegions(request, id,noteType=2):
+    if noteType == 1:
+        #User annotations
+        notes = Annotation.objects.filter(pageimage_id=id, type_id__gt=2)
+    else:
+        #OCVE Commentary
+        notes = Annotation.objects.filter(pageimage_id=id, type_id=2)
     annotations = []
 
     for n in notes:

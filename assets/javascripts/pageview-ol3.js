@@ -281,6 +281,34 @@ define(["jquery", "ol3"], function ($, ol) {
 
     }
 
+    initCommentLayer = function (visible) {
+        noteSource = new ol.source.Vector({
+            url: pageimage.commentURL,
+            format: new ol.format.GeoJSON()
+        });
+
+        //All bar boxes drawn invisible by default
+        //visible: visible
+        return new ol.layer.Vector({
+            source: noteSource,
+            style: new ol.style.Style({
+
+          stroke: new ol.style.Stroke({
+            color: 'red',
+            width: 1
+          }),
+          image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+              color: '#ffcc33'
+            })
+          })
+        })
+
+        });
+
+    }
+
     initAnnotationInteractions = function () {
         //Bind annotation events to elements
         if ($(newNoteForm).length > 0) {
