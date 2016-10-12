@@ -331,6 +331,7 @@ def getPageImageWork(pi,source):
 def ocvePageImageview(request, id,selectedregionid=0):
     mode = "OCVE"
     noteURL = "/ocve/getAnnotationRegions/" + str(id) + "/"
+    commentURL = "/ocve/getCommentRegions/" + str(id) + "/"
     regionURL = "/ocve/getBarRegions/" + str(id) + "/"
     template="frontend/pageview.html"
 
@@ -400,7 +401,7 @@ def ocvePageImageview(request, id,selectedregionid=0):
         'source': source, 'prev': prev_page, 'next': next_page,
         'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL,
         'pageimages': pageimages, 'mode': mode, 'zoomifyURL': zoomifyURL,
-        'regionURL': regionURL, 'noteURL': noteURL, 'page': p,
+        'regionURL': regionURL, 'noteURL': noteURL,'commentURL': commentURL, 'page': p,
         'pageimage': pi, 'view': view},
         context_instance=RequestContext(request))
 
