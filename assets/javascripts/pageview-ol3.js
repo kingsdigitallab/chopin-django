@@ -17,6 +17,7 @@ define(["jquery", "ol3"], function ($, ol) {
     var hover;
     var barLayer;
     var noteLayer;
+    var commentLayer;
     var olpage;
     var styles;
     var annotationInteraction;
@@ -96,11 +97,11 @@ define(["jquery", "ol3"], function ($, ol) {
                 width: 5
             }),
             image: new ol.style.Circle({
-            radius: 7,
-            fill: new ol.style.Fill({
-              color: '#ffcc33'
+                radius: 7,
+                fill: new ol.style.Fill({
+                    color: '#ffcc33'
+                })
             })
-          })
         });
 
         var selectedNoteStyle = new ol.style.Style({
@@ -119,11 +120,17 @@ define(["jquery", "ol3"], function ($, ol) {
             url: pageimage.regionURL,
             format: new ol.format.GeoJSON()
         });
+        var barStyle=styles.invisible;
+        var visible=true;
+        if (pageimage.annotation_mode){
+            barStyle=styles.hover;
+            visible=false;
+        }
         //All bar boxes drawn invisible by default
         var vectorLayer = new ol.layer.Vector({
             source: vectorSource,
-            style: styles.invisible
-
+            style: barStyle,
+            visible:visible
         });
 
         return vectorLayer;
@@ -162,12 +169,10 @@ define(["jquery", "ol3"], function ($, ol) {
         $("#map").css('width', fullWidth + "px").css("height", fullHeight + "px");
 
 
-
-        initStyles();        
-        var cHeight =imgHeight /2 ;
+        initStyles();
+        var cHeight = imgHeight / 2;
 
         var imgCenter = [imgWidth / 2, -cHeight];
-
 
 
         var proj = new ol.proj.Projection({
@@ -190,6 +195,7 @@ define(["jquery", "ol3"], function ($, ol) {
             showNotes = true;
         }
         noteLayer = initAnnotationLayer(showNotes);
+        commentLayer = initCommentLayer(showNotes);
         olpage = new ol.Map({
             controls: ol.control.defaults({
                 attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
@@ -200,7 +206,7 @@ define(["jquery", "ol3"], function ($, ol) {
             layers: [
                 new ol.layer.Tile({
                     source: pageimagesource
-                }), barLayer, noteLayer
+                }), barLayer, noteLayer, commentLayer
             ],
 
             target: 'map',
@@ -212,22 +218,42 @@ define(["jquery", "ol3"], function ($, ol) {
         });
         //TODO Debug only remove
         //Set center
-        var view=olpage.getView();
+        var view = olpage.getView();
         var viewerFullHeight = olpage.getSize()[1] * view.getResolution();
-         var imageFullHeight = view.getProjection().getExtent()[3];                
-                var x = view.getCenter()[0];
-                var y = -1 * (viewerFullHeight / 2);
-                if (viewerFullHeight < imageFullHeight) {
-                    view.setCenter([x, y]);
-                }
+        var imageFullHeight = view.getProjection().getExtent()[3];
+        var x = view.getCenter()[0];
+        var y = -1 * (viewerFullHeight / 2);
+        if (viewerFullHeight < imageFullHeight) {
+            view.setCenter([x, y]);
+        }
 
         olpage.addControl(new ol.control.ZoomSlider());
         //For debug only
-        olpage.addControl(new ol.control.MousePosition());
+        //olpage.addControl(new ol.control.MousePosition());
         //Add interactions depending on mode
         var interactions;
         if (pageimage.annotation_mode == 1) {
-            interactions = initAnnotationInteractions()
+            interactions = initAnnotationInteractions();
+            // Link notes in right sidebar to features
+            jQuery('div.annotation').click(function (e) {
+                var features = noteLayer.getSource().getFeatures().concat(commentLayer.getSource().getFeatures());
+                if ($(this).data('noteid')) {
+                    var noteid = $(this).data('noteid');
+                    if (features.length > 0) {
+                        for (var x = 0; x < features.length; x++) {
+                            var feature = features[x];
+                            if (noteid == feature.getProperties().noteid) {
+                                noteSelectInteraction.getFeatures().clear();
+                                noteSelectInteraction.getFeatures().push(feature);
+                                $('.annotation-box').css('border', 'none');
+                                $('#comment-' + noteid).css('border', '1px solid red');
+                            }
+                        }
+
+                    }
+                }
+
+            });
         } else {
             interactions = initInteractions();
             //Extra click event for clickthrough to bars
@@ -262,20 +288,20 @@ define(["jquery", "ol3"], function ($, ol) {
         return new ol.layer.Vector({
             source: noteSource,
             style: new ol.style.Style({
-          fill: new ol.style.Fill({
-            color: 'rgba(255, 255, 255, 0.2)'
-          }),
-          stroke: new ol.style.Stroke({
-            color: '#ffcc33',
-            width: 2
-          }),
-          image: new ol.style.Circle({
-            radius: 7,
-            fill: new ol.style.Fill({
-              color: '#ffcc33'
+                fill: new ol.style.Fill({
+                    color: 'rgba(255, 255, 255, 0.2)'
+                }),
+                stroke: new ol.style.Stroke({
+                    color: '#ffcc33',
+                    width: 2
+                }),
+                image: new ol.style.Circle({
+                    radius: 7,
+                    fill: new ol.style.Fill({
+                        color: '#ffcc33'
+                    })
+                })
             })
-          })
-        })
 
         });
 
@@ -293,17 +319,17 @@ define(["jquery", "ol3"], function ($, ol) {
             source: noteSource,
             style: new ol.style.Style({
 
-          stroke: new ol.style.Stroke({
-            color: 'red',
-            width: 1
-          }),
-          image: new ol.style.Circle({
-            radius: 7,
-            fill: new ol.style.Fill({
-              color: '#ffcc33'
+                stroke: new ol.style.Stroke({
+                    color: 'red',
+                    width: 1
+                }),
+                image: new ol.style.Circle({
+                    radius: 7,
+                    fill: new ol.style.Fill({
+                        color: '#ffcc33'
+                    })
+                })
             })
-          })
-        })
 
         });
 
@@ -312,11 +338,11 @@ define(["jquery", "ol3"], function ($, ol) {
     initAnnotationInteractions = function () {
         //Bind annotation events to elements
         if ($(newNoteForm).length > 0) {
-           $(pageimage.barAttachToggle).click(function () {
+            $(pageimage.barAttachToggle).click(function () {
                 initDrawInteraction("Bar");
             });
 
-           $(newSquareNoteToggle).click(function () {
+            $(newSquareNoteToggle).click(function () {
                 initDrawInteraction("Polygon");
             });
             $(newCircleNoteToggle).click(function () {
@@ -326,23 +352,23 @@ define(["jquery", "ol3"], function ($, ol) {
 
         noteSelectInteraction = new ol.interaction.Select({
             condition: ol.events.condition.click
-            });
+        });
         olpage.addInteraction(noteSelectInteraction);
 
-        noteSelectInteraction.on('select', function(e) {
-            var feature=e.selected[0];
+        noteSelectInteraction.on('select', function (e) {
+            var feature = e.selected[0];
             var noteid = feature.getProperties().noteid;
-            $('.annotation-box').css('border','none');
-            $('#comment-'+noteid).css('border','1px solid red');
-            if (!$('#comment-'+noteid).is(':visible')){
-                if ($('#comment-'+noteid).attr('class').includes('commentary')) {
+            $('.annotation-box').css('border', 'none');
+            $('#comment-' + noteid).css('border', '1px solid red');
+            if (!$('#comment-' + noteid).is(':visible')) {
+                if ($('#comment-' + noteid).attr('class').includes('commentary')) {
                     $('#commentary h4').click();
                 } else {
                     $('#notes h4').click();
                 }
             }
             // console.log(feature.getProperties().noteid );
-          });
+        });
     }
 
     endDrawInteraction = function () {
@@ -363,28 +389,32 @@ define(["jquery", "ol3"], function ($, ol) {
         //Create annotation
         var type;
         var drawOptions;
+        //Ensure the right layers are visible
+        commentLayer.setVisible(false);
+        noteLayer.setVisible(false);
+        barLayer.setVisible(false);
         if (noteType == "Polygon" || noteType == "Circle") {
             if (noteType == "Polygon") {
                 //type = ol.geom.Polygon;
                 maxPoints = 2;
-            geometryFunction = function(coordinates, geometry) {
-              if (!geometry) {
-                geometry = new ol.geom.Polygon(null);
-              }
-              var start = coordinates[0];
-              var end = coordinates[1];
-              geometry.setCoordinates([
-                [start, [start[0], end[1]], end, [end[0], start[1]], start]
-              ]);
-              return geometry;
-            };
+                geometryFunction = function (coordinates, geometry) {
+                    if (!geometry) {
+                        geometry = new ol.geom.Polygon(null);
+                    }
+                    var start = coordinates[0];
+                    var end = coordinates[1];
+                    geometry.setCoordinates([
+                        [start, [start[0], end[1]], end, [end[0], start[1]], start]
+                    ]);
+                    return geometry;
+                };
                 drawOptions = {
                     type: 'LineString',
                     layers: [noteLayer],
                     geometryFunction: geometryFunction,
                     source: noteSource,
                     maxPoints: maxPoints,
-                    geometryName:"Box"
+                    geometryName: "Box"
 
                 }
 
@@ -394,22 +424,19 @@ define(["jquery", "ol3"], function ($, ol) {
                     layers: [noteLayer],
                     type: (type),
                     source: noteSource,
-                    geometryName:"Circle"
+                    geometryName: "Circle"
                 }
             }
             annotationInteraction = new ol.interaction.Draw(drawOptions);
             annotationInteraction.on('drawend', finishDraw);
         } else if (noteType == "Bar") {
-            //todo: Actually a select, not draw
-            initInteractions();
-            jQuery('#map').click(function () {
-                var features = hover.getFeatures().getArray();
-                if (features.length > 0) {
-                    var feature = features[0];
-                    //console.log(feature.get('label'));
-                    finishDraw(feature);
-                }
+            //Actually a select on the bar layer, not draw
+
+            barLayer.setVisible(true);
+            annotationInteraction = new ol.interaction.Select({
+                condition: ol.events.condition.click
             });
+
 
         }
         olpage.addInteraction(annotationInteraction);
@@ -423,13 +450,13 @@ define(["jquery", "ol3"], function ($, ol) {
      * @param event event object passed by Draw
      */
     finishDraw = function (event) {
-        var feature=event.feature
-        var format=new ol.format.GeoJSON();
-        var geometryName=feature.getGeometryName();
+        var feature = event.feature
+        var format = new ol.format.GeoJSON();
+        var geometryName = feature.getGeometryName();
 
-        if (geometryName == "Circle"){
-            $('#id_noteregions').val(feature.getGeometry().getRadius()+"::"+feature.getGeometry().getCenter() );
-        }else if (geometryName == "Box"){
+        if (geometryName == "Circle") {
+            $('#id_noteregions').val(feature.getGeometry().getRadius() + "::" + feature.getGeometry().getCenter());
+        } else if (geometryName == "Box") {
             $('#id_noteregions').val(format.writeFeature(feature));
         }
 
@@ -439,15 +466,24 @@ define(["jquery", "ol3"], function ($, ol) {
 
     }
 
-    toggleExistingNotes = function(){
-        
+    toggleCommentary = function () {
 
-       if (noteLayer.getVisible() == false ){
+        if (commentLayer.getVisible() == false) {
+            commentLayer.setVisible(true);
+        } else {
+            commentLayer.setVisible(false);
+        }
+
+    }
+
+    toggleExistingNotes = function () {
+
+        if (noteLayer.getVisible() == false) {
             noteLayer.setVisible(true);
-        }else {
+        } else {
             noteLayer.setVisible(false);
         }
-        
+
     }
 
 

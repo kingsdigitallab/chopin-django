@@ -21,7 +21,7 @@
 
                     <p class="annotation-posted">By OCVE, {{ c.timestamp }}</p>
 
-                    <div class="annotation">
+                    <div class="annotation"  data-noteid="{{ c.id }}">
                         <p>{{ c.notetext | safe }}</p>
                     </div>
                 </div>
