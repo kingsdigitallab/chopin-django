@@ -1,5 +1,5 @@
 __author__ = 'Elliot'
-from django.forms import *
+from django.forms import HiddenInput,ModelForm,Select,modelformset_factory
 from django import forms
 from models import *
 from tinymce.widgets import TinyMCE
@@ -50,11 +50,12 @@ class AnnotationForm(ModelForm):
 
     class Meta:
         model = Annotation
-        fields = ['id','notetext','noteregions','pageimage','user']
+        fields = ['id','notetext','noteregions','pageimage','user','type']
         widgets = { 'id':HiddenInput(),
                     'user':HiddenInput(),
                     'pageimage':HiddenInput(),
-                    'noteregions':HiddenInput()
+                    'noteregions':HiddenInput(),
+                    'type':Select(choices=( ('3','Private'),('4','Public') ))
         }
 
 

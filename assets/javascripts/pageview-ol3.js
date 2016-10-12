@@ -440,9 +440,8 @@ define(["jquery", "ol3"], function ($, ol) {
     }
 
     toggleExistingNotes = function(){
-       
         
-       console.log(olpage.getSize()[1] * olpage.getView().getResolution())
+
        if (noteLayer.getVisible() == false ){
             noteLayer.setVisible(true);
         }else {
