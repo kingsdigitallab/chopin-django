@@ -48,6 +48,11 @@ class SourceInformationForm(ModelForm):
 
 class AnnotationForm(ModelForm):
 
+    def __init__(self,*args,**kwargs):
+        super (AnnotationForm,self ).__init__(*args,**kwargs) # populates the post
+        self.fields['type'].queryset = AnnotationType.objects.filter(id__gt=2)
+
+
     class Meta:
         model = Annotation
         fields = ['id','notetext','noteregions','pageimage','user','type']
