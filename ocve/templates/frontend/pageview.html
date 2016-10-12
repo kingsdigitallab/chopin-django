@@ -158,12 +158,6 @@
                             <form id="newNoteForm" method="POST" action="/ocve/saveNote/">
                                 <table>
                                     {{ annotationForm }}
-                                    <tr>
-                                        <th><label for="type_id">Visibility:</label></th>
-                                        <td>
-                                           {{ annotationForm.type }}
-                                        </td>
-                                    </tr>
                                 </table>
                                 <button id="createNote" type="submit" class="tiny radius">Save</button>
                                 <input type="hidden" id="annotation_id" name="annotation_id" value="0">
