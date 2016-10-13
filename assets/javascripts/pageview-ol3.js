@@ -93,8 +93,8 @@ define(["jquery", "ol3"], function ($, ol) {
 
         var visibleNoteStyle = new ol.style.Style({
             stroke: new ol.style.Stroke({
-                color: 'red',
-                width: 5
+                color: '#ffcc33',
+                width: 1
             }),
             image: new ol.style.Circle({
                 radius: 7,
@@ -104,6 +104,20 @@ define(["jquery", "ol3"], function ($, ol) {
             })
         });
 
+        var visibleCommentStyle =new ol.style.Style({
+
+                stroke: new ol.style.Stroke({
+                    color: 'red',
+                    width: 1
+                }),
+                image: new ol.style.Circle({
+                    radius: 7,
+                    fill: new ol.style.Fill({
+                        color: '#ffcc33'
+                    })
+                })
+            });
+
         var selectedNoteStyle = new ol.style.Style({
             stroke: new ol.style.Stroke({
                 color: 'blue',
@@ -111,7 +125,7 @@ define(["jquery", "ol3"], function ($, ol) {
             })
         });
 
-        styles = {invisible: invisibleStyle, hover: hoverStyle, visibleNote: visibleNoteStyle, selectedNote: selectedNoteStyle}
+        styles = {invisible: invisibleStyle, hover: hoverStyle, visibleComment:visibleCommentStyle,visibleNote: visibleNoteStyle, selectedNote: selectedNoteStyle}
     }
 
     //Query the server for the bar boxes in a GeoJSON format
@@ -288,21 +302,7 @@ define(["jquery", "ol3"], function ($, ol) {
         //visible: visible
         return new ol.layer.Vector({
             source: noteSource,
-            style: new ol.style.Style({
-                fill: new ol.style.Fill({
-                    color: 'rgba(255, 255, 255, 0.2)'
-                }),
-                stroke: new ol.style.Stroke({
-                    color: '#ffcc33',
-                    width: 2
-                }),
-                image: new ol.style.Circle({
-                    radius: 7,
-                    fill: new ol.style.Fill({
-                        color: '#ffcc33'
-                    })
-                })
-            }),
+            style: styles.visibleNote,
             visible:visible
 
         });
@@ -310,7 +310,7 @@ define(["jquery", "ol3"], function ($, ol) {
     }
 
     initCommentLayer = function (visible) {
-        noteSource = new ol.source.Vector({
+        commentSource = new ol.source.Vector({
             url: pageimage.commentURL,
             format: new ol.format.GeoJSON()
         });
@@ -318,20 +318,8 @@ define(["jquery", "ol3"], function ($, ol) {
         //All bar boxes drawn invisible by default
         //visible: visible
         return new ol.layer.Vector({
-            source: noteSource,
-            style: new ol.style.Style({
-
-                stroke: new ol.style.Stroke({
-                    color: 'red',
-                    width: 1
-                }),
-                image: new ol.style.Circle({
-                    radius: 7,
-                    fill: new ol.style.Fill({
-                        color: '#ffcc33'
-                    })
-                })
-            }),
+            source: commentSource,
+            style: styles.visibleComment,
             visible:visible
 
         });
@@ -498,10 +486,11 @@ define(["jquery", "ol3"], function ($, ol) {
         var geometryName = feature.getGeometryName();
 
         if (geometryName == "Circle") {
-            var geo=ol.geom.Polygon.fromCircle(feature);
-            console.log (geo);
-            console.log(geo.getCoordinates());
-            $('#id_noteregions').val(feature.getGeometry().getRadius() + "::" + feature.getGeometry().getCenter());
+            //No circle in GeoJSON, use fromCircle as workaround
+            var circle = ol.geom.Polygon.fromCircle(feature.getGeometry());            
+            var nf=new ol.Feature({ geometry: circle })
+            $('#id_noteregions').val(format.writeFeature(nf));
+            
         } else if (geometryName == "Box") {
             $('#id_noteregions').val(format.writeFeature(feature));
         }
