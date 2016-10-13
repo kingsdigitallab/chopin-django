@@ -302,7 +302,8 @@ define(["jquery", "ol3"], function ($, ol) {
                         color: '#ffcc33'
                     })
                 })
-            })
+            }),
+            visible:visible
 
         });
 
@@ -330,7 +331,8 @@ define(["jquery", "ol3"], function ($, ol) {
                         color: '#ffcc33'
                     })
                 })
-            })
+            }),
+            visible:visible
 
         });
 
@@ -474,7 +476,8 @@ define(["jquery", "ol3"], function ($, ol) {
             barLayer.setVisible(true);
             annotationInteraction = new ol.interaction.Select({
                 condition: ol.events.condition.click,
-                layers: [barLayer]
+                layers: [barLayer],
+                multi:true
             });
 
 
@@ -495,6 +498,9 @@ define(["jquery", "ol3"], function ($, ol) {
         var geometryName = feature.getGeometryName();
 
         if (geometryName == "Circle") {
+            var geo=ol.geom.Polygon.fromCircle(feature);
+            console.log (geo);
+            console.log(geo.getCoordinates());
             $('#id_noteregions').val(feature.getGeometry().getRadius() + "::" + feature.getGeometry().getCenter());
         } else if (geometryName == "Box") {
             $('#id_noteregions').val(format.writeFeature(feature));
