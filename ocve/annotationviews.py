@@ -12,6 +12,7 @@ from ocve.forms import AnnotationForm
 from ocve.models import Annotation, Annotation_BarRegion, Bar, BarRegion
 from ocve.models import AnnotationType
 from ocve.uiviews import ocvePageImageview
+from django.shortcuts import redirect
 import re
 
 # Note edit views
@@ -79,9 +80,6 @@ def saveNote(request):
     new_annotation.save()
 
     # Transform POLYGON feature def for later GeoJSON export
-    # POLYGON((1426 2368,1170 2036,1358 1824,1350 2084,1526 2152,1426 2368))
-    #"[{"type":"Feature"],["geometry":{"type":"Polygon"],["coordinates":[[[3493.5947265625],[-1089.8223876953125]],[[3422.8916015625],[-312.08801269531256]],[[2645.1572265625],[-382.7911376953124]],[[2715.8603515625],[-1160.5255126953125]],[[3493.5947265625],[-1089.8223876953125]]]}],["properties":null}]"
-    # [ 906.2841796875001,-618.2037353515625],[906.2841796875001,-823.9654541015625], [1153.1982421875,-823.9654541015625], [1153.1982421875,-618.2037353515625]
     geotext = new_annotation.noteregions
     if len(geotext) > 0:
         # geotext = geotext.replace('POLYGON((', '').replace('))', '').replace(
@@ -117,8 +115,8 @@ def saveNote(request):
         'note': new_annotation,
         'messages': rendered_messages
     }
-
-    return ocvePageImageview(request, new_annotation.pageimage_id)
+    
+    return redirect('ocve_pageview',request=request, id=new_annotation.pageimage_id)
 
 
 @csrf_exempt

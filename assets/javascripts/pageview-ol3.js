@@ -220,8 +220,9 @@ define(["jquery", "ol3"], function ($, ol) {
         //Set center
         var view = olpage.getView();
         var viewerFullHeight = olpage.getSize()[1] * view.getResolution();
+        var viewerFullWidth = olpage.getSize()[0] * view.getResolution();
         var imageFullHeight = view.getProjection().getExtent()[3];
-        var x = view.getCenter()[0];
+        var x = viewerFullWidth /2;
         var y = -1 * (viewerFullHeight / 2);
         if (viewerFullHeight < imageFullHeight) {
             view.setCenter([x, y]);
@@ -391,7 +392,7 @@ define(["jquery", "ol3"], function ($, ol) {
         var drawOptions;
         //Ensure the right layers are visible
         commentLayer.setVisible(false);
-        noteLayer.setVisible(false);
+        noteLayer.setVisible(true);
         barLayer.setVisible(false);
         if (noteType == "Polygon" || noteType == "Circle") {
             if (noteType == "Polygon") {
@@ -431,10 +432,11 @@ define(["jquery", "ol3"], function ($, ol) {
             annotationInteraction.on('drawend', finishDraw);
         } else if (noteType == "Bar") {
             //Actually a select on the bar layer, not draw
-
+            noteLayer.setVisible(false);
             barLayer.setVisible(true);
             annotationInteraction = new ol.interaction.Select({
-                condition: ol.events.condition.click
+                condition: ol.events.condition.click,
+                layers:[barLayer]
             });
 
 
