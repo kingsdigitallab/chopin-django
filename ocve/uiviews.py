@@ -328,7 +328,7 @@ def getPageImageWork(pi,source):
 
 #Annotation.objects.filter(type_id=1).delete()
 @csrf_exempt
-def ocvePageImageview(request, id,selectedregionid=0):
+def ocvePageImageview(request, id,selectedregionid=0,view='full'):
     mode = "OCVE"
     noteURL = "/ocve/getAnnotationRegions/" + str(id) + "/"
     commentURL = "/ocve/getCommentRegions/" + str(id) + "/"
@@ -342,7 +342,8 @@ def ocvePageImageview(request, id,selectedregionid=0):
     except MultiValueDictKeyError:
         pass
 
-    view = request.GET.get('view')
+    if request.GET.get('view'):
+        view = request.GET.get('view')
 
     pi = PageImage.objects.get(id=id)
     p = pi.page
