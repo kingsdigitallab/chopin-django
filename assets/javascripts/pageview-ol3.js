@@ -120,17 +120,17 @@ define(["jquery", "ol3"], function ($, ol) {
             url: pageimage.regionURL,
             format: new ol.format.GeoJSON()
         });
-        var barStyle=styles.invisible;
-        var visible=true;
-        if (pageimage.annotation_mode){
-            barStyle=styles.hover;
-            visible=false;
+        var barStyle = styles.invisible;
+        var visible = true;
+        if (pageimage.annotation_mode) {
+            barStyle = styles.hover;
+            visible = false;
         }
         //All bar boxes drawn invisible by default
         var vectorLayer = new ol.layer.Vector({
             source: vectorSource,
             style: barStyle,
-            visible:visible
+            visible: visible
         });
 
         return vectorLayer;
@@ -222,7 +222,7 @@ define(["jquery", "ol3"], function ($, ol) {
         var viewerFullHeight = olpage.getSize()[1] * view.getResolution();
         var viewerFullWidth = olpage.getSize()[0] * view.getResolution();
         var imageFullHeight = view.getProjection().getExtent()[3];
-        var x = viewerFullWidth /2;
+        var x = viewerFullWidth / 2;
         var y = -1 * (viewerFullHeight / 2);
         if (viewerFullHeight < imageFullHeight) {
             view.setCenter([x, y]);
@@ -351,7 +351,34 @@ define(["jquery", "ol3"], function ($, ol) {
             });
 
             $('#newNoteForm').submit(function (event) {
-            saveNote();
+                saveNote();
+            });
+            $('a.updateNote').click(function () {
+                var noteid = $(this).data('noteid');
+                nTest = noteid;
+                var oldText = $('#comment-' + noteid + ' div.annotation p').html();
+                $('#id_notetext').val(oldText);
+                $('#annotation_id').val(noteid);
+                var features = noteLayer.getSource().getFeatures();
+                if (noteid) {
+                    if (features.length > 0) {
+                        for (var x = 0; x < features.length; x++) {
+                            var feature = features[x];
+                            if (noteid == feature.getProperties().noteid) {
+                                noteSelectInteraction.getFeatures().clear();
+                                noteSelectInteraction.getFeatures().push(feature);
+                                $('.annotation-box').css('border', 'none');
+                                $('#comment-' + noteid).css('border', '1px solid red');
+                            }
+                        }
+
+                    }else{
+                        console.log('Features not found for '+noteid);
+                    }
+                }else{
+                    console.log('noteid not found');
+                }
+
             });
 
             $('#cancelNote').click(function (event) {
@@ -447,7 +474,7 @@ define(["jquery", "ol3"], function ($, ol) {
             barLayer.setVisible(true);
             annotationInteraction = new ol.interaction.Select({
                 condition: ol.events.condition.click,
-                layers:[barLayer]
+                layers: [barLayer]
             });
 
 

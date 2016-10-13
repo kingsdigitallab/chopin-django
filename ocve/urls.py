@@ -52,8 +52,8 @@ urlpatterns = patterns('',
                         getGroupedBarRegions),
 
                        # Annotation URLS
-                       (r'^saveNote/$', saveNote),
-                       (r'^deleteNote/(?P<id>\d+)$', deleteNote),
+                       url(r'^saveNote/$', saveNote, name='save-note'),
+                       url(r'^deleteNote/(?P<id>\d+)$', deleteNote, name='delete-note'),
                        (r'^newsourcefiles/$', newsourcefiles),
                        (r'^getAnnotationRegions/(?P<id>\d+)/$',
                         getNoteRegions),
