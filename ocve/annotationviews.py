@@ -32,8 +32,11 @@ class noteGeos:
 @csrf_exempt
 @login_required
 def deleteNote(request, id):
+    pageimageid=0
     try:
-        Annotation.objects.get(id=id).delete()
+        a=Annotation.objects.get(id=id)
+        pageimageid=a.pageimage_id
+        a.delete()
     except:
         pass
 
@@ -45,8 +48,7 @@ def deleteNote(request, id):
         'messages': rendered_messages
     }
 
-    return render_to_response('frontend/ajax/updatenote.html', data,
-                              RequestContext(request))
+    return redirect(ocvePageImageview,id=pageimageid)
 
 
 # Takes an annotation form and updates
@@ -115,8 +117,8 @@ def saveNote(request):
         'note': new_annotation,
         'messages': rendered_messages
     }
-    
-    return redirect('ocve_pageview',request=request, id=new_annotation.pageimage_id)
+
+    return redirect('/ocve/browse/pageview/'+str(new_annotation.pageimage_id)+'/?view=annotations')
 
 
 @csrf_exempt

@@ -349,6 +349,17 @@ define(["jquery", "ol3"], function ($, ol) {
             $(newCircleNoteToggle).click(function () {
                 initDrawInteraction("Circle");
             });
+
+            $('#newNoteForm').submit(function (event) {
+            saveNote();
+            });
+
+            $('#cancelNote').click(function (event) {
+                event.preventDefault();
+                olpage.removeInteraction(annotationInteraction);
+                olpage.addInteraction(noteSelectInteraction);
+                return false;
+            });
         }
 
         noteSelectInteraction = new ol.interaction.Select({
@@ -488,6 +499,46 @@ define(["jquery", "ol3"], function ($, ol) {
 
     }
 
+    /************************************************************************
+     * Note form functions
+     *
+     */
+
+    saveNote = function () {
+        //Are bars in the bar layer selected?
+        var barString = "";
+        if (barLayer.getFeatures().getArray().length > 0) {
+            var barFeatures = barLayer.getFeatures().getArray();
+            for (var v in barFeatures) {
+                //Serialize
+                if (barString.length > 0) {
+                    barString += ",";
+                }
+                barString += barFeatures[v].getProperties().barid;
+            }
+        }
+
+        //Add to form
+        $('#noteBars').val(barString);
+
+        //Validate
+        if ($('#noteBars').val().length == 0
+            && $('#id_noteregions').val().length == 0) {
+            //No regions or bars select
+            alert('Please attach a bar or draw a shape for your note');
+            return false;
+        }
+
+        if ($('#id_notetext').val().length == 0) {
+            //No Annotation text
+            alert('No text written for annotation');
+            return false;
+        }
+    }
+
+    updateUserNote = function (note, notetext) {
+        $(note).child('div.annotation p').html(notetext);
+    }
 
     return initMap(ol);
 });
