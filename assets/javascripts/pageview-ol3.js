@@ -104,19 +104,19 @@ define(["jquery", "ol3"], function ($, ol) {
             })
         });
 
-        var visibleCommentStyle =new ol.style.Style({
+        var visibleCommentStyle = new ol.style.Style({
 
-                stroke: new ol.style.Stroke({
-                    color: 'red',
-                    width: 1
-                }),
-                image: new ol.style.Circle({
-                    radius: 7,
-                    fill: new ol.style.Fill({
-                        color: '#ffcc33'
-                    })
+            stroke: new ol.style.Stroke({
+                color: 'red',
+                width: 1
+            }),
+            image: new ol.style.Circle({
+                radius: 7,
+                fill: new ol.style.Fill({
+                    color: '#ffcc33'
                 })
-            });
+            })
+        });
 
         var selectedNoteStyle = new ol.style.Style({
             stroke: new ol.style.Stroke({
@@ -125,7 +125,7 @@ define(["jquery", "ol3"], function ($, ol) {
             })
         });
 
-        styles = {invisible: invisibleStyle, hover: hoverStyle, visibleComment:visibleCommentStyle,visibleNote: visibleNoteStyle, selectedNote: selectedNoteStyle}
+        styles = {invisible: invisibleStyle, hover: hoverStyle, visibleComment: visibleCommentStyle, visibleNote: visibleNoteStyle, selectedNote: selectedNoteStyle}
     }
 
     //Query the server for the bar boxes in a GeoJSON format
@@ -303,7 +303,7 @@ define(["jquery", "ol3"], function ($, ol) {
         return new ol.layer.Vector({
             source: noteSource,
             style: styles.visibleNote,
-            visible:visible
+            visible: visible
 
         });
 
@@ -320,7 +320,7 @@ define(["jquery", "ol3"], function ($, ol) {
         return new ol.layer.Vector({
             source: commentSource,
             style: styles.visibleComment,
-            visible:visible
+            visible: visible
 
         });
 
@@ -362,10 +362,10 @@ define(["jquery", "ol3"], function ($, ol) {
                             }
                         }
 
-                    }else{
-                        console.log('Features not found for '+noteid);
+                    } else {
+                        console.log('Features not found for ' + noteid);
                     }
-                }else{
+                } else {
                     console.log('noteid not found');
                 }
 
@@ -373,11 +373,20 @@ define(["jquery", "ol3"], function ($, ol) {
 
             $('#cancelNote').click(function (event) {
                 event.preventDefault();
-                olpage.removeInteraction(annotationInteraction);
-                olpage.addInteraction(noteSelectInteraction);
+                endDrawInteraction();
                 return false;
             });
         }
+        //General esc capture to stop a draw interaction
+        $(document).keyup(function (e) {
+            if (e.keyCode === 27) {
+                olpage.getInteractions().forEach(function (interaction) {
+                    if (interaction == annotationInteraction) {
+                        endDrawInteraction();
+                    }
+                });
+            }
+        });
 
         noteSelectInteraction = new ol.interaction.Select({
             condition: ol.events.condition.click
@@ -465,7 +474,7 @@ define(["jquery", "ol3"], function ($, ol) {
             annotationInteraction = new ol.interaction.Select({
                 condition: ol.events.condition.click,
                 layers: [barLayer],
-                multi:true
+                multi: true
             });
 
 
@@ -487,10 +496,10 @@ define(["jquery", "ol3"], function ($, ol) {
 
         if (geometryName == "Circle") {
             //No circle in GeoJSON, use fromCircle as workaround
-            var circle = ol.geom.Polygon.fromCircle(feature.getGeometry());            
-            var nf=new ol.Feature({ geometry: circle })
+            var circle = ol.geom.Polygon.fromCircle(feature.getGeometry());
+            var nf = new ol.Feature({ geometry: circle })
             $('#id_noteregions').val(format.writeFeature(nf));
-            
+
         } else if (geometryName == "Box") {
             $('#id_noteregions').val(format.writeFeature(feature));
         }
