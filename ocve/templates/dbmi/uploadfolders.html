@@ -7,16 +7,19 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $('#convertForm').submit(function(e){
-                e.preventDefault();
+
                 if ($('input[name="addMethod"]').val() == 'sourceKey' &&  $('#source_key').val() == 0){
                     alert('Source Key selected, but no key added')
+                    e.preventDefault();
                     return false;
                 }else if ($('input[name="addMethod"]').val() == 'sourceSelect' &&  $('#source_id').val() == 0){
                     alert('Source dropdown checked, but no source selected')
+                    e.preventDefault();
                     return false;
                 }
                 if ($('input[name="folderName"]:checked').length == 0){
                     alert('No folder selected');
+                    e.preventDefault();
                     return false;
                 }
 
