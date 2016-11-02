@@ -8,11 +8,11 @@
         $(document).ready(function() {
             $('#convertForm').submit(function(e){
 
-                if ($('input[name="addMethod"]').val() == 'sourceKey' &&  $('#source_key').val() == 0){
+                if ($('input[name="addMethod"]:checked').val() == 'sourceKey' &&  $('#source_key').val() == 0){
                     alert('Source Key selected, but no key added')
                     e.preventDefault();
                     return false;
-                }else if ($('input[name="addMethod"]').val() == 'sourceSelect' &&  $('#source_id').val() == 0){
+                }else if ($('input[name="addMethod"]:checked').val() == 'sourceSelect' &&  $('#source_id').val() == 0){
                     alert('Source dropdown checked, but no source selected')
                     e.preventDefault();
                     return false;
