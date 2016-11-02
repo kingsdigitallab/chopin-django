@@ -277,7 +277,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERYBEAT_SCHEDULE = {
     'haystack-update-index-every-day': {
         'task': 'catalogue.tasks.haystack_update_index',
-        'schedule': crontab(minute=7),
+        'schedule': crontab(minute=0, hour=2),
     },
 
 }
