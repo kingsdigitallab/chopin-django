@@ -49,7 +49,7 @@ CACHE_REDIS_DATABASE = '0'
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': '127.0.0.1:6379:' + CACHE_REDIS_DATABASE,
+        'LOCATION': '127.0.0.1:6379/' + CACHE_REDIS_DATABASE,
         'OPTIONS': {
             'CLIENT_CLASS': 'redis_cache.client.DefaultClient',
             'IGNORE_EXCEPTIONS': True
@@ -265,11 +265,11 @@ ALL_WORKS_WITHOUT_OPUS = WORKS_WITHOUT_OPUS + POSTHUMOUS_WORKS_WITHOUT_OPUS
 # http://docs.celeryproject.org/en/latest/
 # -----------------------------------------------------------------------------
 
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379:' + CACHE_REDIS_DATABASE
-BROKER_URL = 'redis://127.0.0.1:6379:' + CACHE_REDIS_DATABASE
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/' + CACHE_REDIS_DATABASE
+BROKER_URL = 'redis://127.0.0.1:6379/' + CACHE_REDIS_DATABASE
 
-#: Only add pickle to this list if your broker is secured
-#: from unwanted access (see userguide/security.html)
+# Only add pickle to this list if your broker is secured
+# from unwanted access (see userguide/security.html)
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -277,7 +277,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERYBEAT_SCHEDULE = {
     'haystack-update-index-every-day': {
         'task': 'catalogue.tasks.haystack_update_index',
-        'schedule': crontab(minute=0, hour=2),
+        'schedule': crontab(minute=7),
     },
 
 }
