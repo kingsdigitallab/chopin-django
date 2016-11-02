@@ -1,7 +1,9 @@
 from base import *  # noqa
 
 CACHE_REDIS_DATABASE = '0'
-CACHES['default']['LOCATION'] = '127.0.0.1:6379:' + CACHE_REDIS_DATABASE
+CACHES['default']['LOCATION'] = '127.0.0.1:6379/' + CACHE_REDIS_DATABASE
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/' + CACHE_REDIS_DATABASE
+BROKER_URL = 'redis://127.0.0.1:6379/' + CACHE_REDIS_DATABASE
 
 INTERNAL_IPS = ('ocve3.dighum.kcl.ac.uk', )
 ALLOWED_HOSTS = ['ocve3.dighum.kcl.ac.uk', 'www.chopinonline.ac.uk',
