@@ -6,6 +6,10 @@
     <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
+            //Uncheck all by default to stop double attachment
+            $('input[name="folderName"]').attr('checked',false);
+
+            //Validate submit to make sure source and images both selected
             $('#convertForm').submit(function(e){
 
                 if ($('input[name="addMethod"]:checked').val() == 'sourceKey' &&  $('#source_key').val() == 0){
