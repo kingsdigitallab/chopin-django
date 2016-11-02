@@ -610,8 +610,10 @@ def clonepage(request,id):
         #Clone Pagelegacy
         legacies=PageLegacy.objects.filter(pageimage=sourcepageimage)
         if legacies.count() > 0:
-            legacydict=model_to_dict(legacies[0])
+            legacy=legacies[0]
+            legacydict=model_to_dict(legacy)
             legacydict['pageimage']=sourcepageimage
+            legacydict['editstatus']=legacy.editstatus
             newpl=PageLegacy(**legacydict)
             newpl.id=None
             newpl.pageimage=newpageimage
