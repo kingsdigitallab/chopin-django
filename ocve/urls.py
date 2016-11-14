@@ -16,6 +16,7 @@ sqs = SearchQuerySet().order_by('orderno').facet('resource').facet('document')
 urlpatterns = patterns('',
                        # DBMI
                        (r'^', include('ocve.dbmi.dbmi_urls')),
+                       url(r'^verovio/$', verovio, name='verovio'),
 
                        # UI URLS
                        (r'^browse/barview$', barview),
