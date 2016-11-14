@@ -15,7 +15,9 @@ UPLOAD_EXTENSION = '.tif'
 errorPage = 'error.html'
 
 
+def verovio(request):
 
+    return render_to_response('verovio/variant.html', {})
 
 
 def uploadOCVE(request):
