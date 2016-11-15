@@ -591,23 +591,29 @@ def clonepage(request,id):
         #Get pageimage to clone
         sourcepageimage=PageImage.objects.get(id=id)
         sourcedict=model_to_dict(sourcepageimage)
-        newpageimage=PageImage(**sourcedict)
+
 
         #Clone page
         sourcepage=sourcepageimage.page
         sourcepagedict=model_to_dict(sourcepage)
+        sc=sourcepage.sourcecomponent
+        sourcepagedict['sourcecomponent']=sc
+        sourcepagedict['pagetype']=sourcepage.pagetype
         newpage=Page(**sourcepagedict)
         newpage.id=None
         newpage.save()
-
+        sourcedict['page']=newpage
+        newpageimage=PageImage(**sourcedict)
         newpageimage.id=None
-        newpageimage.page=newpage
         newpageimage.save()
 
         #Clone Pagelegacy
         legacies=PageLegacy.objects.filter(pageimage=sourcepageimage)
         if legacies.count() > 0:
-            legacydict=model_to_dict(legacies[0])
+            legacy=legacies[0]
+            legacydict=model_to_dict(legacy)
+            legacydict['pageimage']=sourcepageimage
+            legacydict['editstatus']=legacy.editstatus
             newpl=PageLegacy(**legacydict)
             newpl.id=None
             newpl.pageimage=newpageimage
