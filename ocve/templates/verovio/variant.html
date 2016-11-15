@@ -1,20 +1,26 @@
+{% load  static %}
 <html>
     <head>
-        <title>Verovio example with apparatus</title>
+        <title>Verovio example for interaction with choice elements</title>
         <script src="http://www.verovio.org/javascript/develop/verovio-toolkit.js" type="text/javascript" ></script>
         <!-- We also use jQuery -->
         <script src="https://code.jquery.com/jquery-3.1.1.min.js" type="text/javascript" ></script> 
         <!-- Basic events from example 02 -->
-        <script src="javascript/basic-events.js" type="text/javascript" ></script>
+        <script src="{% static 'javascripts/basic-events.js' %}" type="text/javascript" ></script>
         <!-- A stylesheet for the help overlay -->
-        <link rel="stylesheet" href="css/tutorial.css" />   
+        <link rel="stylesheet" href="{% static 'custom_css/tutorial.css' %}" />
     </head>
     <body style="margin: 0px;">
         
+        <!--//////////////////-->
+        <!-- A choice overlay -->
+        <!--//////////////////-->
+        <div id="choice_overlay"></div>
+        
         <!-- A help overlay -->
         <div id="help_overlay">
-            <p>Press <b>1</b> to show and highlight the lemma</p>
-            <p>Press <b>2</b> to show and highlight the readings ("#source.1570")</p>
+            <p>Click on the blue elements to select an alternative content</p>
+            <p>Press <b>'r'</b> to reset all to the default</p>
         </div>
         
         <!-- The div where we are going to insert the SVG -->
@@ -23,14 +29,16 @@
         <script type="text/javascript">
             var vrvToolkit = new verovio.toolkit();
             var page = 1;
-            var zoom = 50;
+            var zoom = 60;
             var pageHeight = 2970;
             var pageWidth = 2100;
             
-            ///////////////////////////////////////////////////
-            /* A variable for selecting the <rdg> in a <app> */
-            ///////////////////////////////////////////////////
-            var appXPath = "";
+            //////////////////////////////////////////////
+            /* Variables for selecting a <choice> child */
+            //////////////////////////////////////////////
+            var choices = {};
+            var choiceXPathQueries = [];
+            var choiceId = "";
             
             function setOptions() {
                 pageHeight = $(document).height() * 100 / zoom ;
@@ -41,7 +49,7 @@
                             scale: zoom,
                             adjustPageHeight: 1,
                             ignoreLayout: 1,
-                            appXPathQuery: appXPath
+                            choiceXPathQueries: choiceXPathQueries
                         };
                 vrvToolkit.setOptions(options);
             }
@@ -55,18 +63,79 @@
             }
             
             function loadPage() {
+                ////////////////////////////////////////////////////
+                /* Reload the page with the choice if we made one */
+                ////////////////////////////////////////////////////
+                if (choiceId != "") {
+                    var elementPage = vrvToolkit.getPageWithElement(choiceId);
+                    if (elementPage == 0) console.log("ID not found");
+                    else page = elementPage;
+                    choiceId = "";
+                }
+                
                 svg = vrvToolkit.renderPage(page, {});
+                $("#choice_overlay").hide();
                 $("#svg_output").html(svg);
                 
-                ///////////////////////////////////////////////////
-                /* Highlights the lem in blue and the rdg in red */
-                ///////////////////////////////////////////////////
-                $(".lem").attr("fill", "#00e").attr("stroke", "#00e");
-                $(".rdg").attr("fill", "#d00").attr("stroke", "#d00");
+                /////////////////////////////////////////////////////
+                /* Highlights the orign in blue and the reg in red */
+                /////////////////////////////////////////////////////
+                $(".orig, .unclear").attr("fill", "#00e").attr("stroke", "#00e");
+                $(".reg").attr("fill", "#d00").attr("stroke", "#d00");
+                
+                ///////////////////////////////////////////////
+                /* Bind a click event on all choice children */
+                ///////////////////////////////////////////////
+                $(".orig, .reg, .unclear").each(function() {
+                    ///////////////////////////////////////////////////////////
+                    /* Make the bounding box clickable (works on Opera only )*/
+                    ///////////////////////////////////////////////////////////
+                    $(this).attr("pointer-events", "bounding-box");
+                    $(this).click(function(event) {
+                        /////////////////////////////////////////////////////////////////////////////
+                        /* Create a link for each alternative sibling of the selected choice child */
+                        /////////////////////////////////////////////////////////////////////////////
+                        links = "";
+                        $(this).siblings().each(function() {
+                            /////////////////////////////////////////////////////////////////
+                            /* Display the @label for the link but it can be anything else */
+                            /////////////////////////////////////////////////////////////////
+                            var attr = vrvToolkit.getElementAttr($(this).attr("id"));
+                            if (attr.label) {
+                                links += '<p><a href="javascript:choose(\'' + $(this).parent().attr("id") + '\', \'' + $(this).attr("id") + '\')">' + attr.label + "</a></p>";
+                            }
+                        });
+                        //////////////////////
+                        /* Show the overlay */
+                        //////////////////////
+                        $("#choice_overlay").html(links);
+                        $("#choice_overlay").attr("style", "left: " + event.pageX + "px;" + "top: " + event.pageY + "px;").show();
+                    });
+                });
             };
             
+            ////////////////////////////////////////////
+            /* A function for choosing a choice child */
+            ////////////////////////////////////////////
+            function choose(choice, child) {
+                //////////////////////////////////////////////////////
+                /* Keep track of the selected child for each choice */
+                //////////////////////////////////////////////////////
+                choices[choice] = child;
+                choiceXPathQueries = [];
+                //////////////////////////////////////
+                /* Make each of them an xpath query */
+                //////////////////////////////////////
+                for (key in choices) {
+                    choiceXPathQueries.push("./*[@xml:id='" + choices[key] + "']")
+                }
+                choiceId = choice;
+                loadFile();
+            }
+            
             function loadFile() {
-                file = "mei/Marenzio_Quarto_a_6_02.mei";
+                console.log(choiceXPathQueries);
+                file = "{% static 'Mei/Beethoven_Sonata_op.29.mei' %}";
                 $.ajax({
                     url: file
                     , dataType: "text"
@@ -82,15 +151,16 @@
                     // Process navigation an zoom basic events
                     processBasicEvents(event);
                     
-                    //////////////////////////////////////////
-                    /* Key events for switching the reading */
-                    //////////////////////////////////////////
-                    if (event.keyCode == 49) {
-                        appXPath = ""
-                        loadFile();
+                    /////////////////////////////////////////////
+                    /* Hide the overlay on ESC of reset on 'r' */
+                    /////////////////////////////////////////////
+                    if (event.keyCode == 27) {
+                        $("#choice_overlay").hide()
                     }
-                    else if (event.keyCode == 50) {
-                        appXPath = "./rdg[contains(@source, '#source.1570')]";
+                    else if (event.keyCode == 82) {
+                        $("#choice_overlay").hide()
+                        choices = {};
+                        choiceXPathQueries = [];
                         loadFile();
                     }
                 });
