@@ -155,13 +155,13 @@ define(["jquery", "ol3"], function ($, ol) {
     //Clickthrough in JQuery uses this select's selected features
     initInteractions = function () {
 
-        hover = new ol.interaction.Select({
-            addCondition: ol.events.condition.click,
-            condition: ol.events.condition.pointerMove,
-            layers: [barLayer],
-            style: styles.hover
-        });
-
+//        hover = new ol.interaction.Select({
+//            addCondition: ol.events.condition.click,
+//            condition: ol.events.condition.pointerMove,
+//            layers: [barLayer],
+//            style: styles.hover
+//        });
+        initModifyInteraction()
 
         return hover
     }
@@ -415,6 +415,120 @@ define(["jquery", "ol3"], function ($, ol) {
         olpage.addInteraction(noteSelectInteraction);
     }
 
+
+    /**
+     * Based on Geoffroy's modify interaction from Digipal
+     *
+     * https://github.com/kcl-ddh/digipal/blob/master/digipal_text/static/digipal_text/viewer/annotation.ts
+     */
+
+    var Modify = (function (_super) {
+    __extends(Modify, _super);
+    //nearestVertexCoordinates_: ;
+    function Modify(options, vectorLayer, map) {
+        var _this = this;
+        _super.call(this, options);
+        this.started = false;
+        this.startedEvents = ['modifystart', 'modifyend'];
+        this.pointerCoordinate = [];
+        this.pixelTolerance_ = 15;
+        this.features_ = options.features;
+        this.pixelTolerance_ = options.pixelTolerance !== undefined ? options.pixelTolerance : 15;
+        this['handleDownEvent_'] = function (mapBrowserEvent) {
+            var ret = _this.isPointerNearSelectedVertex(mapBrowserEvent.pixel);
+            if (ret) {
+                _this.dispatchEvent(new ol.interaction.ModifyEvent('modifystart', _this.features_, mapBrowserEvent));
+            }
+            return ret;
+        };
+        this['handleUpEvent_'] = function (mapBrowserEvent) {
+            var ret = false;
+            if (!ret) {
+                _this.dispatchEvent(new ol.interaction.ModifyEvent('modifyend', _this.features_, mapBrowserEvent));
+            }
+            return ret;
+        };
+        // We only want to move existing vertices so no highlight and
+        // modification of edges or creation of new vertices.
+        this['handleEvent'] = function (mapBrowserEvent) {
+            if (!(mapBrowserEvent instanceof ol.MapBrowserPointerEvent))
+                return true;
+            _this.pointerCoordinate = mapBrowserEvent.coordinate;
+            if (!_this.isStarted() && !_this.isPointerNearSelectedVertex(mapBrowserEvent.pixel)) {
+                return true;
+            }
+            ;
+            // default handlers
+            ol.interaction.Pointer.handleEvent.call(_this, mapBrowserEvent);
+            return false;
+        };
+        this['handleDragEvent_'] = function (mapBrowserEvent) {
+            // preserve the rectangular shape while modifying the feature
+            var map = _this.getMap();
+            _this['features_'].forEach(function (feature) {
+                var geo = feature.getGeometry();
+                if (geo.getType() === 'Polygon' || geo.getType() === 'MultiPolygon') {
+                    // e.g. [482.52956397333946, -233.56917532670974, 810.2463886407656, -40.794572581164886]
+                    var xt2 = geo.getExtent();
+                    var xt = [
+                        _this.pointerCoordinate[0],
+                        _this.pointerCoordinate[1],
+                        Math.abs(xt2[0] - _this.pointerCoordinate[0]) > Math.abs(xt2[2] - _this.pointerCoordinate[0]) ? xt2[0] : xt2[2],
+                        Math.abs(xt2[1] - _this.pointerCoordinate[1]) > Math.abs(xt2[3] - _this.pointerCoordinate[1]) ? xt2[1] : xt2[3]
+                    ];
+                    var coordinates = [[
+                            [xt[0], xt[1]],
+                            [xt[0], xt[3]],
+                            [xt[2], xt[3]],
+                            [xt[2], xt[1]],
+                            [xt[0], xt[1]]
+                        ]];
+                    //                    var s = '';
+                    //                    coordinates[0].map((p) => {
+                    //                        s += '(' + p[0] + ',' + p[1] + '), ';
+                    //                    });
+                    geo.setCoordinates(coordinates, geo.getLayout());
+                }
+            });
+        };
+    }
+
+    /**
+     * Returns true if the pointer is near one of the vertices of a selected
+     * feature.
+     * 'near' means within this.pixelTolerance pixels.
+     */
+    Modify.prototype.isPointerNearSelectedVertex = function (pointerxy) {
+        var _this = this;
+        var ret = false;
+        var map = this.getMap();
+        this['features_'].forEach(function (feature) {
+            var geo = feature.getGeometry();
+            if (geo.getType() === 'Polygon' || geo.getType() === 'MultiPolygon') {
+                var fcs = geo.getFlatCoordinates();
+                for (var i = 0; i < fcs.length; i += 2) {
+                    var fcxy = map.getPixelFromCoordinate([fcs[i], fcs[i + 1]]);
+                    var dist = Math.sqrt(ol.coordinate['squaredDistance'](fcxy, pointerxy));
+                    if (dist <= _this['pixelTolerance_']) {
+                        ret = true;
+                        // show the resize pointer to indicate that Modify mode works
+                        var elem = _this.getMap().getTargetElement();
+                        elem['style'].cursor = 'move';
+                    }
+                }
+            }
+        });
+        return ret;
+    };
+    return Modify;
+}(ol.interaction.Pointer));
+
+    initModifyInteraction = function () {
+        //Clear interactions
+        olpage.removeInteraction(annotationInteraction);
+        olpage.removeInteraction(noteSelectInteraction);
+        olpage.addInteraction(Modify)
+    }
 
     /**
      * Ends any existing interactions, instantiates an ol.interaction.Draw event to add a note shape.
