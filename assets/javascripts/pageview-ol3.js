@@ -155,14 +155,12 @@ define(["jquery", "ol3"], function ($, ol) {
     //Clickthrough in JQuery uses this select's selected features
     initInteractions = function () {
 
-//        hover = new ol.interaction.Select({
-//            addCondition: ol.events.condition.click,
-//            condition: ol.events.condition.pointerMove,
-//            layers: [barLayer],
-//            style: styles.hover
-//        });
-        initModifyInteraction()
-
+       hover = new ol.interaction.Select({
+           addCondition: ol.events.condition.click,
+           condition: ol.events.condition.pointerMove,
+           layers: [barLayer],
+           style: styles.hover
+       });        
         return hover
     }
 
@@ -250,7 +248,7 @@ define(["jquery", "ol3"], function ($, ol) {
         if (pageimage.annotation_mode == 1) {
             interactions = initAnnotationInteractions();
             // Link notes in right sidebar to features
-            jQuery('div.annotation').click(function (e) {
+            /*jQuery('div.annotation').click(function (e) {
                 var features = noteLayer.getSource().getFeatures().concat(commentLayer.getSource().getFeatures());
                 if ($(this).data('noteid')) {
                     var noteid = $(this).data('noteid');
@@ -268,7 +266,7 @@ define(["jquery", "ol3"], function ($, ol) {
                     }
                 }
 
-            });
+            });*/
         } else {
             interactions = initInteractions();
             //Extra click event for clickthrough to bars
@@ -327,8 +325,11 @@ define(["jquery", "ol3"], function ($, ol) {
     }
 
     initAnnotationInteractions = function () {
+        initModifyInteraction();
+        //return new Modify();
+
         //Bind annotation events to elements
-        if ($(newNoteForm).length > 0) {
+        /*if ($(newNoteForm).length > 0) {
             $(pageimage.barAttachToggle).click(function () {
                 initDrawInteraction("Bar");
             });
@@ -406,10 +407,10 @@ define(["jquery", "ol3"], function ($, ol) {
                 }
             }
             // console.log(feature.getProperties().noteid );
-        });
+        });*/
     }
 
-    endDrawInteraction = function () {
+    var endDrawInteraction = function () {
         //remove any existing interaction
         olpage.removeInteraction(annotationInteraction);
         olpage.addInteraction(noteSelectInteraction);
@@ -422,12 +423,9 @@ define(["jquery", "ol3"], function ($, ol) {
      * https://github.com/kcl-ddh/digipal/blob/master/digipal_text/static/digipal_text/viewer/annotation.ts
      */
 
-    var Modify = (function (_super) {
-    __extends(Modify, _super);
-    //nearestVertexCoordinates_: ;
-    function Modify(options, vectorLayer, map) {
-        var _this = this;
-        _super.call(this, options);
+     var Modify = function(options, vectorLayer, map) {
+        super(options);
+        var _this = this;        
         this.started = false;
         this.startedEvents = ['modifystart', 'modifyend'];
         this.pointerCoordinate = [];
@@ -491,9 +489,20 @@ define(["jquery", "ol3"], function ($, ol) {
                 }
             });
         };
-    }
 
-    /**
+       
+
+        /*ol.interaction.Pointer.call(this, {
+          handleDownEvent: Modify.prototype.handleDownEvent,
+          handleDragEvent: Modify.prototype.handleDragEvent,
+          handleMoveEvent: Modify.prototype.handleMoveEvent,
+          handleUpEvent: Modify.prototype.handleUpEvent
+        });*/
+
+      };
+      ol.inherits(Modify, ol.interaction.Pointer);
+
+      /**
      * Returns true if the pointer is near one of the vertices of a selected
      * feature.
      * 'near' means within this.pixelTolerance pixels.
@@ -520,14 +529,13 @@ define(["jquery", "ol3"], function ($, ol) {
         });
         return ret;
     };
-    return Modify;
-}(ol.interaction.Pointer));
 
-    initModifyInteraction = function () {
+    var initModifyInteraction = function () {
         //Clear interactions
         olpage.removeInteraction(annotationInteraction);
         olpage.removeInteraction(noteSelectInteraction);
-        olpage.addInteraction(Modify)
+        annotationInteraction = new Modify();
+        olpage.addInteraction(annotationInteraction);
     }
 
     /**
