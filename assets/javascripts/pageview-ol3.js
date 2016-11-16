@@ -423,56 +423,71 @@ define(["jquery", "ol3"], function ($, ol) {
      * https://github.com/kcl-ddh/digipal/blob/master/digipal_text/static/digipal_text/viewer/annotation.ts
      */
 
-     var Modify = function(options, vectorLayer, map) {
-        super(options);
-        var _this = this;        
+     var Modify = function(opt_options) {
+        var options = opt_options || {};
+        //var _this = this;        
         this.started = false;
         this.startedEvents = ['modifystart', 'modifyend'];
         this.pointerCoordinate = [];
         this.pixelTolerance_ = 15;
         this.features_ = options.features;
         this.pixelTolerance_ = options.pixelTolerance !== undefined ? options.pixelTolerance : 15;
-        this['handleDownEvent_'] = function (mapBrowserEvent) {
-            var ret = _this.isPointerNearSelectedVertex(mapBrowserEvent.pixel);
+
+        ol.interaction.Pointer.call(this, {
+            //handleEvent: Modify.prototype.handleEvent,
+          handleDownEvent: Modify.prototype.handleDownEvent,
+          handleUpEvent: Modify.prototype.handleUpEvent,
+          handleDragEvent: Modify.prototype.handleDragEvent,          
+        });
+        this.features_ = null;
+
+      };
+      ol.inherits(Modify, ol.interaction.Pointer);
+
+      Modify.prototype.handleDownEvent = function (mapBrowserEvent) {
+            var ret = this.isPointerNearSelectedVertex(mapBrowserEvent.pixel);
             if (ret) {
-                _this.dispatchEvent(new ol.interaction.ModifyEvent('modifystart', _this.features_, mapBrowserEvent));
+                //this.dispatchEvent(new ol.interaction.Modify.Event('modifystart', this.features_, mapBrowserEvent));         
+                console.log(mapBrowserEvent.coordinate);
+                this.pointerCoordinate = mapBrowserEvent.coordinate;        
             }
             return ret;
         };
-        this['handleUpEvent_'] = function (mapBrowserEvent) {
+      Modify.prototype.handleUpEvent = function (mapBrowserEvent) {
             var ret = false;
             if (!ret) {
-                _this.dispatchEvent(new ol.interaction.ModifyEvent('modifyend', _this.features_, mapBrowserEvent));
+                this.dispatchEvent(new ol.interaction.Modify.Event('modifyend', this.features_, mapBrowserEvent));
             }
             return ret;
         };
         // We only want to move existing vertices so no highlight and
         // modification of edges or creation of new vertices.
-        this['handleEvent'] = function (mapBrowserEvent) {
-            if (!(mapBrowserEvent instanceof ol.MapBrowserPointerEvent))
+       Modify.prototype.handleEvent = function (mapBrowserEvent) {
+            if (!(mapBrowserEvent instanceof ol.MapBrowserEvent))
                 return true;
-            _this.pointerCoordinate = mapBrowserEvent.coordinate;
-            if (!_this.isStarted() && !_this.isPointerNearSelectedVertex(mapBrowserEvent.pixel)) {
+            this.pointerCoordinate = mapBrowserEvent.coordinate;
+            if (!this.started && !this.isPointerNearSelectedVertex(mapBrowserEvent.pixel)) {
                 return true;
             }
             ;
             // default handlers
-            ol.interaction.Pointer.handleEvent.call(_this, mapBrowserEvent);
+            ol.interaction.Pointer.handleEvent.call(this, mapBrowserEvent);
             return false;
         };
-        this['handleDragEvent_'] = function (mapBrowserEvent) {
+      Modify.prototype.handleDragEvent = function (mapBrowserEvent) {
             // preserve the rectangular shape while modifying the feature
-            var map = _this.getMap();
-            _this['features_'].forEach(function (feature) {
+            var map = this.getMap();
+            var pointerCoordinate=this.pointerCoordinate;
+            this.features_.forEach(function (feature) {
                 var geo = feature.getGeometry();
                 if (geo.getType() === 'Polygon' || geo.getType() === 'MultiPolygon') {
                     // e.g. [482.52956397333946, -233.56917532670974, 810.2463886407656, -40.794572581164886]
                     var xt2 = geo.getExtent();
                     var xt = [
-                        _this.pointerCoordinate[0],
-                        _this.pointerCoordinate[1],
-                        Math.abs(xt2[0] - _this.pointerCoordinate[0]) > Math.abs(xt2[2] - _this.pointerCoordinate[0]) ? xt2[0] : xt2[2],
-                        Math.abs(xt2[1] - _this.pointerCoordinate[1]) > Math.abs(xt2[3] - _this.pointerCoordinate[1]) ? xt2[1] : xt2[3]
+                        pointerCoordinate[0],
+                        pointerCoordinate[1],
+                        Math.abs(xt2[0] - pointerCoordinate[0]) > Math.abs(xt2[2] - pointerCoordinate[0]) ? xt2[0] : xt2[2],
+                        Math.abs(xt2[1] - pointerCoordinate[1]) > Math.abs(xt2[3] - pointerCoordinate[1]) ? xt2[1] : xt2[3]
                     ];
                     var coordinates = [[
                             [xt[0], xt[1]],
@@ -490,17 +505,7 @@ define(["jquery", "ol3"], function ($, ol) {
             });
         };
 
-       
-
-        /*ol.interaction.Pointer.call(this, {
-          handleDownEvent: Modify.prototype.handleDownEvent,
-          handleDragEvent: Modify.prototype.handleDragEvent,
-          handleMoveEvent: Modify.prototype.handleMoveEvent,
-          handleUpEvent: Modify.prototype.handleUpEvent
-        });*/
-
-      };
-      ol.inherits(Modify, ol.interaction.Pointer);
+      
 
       /**
      * Returns true if the pointer is near one of the vertices of a selected
@@ -508,33 +513,58 @@ define(["jquery", "ol3"], function ($, ol) {
      * 'near' means within this.pixelTolerance pixels.
      */
     Modify.prototype.isPointerNearSelectedVertex = function (pointerxy) {
-        var _this = this;
+        //var this = this;
         var ret = false;
         var map = this.getMap();
-        this['features_'].forEach(function (feature) {
+        var tolerance = this.pixelTolerance_ 
+        
+        var features = [];
+        map.forEachFeatureAtPixel(pointerxy,
+            function (feature) {
             var geo = feature.getGeometry();
             if (geo.getType() === 'Polygon' || geo.getType() === 'MultiPolygon') {
-                var fcs = geo.getFlatCoordinates();
-                for (var i = 0; i < fcs.length; i += 2) {
-                    var fcxy = map.getPixelFromCoordinate([fcs[i], fcs[i + 1]]);
-                    var dist = Math.sqrt(ol.coordinate['squaredDistance'](fcxy, pointerxy));
-                    if (dist <= _this['pixelTolerance_']) {
+                var fcs = geo.getCoordinates()[0];
+                
+                for (var i = 0; i < fcs.length; i ++) {
+                    var point=fcs[i]
+                    var fcxy = map.getPixelFromCoordinate(point);
+                    var dist = Math.sqrt(squaredDistance(fcxy, pointerxy));
+                    
+                    if (dist <= tolerance) {
                         ret = true;
                         // show the resize pointer to indicate that Modify mode works
-                        var elem = _this.getMap().getTargetElement();
+                        var elem = map.getTargetElement();
                         elem['style'].cursor = 'move';
                     }
                 }
+                features.push(feature);
             }
-        });
+        });                
+        this.features_=features;
+
         return ret;
     };
 
+    /**Taken from a different version of ol3.  Not in stable one being used.
+ * @param {ol.Coordinate} coord1 First coordinate.
+ * @param {ol.Coordinate} coord2 Second coordinate.
+ * @return {number} Squared distance between coord1 and coord2.
+ */
+  var squaredDistance = function(coord1, coord2) {
+  var dx = coord1[0] - coord2[0];
+  var dy = coord1[1] - coord2[1];
+  return dx * dx + dy * dy;
+};
+
     var initModifyInteraction = function () {
         //Clear interactions
+        var modifyOptions = {
+                    layers: [noteLayer],                    
+                    source: noteSource,                    
+                }
         olpage.removeInteraction(annotationInteraction);
         olpage.removeInteraction(noteSelectInteraction);
-        annotationInteraction = new Modify();
+        annotationInteraction = new Modify(modifyOptions);
         olpage.addInteraction(annotationInteraction);
     }
 
