@@ -1,0 +1,6 @@
+#!/bin/bash
+deactivate
+source /Users/elliotthall/env/ocve3/bin/activate
+python manage.py dumpdata --indent 3 ocve.accode ocve.country ocve.city ocve.genre ocve.collectiontype ocve.instrument ocve.year ocve.printingmethod ocve.opus ocve.publisher ocve.archive ocve.dedicatee ocve.editstatus ocve.keymode ocve.keypitch ocve.barspine ocve.bar ocve.bar_barregion ocve.barregion ocve.workcollection ocve.workinformation ocve.work ocve.workcomponenttype  ocve.workcomponent  ocve.sourcecomponenttype ocve.sourcetype ocve.source ocve.sourcelegacy ocve.sourcecomponent ocve.sourcecomponent_workcomponent ocve.genre_work ocve.instrumentcomponent ocve.sourceinformation ocve.sourceinformation_year ocve.sourceinformation_printingmethod ocve.sourcecomponent_instrument ocve.newsourceinformation ocve.newsource ocve.annotationtype  ocve.barcollection ocve.barcollection_regions ocve.barsequence ocve.pagetype ocve.page ocve.newpageimage ocve.pageimage ocve.pagelegacy ocve.annotation ocve.annotation_barregion > /Users/elliotthall/projects/chopin-django/ocve/fixtures/mysql_migration.json
+#python manage.py loaddata -i --app ocve ocve/fixtures/mysql_migration.json
+deactivate
