@@ -15,12 +15,19 @@
 define(["jquery", "ol3"], function ($, ol) {
     ol3 = ol;
     var hover;
+    //Bars defined by the databaase 
+    //for selection to bar view and in annotation attaching notes
     var barLayer;
+    //User annotations
     var noteLayer;
-    var commentLayer;
+    // OCVE critical commentary
+    var commentLayer;    
     var olpage;
     var styles;
+    // Drawing new annotations
     var annotationInteraction;
+    // Drag or resize interatcion
+    var modifyInteraction;    
     var noteSelectInteraction;
     var noteSource;
 
@@ -29,7 +36,7 @@ define(["jquery", "ol3"], function ($, ol) {
     // hover: For displaying bar number and boundary on hover
     // visibleNote: Annotation
     // selectedNote: Annotation selected
-    initStyles = function () {
+    var initStyles = function () {
         var invisibleStyle = new ol.style.Style({
             stroke: new ol.style.Stroke({
                 color: 'rgba(0,0,0,0)',
@@ -129,7 +136,7 @@ define(["jquery", "ol3"], function ($, ol) {
     }
 
     //Query the server for the bar boxes in a GeoJSON format
-    initBarLayer = function () {
+    var initBarLayer = function () {
         var vectorSource = new ol.source.Vector({
             url: pageimage.regionURL,
             format: new ol.format.GeoJSON()
@@ -325,8 +332,10 @@ define(["jquery", "ol3"], function ($, ol) {
     }
 
     initAnnotationInteractions = function () {
-        initModifyInteraction();
-        //return new Modify();
+
+
+        initModifyInteraction("Modify");
+        
 
         //Bind annotation events to elements
         /*if ($(newNoteForm).length > 0) {
@@ -389,7 +398,7 @@ define(["jquery", "ol3"], function ($, ol) {
             }
         });
 
-        noteSelectInteraction = new ol.interaction.Select({
+       noteSelectInteraction = new ol.interaction.Select({
             condition: ol.events.condition.click
         });
         olpage.addInteraction(noteSelectInteraction);
@@ -439,7 +448,7 @@ define(["jquery", "ol3"], function ($, ol) {
           handleUpEvent: Modify.prototype.handleUpEvent,
           handleDragEvent: Modify.prototype.handleDragEvent,          
         });
-        this.features_ = null;
+        this.features_ = options.features;
 
       };
       ol.inherits(Modify, ol.interaction.Pointer);
@@ -518,7 +527,7 @@ define(["jquery", "ol3"], function ($, ol) {
         var map = this.getMap();
         var tolerance = this.pixelTolerance_ 
         
-        var features = [];
+       // var features = [];
         map.forEachFeatureAtPixel(pointerxy,
             function (feature) {
             var geo = feature.getGeometry();
@@ -537,10 +546,10 @@ define(["jquery", "ol3"], function ($, ol) {
                         elem['style'].cursor = 'move';
                     }
                 }
-                features.push(feature);
+                //features.push(feature);
             }
         });                
-        this.features_=features;
+        //this.features_=features;
 
         return ret;
     };
@@ -556,16 +565,51 @@ define(["jquery", "ol3"], function ($, ol) {
   return dx * dx + dy * dy;
 };
 
-    var initModifyInteraction = function () {
+/**
+ * [initModifyInteraction 
+ * Instantiate interactions to move or modify an existing note shape
+ * @param  {[type]} mode Type of interaction e.g. modify/draft
+ * 
+ */
+    var initModifyInteraction = function (mode) {
         //Clear interactions
+        olpage.removeInteraction(annotationInteraction);
+        olpage.removeInteraction(noteSelectInteraction);        
+
+        //This version of select populates the form on the left
+        noteSelectInteraction = new ol.interaction.Select({
+            
+        }); 
+
+
+        olpage.addInteraction(noteSelectInteraction);
+        if (mode == 'Move'){
+            annotationInteraction = new ol.interaction.Translate({
+                features: noteSelectInteraction.getFeatures()
+            });
+            annotationInteraction.on('translateend', finishModify);       
+        }else if (mode == 'Modify'){
+        
         var modifyOptions = {
                     layers: [noteLayer],                    
-                    source: noteSource,                    
+                    source: noteSource, 
+                    features: noteSelectInteraction.getFeatures()                   
                 }
-        olpage.removeInteraction(annotationInteraction);
-        olpage.removeInteraction(noteSelectInteraction);
+        
+        
         annotationInteraction = new Modify(modifyOptions);
+        annotationInteraction.on('modifyend', finishModify);
+        }
         olpage.addInteraction(annotationInteraction);
+    }
+
+    var finishModify = function(event) {
+        var features = noteSelectInteraction.getFeatures();        
+        if (features){            
+            var feature = features.getArray()[0];            
+            updateFormGeometry(feature);    
+        }
+        
     }
 
     /**
@@ -636,16 +680,27 @@ define(["jquery", "ol3"], function ($, ol) {
 
     }
 
+
     /**
      * When ol.interaction.Draw triggers draw end, this event finds the geometry
      * of the drawn shape and adds it to the note form.
      * @param event event object passed by Draw
      */
-    finishDraw = function (event) {
-        var feature = event.feature
+    var finishDraw = function (event) {
+        var feature = event.feature        
+        updateFormGeometry(feature);
+    }
+
+    /**
+     * Update the note form with geomertry of selected feature
+     * Modified or newly created
+     * 
+     * @param  {[type]} feature [description]
+     * @return {[type]}         [description]
+     */
+    updateFormGeometry = function (feature){
         var format = new ol.format.GeoJSON();
         var geometryName = feature.getGeometryName();
-
         if (geometryName == "Circle") {
             //No circle in GeoJSON, use fromCircle as workaround
             var circle = ol.geom.Polygon.fromCircle(feature.getGeometry());
@@ -658,11 +713,10 @@ define(["jquery", "ol3"], function ($, ol) {
 
         //Add shape id to note form        
         $('#featureid').val(feature.id);
-
-
+        console.log('Form Updated');
     }
 
-    toggleCommentary = function () {
+    var toggleCommentary = function () {
 
         if (commentLayer.getVisible() == false) {
             commentLayer.setVisible(true);
