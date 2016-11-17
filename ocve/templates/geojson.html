@@ -66,7 +66,6 @@
             {% endfor %}
         {% else %}
             { "type": "Feature",
-            "geometryName": "{{ a.annotation.geometry }}",
             "geometry": {
             "type": "Polygon",
             "coordinates":[
@@ -75,7 +74,7 @@
             ]
             ]}
             ,
-            "properties": {"noteid":{{ a.annotation.id }},"noteType":{{ a.annotation.type.id}}}
+            "properties": {"noteid":{{ a.annotation.id }},"noteType":{{ a.annotation.type.id}}}, "geometryName": "{{ a.annotation.geometry }}"
             }
         {% endif %}
         {% if not forloop.last %},{% endif %}
