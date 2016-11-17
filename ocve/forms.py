@@ -60,6 +60,7 @@ class AnnotationForm(ModelForm):
                     'user':HiddenInput(),
                     'pageimage':HiddenInput(),
                     'noteregions':HiddenInput(),
+                    'geometry':HiddenInput(),
                     'type':Select(choices=( ('3','Private'),('4','Public') ))
         }
 
