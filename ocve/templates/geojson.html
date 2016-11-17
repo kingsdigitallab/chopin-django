@@ -66,6 +66,7 @@
             {% endfor %}
         {% else %}
             { "type": "Feature",
+            "geometryName": "{{ a.geometry }}",
             "geometry": {
             "type": "Polygon",
             "coordinates":[
