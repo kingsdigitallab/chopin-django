@@ -46,7 +46,7 @@
                     </p>
 
                     {% if c.noteregions|length > 0 %}
-                    <div class="annotation noteRegionHighlight"  data-noteid="{{ c.id }}">
+                    <div class="annotation noteRegionHighlight" data-notetype="{{ c.type.id }}"  data-noteid="{{ c.id }}">
                         <p>{{ c.notetext |safe }}</p>
                     </div>
                     {% endif %}

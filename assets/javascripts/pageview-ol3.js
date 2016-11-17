@@ -627,7 +627,8 @@ define(["jquery", "ol3"], function ($, ol) {
             var feature = features.getArray()[0];   
             var noteid = feature.getProperties().noteid;            
             var text=$('#comment-'+noteid+' div.annotation p').html();
-            //todo: Note Type
+            var noteTypeid = $('#comment-'+noteid+' div.annotation').data('notetype'); 
+            $('#id_type').val(noteTypeid);            
             $('#id_notetext').val(text);
             $('#annotation_id').val(noteid);
             //todo Note Bars?
