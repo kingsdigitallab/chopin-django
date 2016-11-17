@@ -333,12 +333,12 @@ define(["jquery", "ol3"], function ($, ol) {
 
     initAnnotationInteractions = function () {
 
-
-        initModifyInteraction("Modify");
-        
-
+        //
         //Bind annotation events to elements
-        /*if ($(newNoteForm).length > 0) {
+        if ($(newNoteForm).length > 0) {
+
+
+            //Bind annotation tool events            
             $(pageimage.barAttachToggle).click(function () {
                 initDrawInteraction("Bar");
             });
@@ -349,6 +349,13 @@ define(["jquery", "ol3"], function ($, ol) {
             $(newCircleNoteToggle).click(function () {
                 initDrawInteraction("Circle");
             });
+            $('#modifyNoteToggle').click(function () {
+                initModifyInteraction("Modify");
+            });
+            $('#moveNoteToggle').click(function () {
+                initModifyInteraction("Move");
+            });
+            //
 
             $('#newNoteForm').submit(function (event) {
                 saveNote();
@@ -416,7 +423,7 @@ define(["jquery", "ol3"], function ($, ol) {
                 }
             }
             // console.log(feature.getProperties().noteid );
-        });*/
+        });
     }
 
     var endDrawInteraction = function () {
@@ -465,7 +472,8 @@ define(["jquery", "ol3"], function ($, ol) {
       Modify.prototype.handleUpEvent = function (mapBrowserEvent) {
             var ret = false;
             if (!ret) {
-                this.dispatchEvent(new ol.interaction.Modify.Event('modifyend', this.features_, mapBrowserEvent));
+                //this.dispatchEvent(new ol.interaction.Modify.Event('modifyend', this.features_, mapBrowserEvent));
+                finishModify(mapBrowserEvent);
             }
             return ret;
         };
@@ -489,6 +497,7 @@ define(["jquery", "ol3"], function ($, ol) {
             var pointerCoordinate=this.pointerCoordinate;
             this.features_.forEach(function (feature) {
                 var geo = feature.getGeometry();
+
                 if (geo.getType() === 'Polygon' || geo.getType() === 'MultiPolygon') {
                     // e.g. [482.52956397333946, -233.56917532670974, 810.2463886407656, -40.794572581164886]
                     var xt2 = geo.getExtent();
@@ -509,6 +518,7 @@ define(["jquery", "ol3"], function ($, ol) {
                     //                    coordinates[0].map((p) => {
                     //                        s += '(' + p[0] + ',' + p[1] + '), ';
                     //                    });
+                    console.log(coordinates);
                     geo.setCoordinates(coordinates, geo.getLayout());
                 }
             });
@@ -528,7 +538,7 @@ define(["jquery", "ol3"], function ($, ol) {
         var tolerance = this.pixelTolerance_ 
         
        // var features = [];
-        map.forEachFeatureAtPixel(pointerxy,
+        this.features_.forEach(
             function (feature) {
             var geo = feature.getGeometry();
             if (geo.getType() === 'Polygon' || geo.getType() === 'MultiPolygon') {
@@ -580,6 +590,7 @@ define(["jquery", "ol3"], function ($, ol) {
         noteSelectInteraction = new ol.interaction.Select({
             
         }); 
+        noteSelectInteraction.on('select', modifySelect);
 
 
         olpage.addInteraction(noteSelectInteraction);
@@ -598,9 +609,31 @@ define(["jquery", "ol3"], function ($, ol) {
         
         
         annotationInteraction = new Modify(modifyOptions);
-        annotationInteraction.on('modifyend', finishModify);
+        
         }
         olpage.addInteraction(annotationInteraction);
+    }
+
+    /**
+     * Select Event for modify select interaction
+     * To update the form on right 
+     * @param  {[type]} event [description]
+     * @return {[type]}       [description]
+     */
+    var modifySelect = function(event){
+        //todo Only allow select of user's note
+        var features = noteSelectInteraction.getFeatures();        
+        if (features){            
+            var feature = features.getArray()[0];   
+            var noteid = feature.getProperties().noteid;            
+            var text=$('#comment-'+noteid+' div.annotation p').html();
+            //todo: Note Type
+            $('#id_notetext').val(text);
+            $('#annotation_id').val(noteid);
+            //todo Note Bars?
+            console.log(noteid);
+            updateFormGeometry(feature);
+        }
     }
 
     var finishModify = function(event) {
