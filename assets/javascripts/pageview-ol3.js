@@ -27,7 +27,7 @@ define(["jquery", "ol3"], function ($, ol) {
     // Drawing new annotations
     var annotationInteraction;
     // Drag or resize interatcion
-    var modifyInteraction;    
+    
     var noteSelectInteraction;
     var noteSource;
 
@@ -255,7 +255,7 @@ define(["jquery", "ol3"], function ($, ol) {
         if (pageimage.annotation_mode == 1) {
             interactions = initAnnotationInteractions();
             // Link notes in right sidebar to features
-            /*jQuery('div.annotation').click(function (e) {
+            jQuery('div.annotation').click(function (e) {
                 var features = noteLayer.getSource().getFeatures().concat(commentLayer.getSource().getFeatures());
                 if ($(this).data('noteid')) {
                     var noteid = $(this).data('noteid');
@@ -273,7 +273,7 @@ define(["jquery", "ol3"], function ($, ol) {
                     }
                 }
 
-            });*/
+            });
         } else {
             interactions = initInteractions();
             //Extra click event for clickthrough to bars
@@ -422,7 +422,7 @@ define(["jquery", "ol3"], function ($, ol) {
                     $('#notes h4').click();
                 }
             }
-            // console.log(feature.getProperties().noteid );
+            
         });
     }
 
@@ -453,7 +453,7 @@ define(["jquery", "ol3"], function ($, ol) {
             //handleEvent: Modify.prototype.handleEvent,
           handleDownEvent: Modify.prototype.handleDownEvent,
           handleUpEvent: Modify.prototype.handleUpEvent,
-          handleDragEvent: Modify.prototype.handleDragEvent,          
+          handleDragEvent: Modify.prototype.handleDragEvent
         });
         this.features_ = options.features;
 
@@ -464,8 +464,9 @@ define(["jquery", "ol3"], function ($, ol) {
             var ret = this.isPointerNearSelectedVertex(mapBrowserEvent.pixel);
             if (ret) {
                 //this.dispatchEvent(new ol.interaction.Modify.Event('modifystart', this.features_, mapBrowserEvent));         
-                console.log(mapBrowserEvent.coordinate);
-                this.pointerCoordinate = mapBrowserEvent.coordinate;        
+                //console.log(mapBrowserEvent.coordinate);
+                this.pointerCoordinate = mapBrowserEvent.coordinate;
+                this.coordinate_ = evt.coordinate;
             }
             return ret;
         };
@@ -491,11 +492,48 @@ define(["jquery", "ol3"], function ($, ol) {
             ol.interaction.Pointer.handleEvent.call(this, mapBrowserEvent);
             return false;
         };
-      Modify.prototype.handleDragEvent = function (mapBrowserEvent) {
+
+    Modify.prototype.handleDragEvent = function (mapBrowserEvent) {
+
+        //todo if circle/rectangle
+        this.handlePolygonDragEvent(mapBrowserEvent);
+    }
+
+    /**
+     *
+     *  p1        p2
+     *
+     *
+     *  p3        p4
+     *
+     * @param mapBrowserEvent
+     */
+      Modify.prototype.handlePolygonDragEvent = function (mapBrowserEvent) {
             // preserve the rectangular shape while modifying the feature
             var map = this.getMap();
             var pointerCoordinate=this.pointerCoordinate;
-            this.features_.forEach(function (feature) {
+            var deltaX = evt.coordinate[0] - this.coordinate_[0];
+            var deltaY = evt.coordinate[1] - this.coordinate_[1];
+
+            var geometry = /** @type {ol.geom.SimpleGeometry} */
+            (this.feature_.getGeometry());
+            console.log(geometry);
+            var p1=geometry[0];
+            var p2=geometry[1];
+            var p3=geometry[2];
+            var p4=geometry[3];
+            console.log(p1);
+          console.log(p2);
+          console.log(p3);
+          console.log(p4);
+            if (this.vertexMode == "topLeft"){
+                //Top left drag
+            }
+
+
+            this.coordinate_[0] = evt.coordinate[0];
+            this.coordinate_[1] = evt.coordinate[1];
+            /*this.features_.forEach(function (feature) {
                 var geo = feature.getGeometry();
 
                 if (geo.getType() === 'Polygon' || geo.getType() === 'MultiPolygon') {
@@ -521,7 +559,7 @@ define(["jquery", "ol3"], function ($, ol) {
                     console.log(coordinates);
                     geo.setCoordinates(coordinates, geo.getLayout());
                 }
-            });
+            });*/
         };
 
       
@@ -734,14 +772,21 @@ define(["jquery", "ol3"], function ($, ol) {
      */
     updateFormGeometry = function (feature){
         var format = new ol.format.GeoJSON();
-        var geometryName = feature.getGeometryName();
+        var geometryName = feature.getGeometryName();        
+        /*if (geometryName == 'geometry'){
+            //EXisting note, get geometryname from geojson
+            var props = feature.getProperties();
+            geometryName=props['geometryName'];
+        }
+        console.log(format.writeFeature(feature));*/
+            
         if (geometryName == "Circle") {
             //No circle in GeoJSON, use fromCircle as workaround
             var circle = ol.geom.Polygon.fromCircle(feature.getGeometry());
             var nf = new ol.Feature({ geometry: circle })
             $('#id_noteregions').val(format.writeFeature(nf));
 
-        } else if (geometryName == "Box") {
+        } else if (geometryName == "Box" || geometryName == 'geometry') {
             $('#id_noteregions').val(format.writeFeature(feature));
         }
 
