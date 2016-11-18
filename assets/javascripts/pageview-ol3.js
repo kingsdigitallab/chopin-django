@@ -466,7 +466,7 @@ define(["jquery", "ol3"], function ($, ol) {
                 //this.dispatchEvent(new ol.interaction.Modify.Event('modifystart', this.features_, mapBrowserEvent));         
                 //console.log(mapBrowserEvent.coordinate);
                 this.pointerCoordinate = mapBrowserEvent.coordinate;
-                this.coordinate_ = evt.coordinate;
+                this.coordinate_ = mapBrowserEvent.coordinate;
             }
             return ret;
         };
@@ -501,10 +501,10 @@ define(["jquery", "ol3"], function ($, ol) {
 
     /**
      *
+     *  p0(4)        p3
+     *
+     *
      *  p1        p2
-     *
-     *
-     *  p3        p4
      *
      * @param mapBrowserEvent
      */
@@ -512,27 +512,48 @@ define(["jquery", "ol3"], function ($, ol) {
             // preserve the rectangular shape while modifying the feature
             var map = this.getMap();
             var pointerCoordinate=this.pointerCoordinate;
-            var deltaX = evt.coordinate[0] - this.coordinate_[0];
-            var deltaY = evt.coordinate[1] - this.coordinate_[1];
-
-            var geometry = /** @type {ol.geom.SimpleGeometry} */
-            (this.feature_.getGeometry());
-            console.log(geometry);
-            var p1=geometry[0];
-            var p2=geometry[1];
-            var p3=geometry[2];
-            var p4=geometry[3];
-            console.log(p1);
-          console.log(p2);
-          console.log(p3);
-          console.log(p4);
+            var deltaX = mapBrowserEvent.coordinate[0] - this.coordinate_[0];
+            var deltaY = mapBrowserEvent.coordinate[1] - this.coordinate_[1];
+            this.features_.forEach(
+            function (feature) {
+                var geometry = /** @type {ol.geom.SimpleGeometry} */
+            (feature.getGeometry());
+            var coord = geometry.getCoordinates();
+            this.vertexMode = "topLeft";
+            
             if (this.vertexMode == "topLeft"){
                 //Top left drag
+                // Affects p0.x,p0.y,p1.x,p3.y                
+                coord[0][0][0] += deltaX;
+                coord[0][0][1] += deltaY;                
+                coord[0][4][0] += deltaX;
+                coord[0][4][1] += deltaY;                
+                coord[0][1][0] += deltaX;                
+                coord[0][3][1] += deltaY;
+            } else if (this.vertexMode == "topRight"){
+                //Top right drag
+                // Affects p3.x,p3.y,p2.x,p0.y,p4.y
+                coord[0][3][0] += deltaX;
+                coord[0][3][1] += deltaY;                
+                coord[0][2][0] += deltaX;
+                coord[0][0][1] += deltaY;                                
+                coord[0][4][1] += deltaY;                               
+
+            }else if (this.vertexMode == "bottomLeft"){
+
+            }else if (this.vertexMode == "bottomRight"){
+
             }
 
+            //Apply new coordinates
+            geometry.setCoordinates(coord, geometry.getLayout());
 
-            this.coordinate_[0] = evt.coordinate[0];
-            this.coordinate_[1] = evt.coordinate[1];
+            });
+            
+
+
+            this.coordinate_[0] = mapBrowserEvent.coordinate[0];
+            this.coordinate_[1] = mapBrowserEvent.coordinate[1];
             /*this.features_.forEach(function (feature) {
                 var geo = feature.getGeometry();
 
