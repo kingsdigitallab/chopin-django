@@ -297,7 +297,7 @@ define(["jquery", "ol3"], function ($, ol) {
      */
 
 
-    initAnnotationLayer = function (visible) {
+    var initAnnotationLayer = function (visible) {
         noteSource = new ol.source.Vector({
             url: pageimage.noteURL,
             format: new ol.format.GeoJSON()
@@ -314,7 +314,7 @@ define(["jquery", "ol3"], function ($, ol) {
 
     }
 
-    initCommentLayer = function (visible) {
+    var initCommentLayer = function (visible) {
         commentSource = new ol.source.Vector({
             url: pageimage.commentURL,
             format: new ol.format.GeoJSON()
@@ -331,7 +331,7 @@ define(["jquery", "ol3"], function ($, ol) {
 
     }
 
-    initAnnotationInteractions = function () {
+    var initAnnotationInteractions = function () {
 
         //
         //Bind annotation events to elements
@@ -448,6 +448,10 @@ define(["jquery", "ol3"], function ($, ol) {
         this.pixelTolerance_ = 15;
         this.features_ = options.features;
         this.pixelTolerance_ = options.pixelTolerance !== undefined ? options.pixelTolerance : 15;
+        this.vertexMode = "";
+        this.circleDist=0;
+        this.centreX=0;
+        this.centreY=0;
 
         ol.interaction.Pointer.call(this, {
             //handleEvent: Modify.prototype.handleEvent,
@@ -467,6 +471,11 @@ define(["jquery", "ol3"], function ($, ol) {
                 //console.log(mapBrowserEvent.coordinate);
                 this.pointerCoordinate = mapBrowserEvent.coordinate;
                 this.coordinate_ = mapBrowserEvent.coordinate;
+
+                var Extent = this.features_.getArray()[0].getGeometry().getExtent();
+                this.centreX = Extent[0] + (Extent[2]-Extent[0])/2;
+                this.centreY = Extent[1] + (Extent[3]-Extent[1])/2;
+                this.circleDist = Math.sqrt(Math.pow((mapBrowserEvent.coordinate[1]-this.centreY),2)+Math.pow((mapBrowserEvent.coordinate[0]-this.centreX),2));
             }
             return ret;
         };
@@ -496,7 +505,52 @@ define(["jquery", "ol3"], function ($, ol) {
     Modify.prototype.handleDragEvent = function (mapBrowserEvent) {
 
         //todo if circle/rectangle
-        this.handlePolygonDragEvent(mapBrowserEvent);
+        
+        this.handleCircleDragEvent(mapBrowserEvent);
+        //Rectangle
+        //this.handlePolygonDragEvent(mapBrowserEvent);
+    }
+
+    Modify.prototype.handleCircleDragEvent = function(mapBrowserEvent){
+        var dist = 0;
+        var circleDist=this.circleDist;
+        var centreX=this.centreX;
+        var centreY=this.centreY;
+        this.features_.forEach(
+            function (feature) {
+                //Crile that has been saved
+                //and thus transformed into poygon ring
+                if (feature.getGeometryName() == 'geometry'){
+                    //EXisting note, get geometryname from geojson
+                    var props = feature.getProperties();
+                    var geometryName=props['geometryName'];
+                    var geometry = /** @type {ol.geom.SimpleGeometry} */
+                    (feature.getGeometry());
+                    var coord = geometry.getCoordinates();
+
+                    //Get centre of polygon circle
+                    var Extent = feature.getGeometry().getExtent();
+                    var radius = Extent[2] - centreX;
+                    // Calculate Delta
+                    dist=Math.sqrt(Math.pow((mapBrowserEvent.coordinate[1]-centreY),2)+Math.pow((mapBrowserEvent.coordinate[0]-centreX),2));
+                    var delta=dist-circleDist;
+
+                    //Use Centre and new radius to generate circle
+                    // Convert circle back to linear ring polygon
+                    var circle = new ol.geom.Circle([centreX,centreY],(radius+delta));
+                    var cGeo = ol.geom.Polygon.fromCircle(circle);
+                    coord = cGeo.getCoordinates();
+
+
+                } else{
+                    //Just Drawn circle
+                    
+                }
+                geometry.setCoordinates(coord, geometry.getLayout());
+                
+        });
+        
+        this.circleDist=dist;
     }
 
     /**
@@ -519,7 +573,6 @@ define(["jquery", "ol3"], function ($, ol) {
                 var geometry = /** @type {ol.geom.SimpleGeometry} */
             (feature.getGeometry());
             var coord = geometry.getCoordinates();
-            this.vertexMode = "topLeft";
             
             if (this.vertexMode == "topLeft"){
                 //Top left drag
@@ -540,9 +593,21 @@ define(["jquery", "ol3"], function ($, ol) {
                 coord[0][4][1] += deltaY;                               
 
             }else if (this.vertexMode == "bottomLeft"){
+                //Bottom Left
+                //Affects p0.x,p4.x,p1.x.p1.y.p2.y
+                coord[0][0][0] += deltaX;
+                coord[0][4][0] += deltaX;
+                coord[0][1][0] += deltaX;               
+                coord[0][1][1] += deltaY;
+                coord[0][2][1] += deltaY;
 
             }else if (this.vertexMode == "bottomRight"){
-
+                //Bottom Right
+                //Affects p2.x,p2.y,p3.x,p1.y
+                coord[0][2][0] += deltaX;
+                coord[0][2][1] += deltaY;
+                coord[0][3][0] += deltaX;
+                coord[0][1][1] += deltaY;
             }
 
             //Apply new coordinates
@@ -554,33 +619,7 @@ define(["jquery", "ol3"], function ($, ol) {
 
             this.coordinate_[0] = mapBrowserEvent.coordinate[0];
             this.coordinate_[1] = mapBrowserEvent.coordinate[1];
-            /*this.features_.forEach(function (feature) {
-                var geo = feature.getGeometry();
-
-                if (geo.getType() === 'Polygon' || geo.getType() === 'MultiPolygon') {
-                    // e.g. [482.52956397333946, -233.56917532670974, 810.2463886407656, -40.794572581164886]
-                    var xt2 = geo.getExtent();
-                    var xt = [
-                        pointerCoordinate[0],
-                        pointerCoordinate[1],
-                        Math.abs(xt2[0] - pointerCoordinate[0]) > Math.abs(xt2[2] - pointerCoordinate[0]) ? xt2[0] : xt2[2],
-                        Math.abs(xt2[1] - pointerCoordinate[1]) > Math.abs(xt2[3] - pointerCoordinate[1]) ? xt2[1] : xt2[3]
-                    ];
-                    var coordinates = [[
-                            [xt[0], xt[1]],
-                            [xt[0], xt[3]],
-                            [xt[2], xt[3]],
-                            [xt[2], xt[1]],
-                            [xt[0], xt[1]]
-                        ]];
-                    //                    var s = '';
-                    //                    coordinates[0].map((p) => {
-                    //                        s += '(' + p[0] + ',' + p[1] + '), ';
-                    //                    });
-                    console.log(coordinates);
-                    geo.setCoordinates(coordinates, geo.getLayout());
-                }
-            });*/
+            
         };
 
       
@@ -613,6 +652,17 @@ define(["jquery", "ol3"], function ($, ol) {
                         // show the resize pointer to indicate that Modify mode works
                         var elem = map.getTargetElement();
                         elem['style'].cursor = 'move';
+                        // Set the selected vertex to modify correct coordinates
+                        if (i ==0 || i ==4){
+                            this.vertexMode = "topLeft";
+                        }else if (i ==1){
+                            this.vertexMode = "bottomLeft";
+                        }else if (i ==2){
+                            this.vertexMode = "bottomRight";
+                        }else if (i ==3){
+                            this.vertexMode = "topRight";
+                        }
+                        console.log(this.vertexMode);
                     }
                 }
                 //features.push(feature);
