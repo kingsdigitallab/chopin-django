@@ -49,7 +49,7 @@ CACHE_REDIS_DATABASE = '0'
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': '127.0.0.1:6379/' + CACHE_REDIS_DATABASE,
+        'LOCATION': '127.0.0.1:6379:' + CACHE_REDIS_DATABASE,
         'OPTIONS': {
             'CLIENT_CLASS': 'redis_cache.client.DefaultClient',
             'IGNORE_EXCEPTIONS': True
@@ -279,7 +279,6 @@ CELERYBEAT_SCHEDULE = {
         'task': 'catalogue.tasks.haystack_update_index',
         'schedule': crontab(minute=0, hour=2),
     },
-
 }
 
 # -----------------------------------------------------------------------------
@@ -344,7 +343,8 @@ IMAGEFOLDER = '/vol/ocve3/images/'
 # -----------------------------------------------------------------------------
 
 SOURCEJSONPATH = os.path.join(STATIC_ROOT, 'javascripts')
-#Build Json with the live flag
+
+# Build JSON with the live flag
 BUILD_LIVE_ONLY = False
 
 IMAGE_UPLOAD_PATH = '/vol/ocve2/images/upload/'
