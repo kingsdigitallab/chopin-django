@@ -447,11 +447,13 @@ define(["jquery", "ol3"], function ($, ol) {
         this.pointerCoordinate = [];
         this.pixelTolerance_ = 15;
         this.features_ = options.features;
+        this.layer=options.layers[0];
         this.pixelTolerance_ = options.pixelTolerance !== undefined ? options.pixelTolerance : 15;
         this.vertexMode = "";
         this.circleDist=0;
         this.centreX=0;
         this.centreY=0;
+        
 
         ol.interaction.Pointer.call(this, {
             //handleEvent: Modify.prototype.handleEvent,
@@ -465,17 +467,25 @@ define(["jquery", "ol3"], function ($, ol) {
       ol.inherits(Modify, ol.interaction.Pointer);
 
       Modify.prototype.handleDownEvent = function (mapBrowserEvent) {
-            var ret = this.isPointerNearSelectedVertex(mapBrowserEvent.pixel);
-            if (ret) {
-                //this.dispatchEvent(new ol.interaction.Modify.Event('modifystart', this.features_, mapBrowserEvent));         
-                //console.log(mapBrowserEvent.coordinate);
-                this.pointerCoordinate = mapBrowserEvent.coordinate;
-                this.coordinate_ = mapBrowserEvent.coordinate;
+            
+            var ret = false;
+            if (this.features_){
+                // console.log(this.features_.getArray());
+                // var props = this.features_.getArray()[0].getProperties();
+                // var geometryName=props['geometryName'];
+                var ret = this.isPointerNearSelectedVertex(mapBrowserEvent.pixel);
 
-                var Extent = this.features_.getArray()[0].getGeometry().getExtent();
-                this.centreX = Extent[0] + (Extent[2]-Extent[0])/2;
-                this.centreY = Extent[1] + (Extent[3]-Extent[1])/2;
-                this.circleDist = Math.sqrt(Math.pow((mapBrowserEvent.coordinate[1]-this.centreY),2)+Math.pow((mapBrowserEvent.coordinate[0]-this.centreX),2));
+                if (ret) {
+                    //this.dispatchEvent(new ol.interaction.Modify.Event('modifystart', this.features_, mapBrowserEvent));         
+                    //console.log(mapBrowserEvent.coordinate);
+                    this.pointerCoordinate = mapBrowserEvent.coordinate;
+                    this.coordinate_ = mapBrowserEvent.coordinate;
+
+                    var Extent = this.features_.getArray()[0].getGeometry().getExtent();
+                    this.centreX = Extent[0] + (Extent[2]-Extent[0])/2;
+                    this.centreY = Extent[1] + (Extent[3]-Extent[1])/2;
+                    this.circleDist = Math.sqrt(Math.pow((mapBrowserEvent.coordinate[1]-this.centreY),2)+Math.pow((mapBrowserEvent.coordinate[0]-this.centreX),2));
+                  }
             }
             return ret;
         };
@@ -502,13 +512,27 @@ define(["jquery", "ol3"], function ($, ol) {
             return false;
         };
 
-    Modify.prototype.handleDragEvent = function (mapBrowserEvent) {
+    Modify.prototype.handleDragEvent = function (mapBrowserEvent) {       
 
-        //todo if circle/rectangle
+        var this_ = this;
+        this.features_.forEach(
+            //if circle/rectangle
+            function (feature) {
+                var geometry = /** @type {ol.geom.SimpleGeometry} */
+                    (feature.getGeometry());
+                var coord = geometry.getCoordinates()[0];                
+                if (coord.length > 5){
+                    this_.handleCircleDragEvent(mapBrowserEvent);    
+                }else{
+                    //Rectangle
+                   this_.handlePolygonDragEvent(mapBrowserEvent);    
+                }                
+                
+            }
+        );
         
-        this.handleCircleDragEvent(mapBrowserEvent);
-        //Rectangle
-        //this.handlePolygonDragEvent(mapBrowserEvent);
+        
+        
     }
 
     Modify.prototype.handleCircleDragEvent = function(mapBrowserEvent){
@@ -516,36 +540,31 @@ define(["jquery", "ol3"], function ($, ol) {
         var circleDist=this.circleDist;
         var centreX=this.centreX;
         var centreY=this.centreY;
+        //Get centre of polygon circle
+        
         this.features_.forEach(
             function (feature) {
                 //Crile that has been saved
                 //and thus transformed into poygon ring
-                if (feature.getGeometryName() == 'geometry'){
-                    //EXisting note, get geometryname from geojson
-                    var props = feature.getProperties();
-                    var geometryName=props['geometryName'];
-                    var geometry = /** @type {ol.geom.SimpleGeometry} */
+                var geometry = /** @type {ol.geom.SimpleGeometry} */
                     (feature.getGeometry());
-                    var coord = geometry.getCoordinates();
+                var coord = geometry.getCoordinates();
+                var Extent = feature.getGeometry().getExtent();
+                var radius = Extent[2] - centreX;                
+                
+                    
+                    // Apply Delta to radius
+                    dist=Math.sqrt(Math.pow((mapBrowserEvent.coordinate[1]-centreY),2)+Math.pow((mapBrowserEvent.coordinate[0]-centreX),2));                    
 
-                    //Get centre of polygon circle
-                    var Extent = feature.getGeometry().getExtent();
-                    var radius = Extent[2] - centreX;
-                    // Calculate Delta
-                    dist=Math.sqrt(Math.pow((mapBrowserEvent.coordinate[1]-centreY),2)+Math.pow((mapBrowserEvent.coordinate[0]-centreX),2));
-                    var delta=dist-circleDist;
+                    delta=dist-circleDist;
+                    console.log(delta);
 
                     //Use Centre and new radius to generate circle
-                    // Convert circle back to linear ring polygon
+                    // Convert circle back to linear ring polygon                    
                     var circle = new ol.geom.Circle([centreX,centreY],(radius+delta));
                     var cGeo = ol.geom.Polygon.fromCircle(circle);
                     coord = cGeo.getCoordinates();
-
-
-                } else{
-                    //Just Drawn circle
-                    
-                }
+                
                 geometry.setCoordinates(coord, geometry.getLayout());
                 
         });
@@ -634,42 +653,59 @@ define(["jquery", "ol3"], function ($, ol) {
         var ret = false;
         var map = this.getMap();
         var tolerance = this.pixelTolerance_ 
-        
+        var layer = this.layer;     
+
        // var features = [];
         this.features_.forEach(
             function (feature) {
             var geo = feature.getGeometry();
             if (geo.getType() === 'Polygon' || geo.getType() === 'MultiPolygon') {
                 var fcs = geo.getCoordinates()[0];
-                
-                for (var i = 0; i < fcs.length; i ++) {
-                    var point=fcs[i]
-                    var fcxy = map.getPixelFromCoordinate(point);
-                    var dist = Math.sqrt(squaredDistance(fcxy, pointerxy));
+                if (fcs.length > 5) {
+                    // var features=layer.getSource().getFeaturesAtCoordinate(pointerxy);
+                    // map.forEachFeatureAtPixel(map.getPixelFromCoordinate(pointerxy),function(f){
+                    //         console.log(f);
+                    // });
                     
-                    if (dist <= tolerance) {
-                        ret = true;
-                        // show the resize pointer to indicate that Modify mode works
-                        var elem = map.getTargetElement();
-                        elem['style'].cursor = 'move';
-                        // Set the selected vertex to modify correct coordinates
-                        if (i ==0 || i ==4){
-                            this.vertexMode = "topLeft";
-                        }else if (i ==1){
-                            this.vertexMode = "bottomLeft";
-                        }else if (i ==2){
-                            this.vertexMode = "bottomRight";
-                        }else if (i ==3){
-                            this.vertexMode = "topRight";
+                    // for (var x=0;x<features.length;x++){
+                    //     if (feature==features[x]){
+                    //         ret=true;
+                    //         breal;
+                    //     }
+                    // }
+                    ret = true;
+                } else {
+                    for (var i = 0; i < fcs.length; i ++) {
+                        var point=fcs[i]
+                        var fcxy = map.getPixelFromCoordinate(point);
+                        var dist = Math.sqrt(squaredDistance(fcxy, pointerxy));
+                        
+                        if (dist <= tolerance) {
+                            ret = true;
+                            // show the resize pointer to indicate that Modify mode works
+                            
+                            // Set the selected vertex to modify correct coordinates
+                            if (i ==0 || i ==4){
+                                this.vertexMode = "topLeft";
+                            }else if (i ==1){
+                                this.vertexMode = "bottomLeft";
+                            }else if (i ==2){
+                                this.vertexMode = "bottomRight";
+                            }else if (i ==3){
+                                this.vertexMode = "topRight";
+                            }
+                            console.log(this.vertexMode);
                         }
-                        console.log(this.vertexMode);
                     }
                 }
                 //features.push(feature);
             }
         });                
         //this.features_=features;
-
+        if (ret){
+            var elem = map.getTargetElement();
+                            elem['style'].cursor = 'move';
+        }
         return ret;
     };
 
@@ -740,8 +776,7 @@ define(["jquery", "ol3"], function ($, ol) {
             $('#id_type').val(noteTypeid);            
             $('#id_notetext').val(text);
             $('#annotation_id').val(noteid);
-            //todo Note Bars?
-            console.log(noteid);
+            
             updateFormGeometry(feature);
         }
     }
@@ -830,7 +865,7 @@ define(["jquery", "ol3"], function ($, ol) {
      * @param event event object passed by Draw
      */
     var finishDraw = function (event) {
-        var feature = event.feature        
+        var feature = event.feature;                
         updateFormGeometry(feature);
     }
 
@@ -850,14 +885,18 @@ define(["jquery", "ol3"], function ($, ol) {
             geometryName=props['geometryName'];
         }
         console.log(format.writeFeature(feature));*/
+        
+        if (feature.getGeometry() instanceof ol.geom.Circle) {
             
-        if (geometryName == "Circle") {
             //No circle in GeoJSON, use fromCircle as workaround
-            var circle = ol.geom.Polygon.fromCircle(feature.getGeometry());
-            var nf = new ol.Feature({ geometry: circle })
+            var circle = ol.geom.Polygon.fromCircle(feature.getGeometry());            
+            feature.setGeometry(circle);
+            //feature.setGeometryName('Polygon');
+            console.log();
+            var nf = new ol.Feature({ geometry: circle })            
             $('#id_noteregions').val(format.writeFeature(nf));
 
-        } else if (geometryName == "Box" || geometryName == 'geometry') {
+        } else  {
             $('#id_noteregions').val(format.writeFeature(feature));
         }
 
