@@ -6,8 +6,8 @@
 
 @import "../vendor/foundation/scss/foundation";
 
-$fa-font-path: "/static/vendor/font-awesome/fonts";
-@import "../vendor/font-awesome/scss/font-awesome.scss";
+$fa-font-path: "../vendor/font-awesome/fonts";
+@import "../vendor/font-awesome/scss/font-awesome";
 
 $borderColor: #e7e7e7;
 $workspaceNavColor: #e7e7e7;
