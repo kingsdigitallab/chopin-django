@@ -53,7 +53,7 @@ urlpatterns = patterns('',
 
                        # Annotation URLS
                        url(r'^saveNote/$', saveNote, name='save-note'),
-                       url(r'^deleteNote/(?P<id>\d+)$', deleteNote, name='delete-note'),
+                       url(r'^deleteNote/(?P<id>\d+)/$', deleteNote, name='delete-note'),
                        (r'^newsourcefiles/$', newsourcefiles),
                        (r'^getAnnotationRegions/(?P<id>\d+)/$',
                         getNoteRegions),
