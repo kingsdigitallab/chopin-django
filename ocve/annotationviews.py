@@ -57,7 +57,7 @@ def deleteNote(request, id):
 def saveNote(request):
     annotation_id = request.POST['annotation_id']
     annotation = None
-    if annotation_id is None:
+    if annotation_id is None or len(annotation_id) == 0:
         annotation_id = 0
     if int(annotation_id) > 0:
         # Update
