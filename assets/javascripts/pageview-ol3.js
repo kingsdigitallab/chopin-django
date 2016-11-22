@@ -734,23 +734,21 @@ define(["jquery", "ol3"], function ($, ol) {
         //This version of select populates the form on the left
         noteModifySelectInteraction = new ol.interaction.Select({
             features: noteSelectInteraction.getFeatures(),
-            condition:function(mapBrowserEvent){
-                var features = noteSelectInteraction.getFeatures();        
-                if (features){    
-                    features.forEach(function(feature){
-                        props=feature.getProperties();                                                
-                        if (props['userid'] && props['userid'] == $('#id_user').val()){
+            filter : function(feature, layer){
+                props=feature.getProperties();     
+                if (props['userid'] && props['userid'] == $('#id_user').val()){
+                    console.log(props);
                             return true;
                         } else{
                             return false;
                         }
-                    });
-                }                
             }
+            
         }); 
         noteModifySelectInteraction.on('select', modifySelect);
         olpage.removeInteraction(noteSelectInteraction);  
         olpage.addInteraction(noteModifySelectInteraction);
+
         if (mode == 'Move'){
             annotationInteraction = new ol.interaction.Translate({
                 features: noteSelectInteraction.getFeatures()
