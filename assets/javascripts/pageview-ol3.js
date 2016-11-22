@@ -729,16 +729,28 @@ define(["jquery", "ol3"], function ($, ol) {
     var initModifyInteraction = function (mode) {
         //Clear interactions
         olpage.removeInteraction(annotationInteraction);
-        olpage.removeInteraction(noteSelectInteraction);        
+        
 
         //This version of select populates the form on the left
-        noteSelectInteraction = new ol.interaction.Select({
-            
+        noteModifySelectInteraction = new ol.interaction.Select({
+            features: noteSelectInteraction.getFeatures(),
+            condition:function(mapBrowserEvent){
+                var features = noteSelectInteraction.getFeatures();        
+                if (features){    
+                    features.forEach(function(feature){
+                        props=feature.getProperties();                                                
+                        if (props['userid'] && props['userid'] == $('#id_user').val()){
+                            return true;
+                        } else{
+                            return false;
+                        }
+                    });
+                }                
+            }
         }); 
-        noteSelectInteraction.on('select', modifySelect);
-
-
-        olpage.addInteraction(noteSelectInteraction);
+        noteModifySelectInteraction.on('select', modifySelect);
+        olpage.removeInteraction(noteSelectInteraction);  
+        olpage.addInteraction(noteModifySelectInteraction);
         if (mode == 'Move'){
             annotationInteraction = new ol.interaction.Translate({
                 features: noteSelectInteraction.getFeatures()
@@ -771,11 +783,17 @@ define(["jquery", "ol3"], function ($, ol) {
         if (features){            
             var feature = features.getArray()[0];   
             var noteid = feature.getProperties().noteid;            
-            var text=$('#comment-'+noteid+' div.annotation p').html();
-            var noteTypeid = $('#comment-'+noteid+' div.annotation').data('notetype'); 
-            $('#id_type').val(noteTypeid);            
-            $('#id_notetext').val(text);
-            $('#annotation_id').val(noteid);
+            if (noteid > 0){
+                var text=$('#comment-'+noteid+' div.annotation p').html();
+                var noteTypeid = $('#comment-'+noteid+' div.annotation').data('notetype'); 
+                $('#id_type').val(noteTypeid);            
+                $('#id_notetext').val(text);
+                $('#annotation_id').val(noteid);
+            }else{
+                $('#annotation_id').val(0);
+                $('#id_notetext').val('');
+
+            }
             
             updateFormGeometry(feature);
         }
@@ -890,9 +908,7 @@ define(["jquery", "ol3"], function ($, ol) {
             
             //No circle in GeoJSON, use fromCircle as workaround
             var circle = ol.geom.Polygon.fromCircle(feature.getGeometry());            
-            feature.setGeometry(circle);
-            //feature.setGeometryName('Polygon');
-            console.log();
+            feature.setGeometry(circle);            
             var nf = new ol.Feature({ geometry: circle })            
             $('#id_noteregions').val(format.writeFeature(nf));
 
