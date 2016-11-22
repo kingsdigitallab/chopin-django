@@ -238,7 +238,7 @@
 <script src="{{ STATIC_URL }}javascripts/slick.min.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
 
-    pageimage= {workid:{{ work.id }},pageID:{{ pageimage.id }},zoomify_width:{{ pageimage.width }}, zoomify_height:{{ pageimage.height }},{% if user.is_authenticated %}user_id:{{ user.id }}{% else %}user_id:0{% endif %},
+    pageimage= {workid:{{ work.id }},pageID:{{ pageimage.id }},zoomify_width:{{ pageimage.width }}, zoomify_height:{{ pageimage.height }},
         ,zoomify_url:"{{ zoomifyURL }}",regionURL:"{{ regionURL }}",noteURL :"{{ noteURL }}",commentURL :"{{ commentURL }}",annotation_mode:{% if view == 'annotations' %}1{% else %}0{% endif %},
     barAttachToggle:"#barAttachToggle",newSquareNoteToggle:"#newSquareNoteToggle",newCircleNoteToggle:"#newCircleNoteToggle",newNoteForm:"#newNoteForm"
     };
