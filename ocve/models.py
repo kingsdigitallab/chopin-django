@@ -650,6 +650,9 @@ class AcCode(models.Model):
 
     table_group = ''
 
+    def __unicode__(self):
+        return self.accode
+
 
 # Many To Many Tables
 
