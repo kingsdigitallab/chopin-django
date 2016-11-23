@@ -191,13 +191,13 @@ def updateBarNumber(request):
             l.delete()
             #Split on commas in case multiple bars
         for number in numbers.split(","):
-            number = number.strip(' ')
-            bars = Bar.objects.filter(barlabel=number)
+            number = number.strip(' ').lstrip(' ')
+            bars = Bar.objects.filter(barlabel=number).order_by('id')
             if bars.count() > 0:
-                for b in bars:
-                    #br.bar_barregion_set.create(bar=b,barregion=br)
-                    barlink = Bar_BarRegion(bar=b, barregion=br)
-                    barlink.save()
+                b = bars[0]
+                #br.bar_barregion_set.create(bar=b,barregion=br)
+                barlink = Bar_BarRegion(bar=b, barregion=br)
+                barlink.save()
             else:
                 m = re.search("(\d+)", number)
                 if m is not None:
