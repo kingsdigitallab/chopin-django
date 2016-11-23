@@ -4,7 +4,7 @@
     {% autoescape off %}
     <div class="row">
         <div class="large-12 columns">
-            <h1>{{ si.accode }}</h1>
+            <h1>{{ si.accode.accode| add_special_characters }}</h1>
         </div>
     </div>
     {% if mode == "OCVE" and si.title %}
