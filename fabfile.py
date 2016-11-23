@@ -9,7 +9,7 @@ from socket import gethostname
 
 from django.conf import settings
 from fabric.api import cd, env, local, prefix, quiet, require, run, sudo, task
-from fabric.colors import green, yellow
+from fabric.colors import green, red, yellow
 from fabric.contrib import django
 
 # put project directory in path
@@ -150,9 +150,16 @@ def deploy(branch=None):
     install_requirements()
     migrate()
     own_django_log()
-    add_supervisor_conf()
     collect_static()
     update_index()
+
+    try:
+        add_supervisor_conf()
+    except:
+        print(yellow('adding supervisor configuration may have failed'))
+        print(yellow('check the server'))
+        print(red(sys.exec_info()))
+
     touch_wsgi()
 
 
