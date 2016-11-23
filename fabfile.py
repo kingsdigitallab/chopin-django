@@ -271,9 +271,14 @@ def add_supervisor_conf():
         os.path.join(env.path,
                      'chopin/supervisor/celery_{}.conf'.format(env.srvr)),
         env.srvr))
+    sudo('ln -f -s {} /etc/supervisor/conf.d'.format(
+        os.path.join(env.path,
+                     'chopin/supervisor/celery_worker_{}.conf'.format(
+                         env.srvr)),
+        env.srvr))
 
     with cd(env.path):
-        run('rm -f celerybeat-schedule')
+        sudo('rm -f celerybeat-schedule')
 
     sudo('service supervisor start')
 
