@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}vendor/OpenLayers/theme/default/style.css" type="text/css">
     <link rel="stylesheet" href="{{ STATIC_URL }}custom_css/bareditor.css" type="text/css">
 {% endblock custom_stylesheets %}
-
+{% block breadcrumbs %}{% endblock %}
 {% block header_scripts %}
 {% endblock header_scripts %}
 
@@ -110,6 +110,7 @@
             </div>
             <div class="large-9 columns">
                 <div id="copyright">
+                    <img src="{% static 'images/public-domain-mark.png' %}" alt="Public Domain" class="image-cc">
                     {{ source.getSourceInformation.copyright|safe }}
                 </div>
                 <div id="pageimage">
