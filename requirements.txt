@@ -17,4 +17,4 @@ parsley
 psycopg2
 pyparsing
 wagtail==1.3.1
-celery
+celery<4

@@ -4,8 +4,7 @@ import logging
 import subprocess
 from optparse import make_option
 
-logging.basicConfig(format='%(asctime)-15s %(message)s')
-logger = logging.getLogger('Main logger')
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
