@@ -69,10 +69,6 @@ a:focus {
     padding: 0 0 1rem;
 }
 
-// #copyright:before {
-//     content: "\00a9 ";
-// }
-
 .no-padding {
     padding: 0 !important;
 }
@@ -83,8 +79,6 @@ a:focus {
 
 #pageimage {
     z-index: 0;
-    // width: 100%;
-    // margin-left: 2.5%;
     float: left;
     clear: both;
 }
@@ -131,10 +125,6 @@ a:focus {
     }
 }
 
-.image-cc {
-    
-}
-
 /* comments */
 .comment.panel {
     max-width: 600px;
@@ -157,7 +147,6 @@ a:focus {
 
 /* General styles and AC-specific styles */
 .main.content-section {
-    // overflow: hidden;
     margin-top: rem-calc(20px);
     a.exit-off-canvas {
         box-shadow: none !important;
@@ -1063,8 +1052,6 @@ b.top-spacing {
 /* bar menu */
 
 .side-nav {
-    // background: $primary-color;
-
     .f-dropdown {
         z-index: 1000;
 
@@ -1473,11 +1460,3 @@ b.top-spacing {
 .source h5 span.label {
     vertical-align: text-top !important;
 }
-
-/** Some media queries **/
-
-// @media #{$small-only} {
-//     .pageview-sub-nav {
-//         position: relative !important;
-//     }
-// }
