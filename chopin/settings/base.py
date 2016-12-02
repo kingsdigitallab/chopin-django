@@ -102,7 +102,7 @@ INTERNAL_IPS = ('127.0.0.1', )
 
 
 LOGGING_ROOT = os.path.join(BASE_DIR, 'logs')
-LOGGING_LEVEL = logging.WARN
+LOGGING_LEVEL = logging.INFO
 
 if not os.path.exists(LOGGING_ROOT):
     os.makedirs(LOGGING_ROOT)
@@ -265,11 +265,11 @@ ALL_WORKS_WITHOUT_OPUS = WORKS_WITHOUT_OPUS + POSTHUMOUS_WORKS_WITHOUT_OPUS
 # http://docs.celeryproject.org/en/latest/
 # -----------------------------------------------------------------------------
 
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379:' + CACHE_REDIS_DATABASE
-BROKER_URL = 'redis://127.0.0.1:6379:' + CACHE_REDIS_DATABASE
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/' + CACHE_REDIS_DATABASE
+BROKER_URL = 'redis://127.0.0.1:6379/' + CACHE_REDIS_DATABASE
 
-#: Only add pickle to this list if your broker is secured
-#: from unwanted access (see userguide/security.html)
+# Only add pickle to this list if your broker is secured
+# from unwanted access (see userguide/security.html)
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -343,7 +343,8 @@ IMAGEFOLDER = '/vol/ocve3/images/'
 # -----------------------------------------------------------------------------
 
 SOURCEJSONPATH = os.path.join(STATIC_ROOT, 'javascripts')
-#Build Json with the live flag
+
+# Build JSON with the live flag
 BUILD_LIVE_ONLY = False
 
 IMAGE_UPLOAD_PATH = '/vol/ocve2/images/upload/'

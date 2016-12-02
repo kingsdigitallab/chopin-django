@@ -69,9 +69,9 @@ a:focus {
     padding: 0 0 1rem;
 }
 
-#copyright:before {
-    content: "\00a9 ";
-}
+// #copyright:before {
+//     content: "\00a9 ";
+// }
 
 .no-padding {
     padding: 0 !important;
@@ -83,10 +83,19 @@ a:focus {
 
 #pageimage {
     z-index: 0;
-    // width: 95%;
+    // width: 100%;
     // margin-left: 2.5%;
     float: left;
     clear: both;
+}
+
+.cfeo-page {
+    #pageimage {
+        z-index: 0;
+        width: 100%;
+        float: left;
+        clear: both;
+    }
 }
 
 .osd-iip {
@@ -95,9 +104,11 @@ a:focus {
     height: 100%;
 }
 
-#image_one,
-#image_two {
-    width: 100% !important;
+.compare-block {
+    #image_one,
+    #image_two {
+        width: 100% !important;
+    }
 }
 
 .sticky-widget {
@@ -118,6 +129,10 @@ a:focus {
             font-family: "FontAwesome";
         }
     }
+}
+
+.image-cc {
+    
 }
 
 /* comments */

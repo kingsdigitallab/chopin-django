@@ -205,28 +205,76 @@ def browse(request,mode="OCVE",defaultFilters=None):
 
     sourceTypes=SourceType.objects.all()
     workinfos=[]
+
     if mode == 'OCVE':
-        works=Work.objects.filter(workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__ocve=True).distinct()
-        if works.count() > 0:
-            for w in works:
-                if len(w.workinformation.OCVE)> 0:
-                    workinfos.append(w.id)
+        if settings.BUILD_LIVE_ONLY:
+            works = Work.objects.filter(
+                    workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__ocve=True,
+                    workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__live=True).distinct()
+            publishers = Publisher.objects.filter(
+                    sourceinformation__source__ocve=True,
+                    sourceinformation__source__live=True).filter(
+                    id__gt=2).distinct()
+            years = Year.objects.filter(
+                    sourceinformation__source__ocve=True,
+                    sourceinformation__source__live=True).distinct()
+            genres = Genre.objects.filter(
+                    work__workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__ocve=True,
+                    work__workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__live=True).filter(
+                    id__gt=2).distinct()
+            instruments = Instrument.objects.filter(
+                    sourcecomponent_instrument__sourcecomponent__source__ocve=True,
+                    sourcecomponent_instrument__sourcecomponent__source__live=True).distinct()
+        else:
+            works = Work.objects.filter(
+                    workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__ocve=True).distinct()
+            publishers=Publisher.objects.filter(
+                    sourceinformation__source__ocve=True).filter(
+                    id__gt=2).distinct()
+            years=Year.objects.filter(
+                    sourceinformation__source__ocve=True).distinct()
+            genres=Genre.objects.filter(
+                    work__workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__ocve=True).filter(
+                    id__gt=2).distinct()
+            instruments=Instrument.objects.filter(
+                    sourcecomponent_instrument__sourcecomponent__source__ocve=True).distinct()
 
-        publishers=Publisher.objects.filter(sourceinformation__source__ocve=True).filter(id__gt=2).distinct()
-        years=Year.objects.filter(sourceinformation__source__ocve=True).distinct()
-        genres=Genre.objects.filter(work__workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__ocve=True).filter(id__gt=2).distinct()
-        instruments=Instrument.objects.filter(sourcecomponent_instrument__sourcecomponent__source__ocve=True).distinct()
+        for w in works:
+            if len(w.workinformation.OCVE)> 0:
+                workinfos.append(w.id)
     else:
-        works=Work.objects.filter(workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__cfeo=True).distinct()
-        if works.count() > 0:
-            for w in works:
-                if len(w.workinformation.analysis)> 0 or len(w.workinformation.generalinfo)> 0 or len(w.workinformation.relevantmanuscripts)> 0:
-                    workinfos.append(w.id)
+        if settings.BUILD_LIVE_ONLY:
+            works = Work.objects.filter(
+                    workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__cfeo=True,
+                    workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__live=True).distinct()
+            publishers = Publisher.objects.filter(
+                    sourceinformation__source__cfeo=True,
+                    sourceinformation__source__live=True).distinct()
+            years = Year.objects.filter(
+                    sourceinformation__source__cfeo=True,
+                    sourceinformation__source__live=True).distinct()
+            genres = Genre.objects.filter(
+                    work__workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__cfeo=True,
+                    work__workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__live=True).distinct()
+            instruments = Instrument.objects.filter(
+                    sourcecomponent_instrument__sourcecomponent__source__cfeo=True,
+                    sourcecomponent_instrument__sourcecomponent__source__live=True).distinct()
+        else:
+            works = Work.objects.filter(
+                    workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__cfeo=True).distinct()
+            publishers = Publisher.objects.filter(
+                    sourceinformation__source__cfeo=True).distinct()
+            years = Year.objects.filter(
+                    sourceinformation__source__cfeo=True).distinct()
+            genres = Genre.objects.filter(
+                    work__workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__cfeo=True).distinct()
+            instruments = Instrument.objects.filter(
+                    sourcecomponent_instrument__sourcecomponent__source__cfeo=True).distinct()
 
-        publishers=Publisher.objects.filter(sourceinformation__source__cfeo=True).distinct()
-        years=Year.objects.filter(sourceinformation__source__cfeo=True).distinct()
-        genres=Genre.objects.filter(work__workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__cfeo=True).distinct()
-        instruments=Instrument.objects.filter(sourcecomponent_instrument__sourcecomponent__source__cfeo=True).distinct()
+        for w in works:
+            if len(w.workinformation.analysis)> 0 or len(w.workinformation.generalinfo)> 0 or len(w.workinformation.relevantmanuscripts)> 0:
+                workinfos.append(w.id)
+
     return render_to_response('frontend/browse.html',
         {'defaultFilters':defaultFilters,
          'mode':mode,
@@ -284,6 +332,14 @@ def ocvePageImageview(request, id,selectedregionid=0):
     mode = "OCVE"
     noteURL = "/ocve/getAnnotationRegions/" + id + "/"
     regionURL = "/ocve/getBarRegions/" + id + "/"
+    template="frontend/pageview.html"
+
+    try:
+        useol3 = int(request.GET['ol3'])
+        if useol3 == 1:
+            template = "frontend/ol3-pageview.html"
+    except MultiValueDictKeyError:
+        pass
 
     view = request.GET.get('view')
 
@@ -336,7 +392,7 @@ def ocvePageImageview(request, id,selectedregionid=0):
 
     request.session['page_image'] = id
 
-    return render_to_response('frontend/pageview.html', {
+    return render_to_response(template, {
         'workinfoexists':workinfoexists,
         'selectedregionid':selectedregionid,
         'achash': achash, 'annotationForm': annotationForm, 'notes': notes,
