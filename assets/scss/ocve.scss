@@ -45,6 +45,26 @@ $secondary-color: #e7e7e7;
     margin-bottom: 1rem;
 }
 
+/* Key display on browse page */
+
+#key {
+    position: absolute;
+    z-index: 999;
+
+    li {
+        font-size: .8125rem;
+        line-height: 1.25;
+        margin-bottom: .625rem;
+    }
+}
+
+.accordion-navigation {
+    a {
+        border-radius: .25rem;
+        padding: .25rem 1rem !important;
+    }
+}
+
 /* Annotations panel */
 
 p.annotation-details,
