@@ -12,7 +12,7 @@
 
     {% compress css %}
     {# SCSS compilation relies on django compressor #}
-    <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main-'|add:BASE_URL|add:'.scss' %}">
+    <link rel="stylesheet" type="text/x-scss" href="{% if BASE_URL %}{% static 'scss/main-'|add:BASE_URL|add:'.scss' %}{% else %}{% static 'scss/main.scss' %}{% endif %}">
     {% endcompress %}
 
     {% block custom_stylesheets %}
@@ -26,19 +26,17 @@
     } catch (e) {}
     </script>
 
-
     {% block header_scripts %}{% endblock header_scripts %}
     
-
     <!-- Favicon -->
     {% include 'includes/favicon.html' %}
 
     <script src="{% static 'vendor/modernizr/modernizr.js' %}"></script>
 </head>
 
-<body class="{% block body_class %}{{ BASE_URL }}-page{% endblock %}">
+<body{% if BASE_URL %} class="{% block body_class %}{{ BASE_URL }}-page{% endblock %}"{% endif %}>
 
-    <header class="header header-{{ BASE_URL }}">
+    <header class="header{% if BASE_URL %} header-{{ BASE_URL }}{% endif %}">
     {% block header %}
     {% include 'includes/header.html' %}
     {% endblock %}
@@ -50,13 +48,14 @@
     <section class="main content-section">
         <div class="row clear">
             <div class="large-12 columns">
+                {% if not BASE_URL %}<h1>{{ self.title }}</h1>{% endif %}
     {% endif %}
     
+    {% if BASE_URL %}
     {% block breadcrumbs %}
-
     {% include 'includes/breadcrumbs.html' %}
-
     {% endblock %}
+    {% endif %}
 
     {% block content %}
     <div class="row clear">
@@ -70,7 +69,8 @@
             {% block overtitle %}
             <h1>{% block title %}{% endblock %}</h1>
             {% endblock %}
-            {% block main %}{% endblock %}
+            {% block main %}
+            {% endblock %}
         </div>
     </div>
     {% endblock %}
