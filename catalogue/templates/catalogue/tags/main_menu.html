@@ -2,7 +2,7 @@
 
 <ul class="left header-menu header-menu-aco">
     <li class="{% if current_page and root.url == current_page.url %}active{% endif %}">
-        <a href="{% pageurl root %}">{{ root.title }}</a>
+        <a href="{% if not BASE_URL %}/{% else %}{% pageurl root %}{% endif %}">{% if not BASE_URL %}Home{% else %}{{ root.title }}{% endif %}</a>
     </li>
     <li class="divider"></li>
 
