@@ -1,12 +1,12 @@
 __author__ = 'Elliot'
-from dbmiviews import *
 from django.conf.urls import *
+
 from ocve.views import *
 from sourceeditor import *
 from bareditor import *
-from datatools import correctSourceInformation
 from uploader import convertFolder,convertimage
 from spine import *
+
 
 urlpatterns = patterns('', #(r'^source/(?P<id>\d+)/$', source),
                        #Source and source information

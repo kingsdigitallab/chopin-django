@@ -9,9 +9,6 @@ from django.db import connection, transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from ocve.imagetools import verifyImageDimensions
-from django.core.management.base import NoArgsCommand
-
-from unicodedata import normalize as _n
 
 
 #INSERT INTO ocve_country (country,countryabbrev) SELECT country,countryAbbrev FROM country

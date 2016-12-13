@@ -1,19 +1,21 @@
 __author__ = 'Elliot'
 
+import re
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
-from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import redirect
+from django.core.urlresolvers import reverse
 
 from bartools import toGeos
 from ocve.forms import AnnotationForm
 from ocve.models import Annotation, Annotation_BarRegion, Bar, BarRegion
 from ocve.models import AnnotationType
 from ocve.uiviews import ocvePageImageview
-from django.shortcuts import redirect
-import re
+
 
 # Note edit views
 
@@ -48,7 +50,7 @@ def deleteNote(request, id):
         'messages': rendered_messages
     }
 
-    return redirect(ocvePageImageview,id=pageimageid)+"?view='annotations'"
+    return redirect(reverse(ocvePageImageview,id=pageimageid)+"?view='annotations'")
 
 
 # Takes an annotation form and updates

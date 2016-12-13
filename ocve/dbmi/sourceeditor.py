@@ -7,12 +7,12 @@ from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import register
+
 from ocve.forms import *
 from ocve.bartools import *
 from datatools import *
 from ocve.uitools import generateThumbnails
 
-import os
 
 @register.filter()
 def nbsp(value):
