@@ -45,11 +45,11 @@
                     {% endfor %}
                     </p>
 
-                    {% if c.noteregions|length > 0 %}
+
                     <div class="annotation noteRegionHighlight" data-notetype="{{ c.type.id }}"  data-noteid="{{ c.id }}">
                         <p>{{ c.notetext |safe }}</p>
                     </div>
-                    {% endif %}
+                    
 
                     <p class="annotation-posted">By {{ c.user }}, {{ c.timestamp }}
                     {% if c.user.id == request.user.id %}
@@ -58,11 +58,7 @@
                     {% endif %}
                     </p>
 
-                    {% if not c.noteregions %}
-                    <div class="annotation" data-notetype="{{ c.type.id }}"  data-noteid="{{ c.id }}>
-                        <p>{% autoescape off %}{{ c.notetext |safe }}{% endautoescape %}</p>
-                    </div>
-                    {% endif %}
+
                 </div>
                 <hr />
                 {% endfor %}
