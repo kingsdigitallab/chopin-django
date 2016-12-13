@@ -1,23 +1,20 @@
-from django.utils.datastructures import MultiValueDictKeyError
-
 __author__ = 'Elliott Hall'
 # Various queries and reusable functions that will be employed in the ui.
 #Kept here for the sake of hygiene, and hopefully resuability
-from models import *
 import json
 import os
 from unicodedata import normalize as _n
-from django.conf import settings
-from django.db import connection
-from catalogue.templatetags.catalogue_tags import get_impression_exists, add_special_characters
 import urllib
 import re
-from django.db import connection
-
-import hashlib
-
 import gzip
+
+from django.conf import settings
+from django.db import connection
 from django.db.models import Q
+
+from models import *
+from catalogue.templatetags.catalogue_tags import get_impression_exists, add_special_characters
+
 
 norm = 'NFKC'
 

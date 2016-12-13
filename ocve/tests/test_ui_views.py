@@ -2,11 +2,7 @@ __author__ = 'elliotthall'
 
 
 from django.test import TestCase
-from django.test import Client
 
-from ocve.models import *
-from ocve.uitools import *
-from ocve.uiviews import *
 
 class TestUIViews(TestCase):
 

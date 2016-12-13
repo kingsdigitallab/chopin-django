@@ -1,10 +1,12 @@
 import re
 import urllib
+import logging
+
+from django.conf import settings
+
 from ocve.models import PageLegacy, SourceLegacy
 from ocve.models import PageImage
-from django.conf import settings
-from django.utils.html import escape
-import logging
+
 
 __author__ = 'Elliot'
 

@@ -1,16 +1,16 @@
 __author__ = 'Elliott Hall'
 
 import json
+
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response
-from django.conf import settings
-from ocve.forms import *
-from ocve.imagetools import verifyImageDimensions
+from django.views.decorators.csrf import csrf_exempt
+
 from ocve.bartools import *
 from datatools import *
-from django.views.decorators.csrf import csrf_exempt
+
 
 
 

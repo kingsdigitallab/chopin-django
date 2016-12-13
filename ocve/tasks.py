@@ -3,7 +3,9 @@ from __future__ import absolute_import
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.core.management import call_command
+
 from ocve.uiviews import serializeOCVESourceJson,serializeCFEOSourceJson,serializeAcCodeConnector
+
 logger = get_task_logger(__name__)
 
 

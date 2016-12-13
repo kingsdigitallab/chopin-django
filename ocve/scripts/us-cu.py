@@ -1,7 +1,7 @@
  # -*- coding: utf-8 -*-
-from ocve.models import *
+ import codecs
 
-import codecs
+ from ocve.models import *
 
 def run():
     src = SourceInformation.objects.filter(archive=1803)# 1803=US-Cu

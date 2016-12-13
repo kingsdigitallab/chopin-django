@@ -2,18 +2,17 @@ __author__ = 'Elliot'
  # coding=utf8
 
 #Views for the user interface
-import re
-from django.core import serializers
-from ocve.serialize import serializeSource
 from django.shortcuts import render_to_response,HttpResponseRedirect
 from django.template.context import RequestContext
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from ocve.serialize import serializeSource
 from bartools import *
 from uitools import *
 from dbmi.spine import getSpinesByWork,spinesToRegionThumbs
 from dbmi.sourceeditor import cleanSourceInformationHTML
+
 
 
 #Takes pageimageid
@@ -24,7 +23,6 @@ from django.db import connection
 from forms import AnnotationForm
 from dbmi.datatools import convertEntities
 from imagetools import verifyImageDimensions
-from bartools import mergeBarNumbers
 
 #IIP_URL = settings.IIP_URL
 IMAGE_SERVER_URL = settings.IMAGE_SERVER_URL
