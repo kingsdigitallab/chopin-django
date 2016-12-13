@@ -5,6 +5,7 @@ from django.contrib import admin
 
 from admin_generic import *
 from models import *
+from django.contrib import admin
 
 class WorkComponentInline(admin.TabularInline):
     model=WorkComponent
