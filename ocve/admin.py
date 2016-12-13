@@ -4,7 +4,7 @@
 from django.contrib import admin
 
 from admin_custom import *
-
+from models import *
 
 admin.site.register(SourceComponent_WorkComponent, SourceComponent_WorkComponentAdmin)
 admin.site.register(WorkComponent, WorkComponentAdmin)
