@@ -614,6 +614,7 @@ class Annotation(models.Model):
     user = models.ForeignKey(User,default=11)
     notetext = models.TextField(null=False, default="", blank=True, )
     noteregions = models.TextField(null=False, default="", blank=True, )
+    geometry = models.TextField(null=False, default="", blank=True, )
     pageimage = models.ForeignKey('PageImage', blank=False, null=False, default=1 )
     type = models.ForeignKey('AnnotationType', blank=False, null=False, default=1)
     timestamp=models.DateTimeField(auto_now=True)
