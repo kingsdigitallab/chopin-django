@@ -5,9 +5,18 @@
 
 {% block custom_stylesheets %}
 {{ block.super }}
-<link rel="stylesheet" href="{{ STATIC_URL }}vendor/OpenLayers/theme/default/style.css" type="text/css">
 <link rel="stylesheet" href="{{ STATIC_URL }}custom_css/bareditor.css" type="text/css">
-{% endblock custom_stylesheets %}
+   <link rel="stylesheet" href="{{ STATIC_URL }}vendor/OpenLayers/3.18.2/ol.css" type="text/css">
+   <style type="text/css">
+   /*Hide the OpenLayers logo*/
+       .ol-attribution.ol-logo-only{
+        display: none;
+       }
+       #map{
+        height:100%;
+       }
+   </style>
+   {% endblock custom_stylesheets %}
 
 {% block header_scripts %}
 {% endblock header_scripts %}
@@ -132,11 +141,13 @@
                         {% endif %}
 
                         <ul class="no-bullet">
-                            {% if user.is_authenticated %}
+
                             <li id="cinque"><a id="barAttachToggle" href="#"><i class="fa fa-link"></i> Show bar numbers for annotation</a></li>
                             <li id="sei"><a id="newSquareNoteToggle" href="#"><i class="fa fa-square-o"></i> Create square annotation</a></li>
                             <li id="sette"><a id="newCircleNoteToggle" href="#"><i class="fa fa-circle-thin"></i> Create circle annotation</a></li>
-                            {% endif %}
+                            <li id="sette"><a id="modifyNoteToggle" href="#"><i class="fa fa-circle-thin"></i> Modify note</a></li>
+                        <li id="sette"><a id="moveNoteToggle" href="#"><i class="fa fa-circle-thin"></i> Move note</a></li>
+
                         {% if notes.count > 0 or comments.count > 0 %}
                             <li id="otto"><a href="#" class="com"><i class="fa fa-eye"></i> Show/hide commentary on the image</a></li>
                             <li id="nove"><a href="#" class="not"><i class="fa fa-eye"></i> Show/hide notes on the image</a></li>
@@ -149,18 +160,10 @@
                         {% include 'frontend/ajax/annotations.html' with without_wrapper=True %}
 
                         <div id="newNote">
+                            {% if user.is_authenticated %}
                             <form id="newNoteForm" method="POST" action="/ocve/saveNote/">
                                 <table>
                                     {{ annotationForm }}
-                                    <tr>
-                                        <th><label for="type_id">Visibility:</label></th>
-                                        <td>
-                                            <select id="type" name="type_id">
-                                                <option value="3" selected="selected">Private</option>
-                                                <option value="4">Public</option>
-                                            </select>
-                                        </td>
-                                    </tr>
                                 </table>
                                 <button id="createNote" type="submit" class="tiny radius">Save</button>
                                 <input type="hidden" id="annotation_id" name="annotation_id" value="0">
@@ -168,6 +171,7 @@
                                 <input type="hidden" id="noteBars" name="noteBars" value="">
                                 <button id="cancelNote" type="submit" class="tiny radius">Cancel</button>
                             </form>
+                                {% endif %}
                         </div>
                     </div>
                 </div>
@@ -235,43 +239,36 @@
 {% block footer_scripts %}
 {{ block.super }}
 <script src="{{ STATIC_URL }}javascripts/slick.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="{{ STATIC_URL }}vendor/OpenLayers/OpenLayers.js"></script>
-
 <script type="text/javascript">
-    var map, zoomify;
-    var alayer, vlayer;
 
-    var zoomify_width = {{ pageimage.width }};
-    var zoomify_height = {{ pageimage.height }};
+    pageimage= {workid:{{ work.id }},pageID:{{ pageimage.id }},zoomify_width:{{ pageimage.width }}, zoomify_height:{{ pageimage.height }}
+        ,zoomify_url:"{{ zoomifyURL }}",regionURL:"{{ regionURL }}",noteURL :"{{ noteURL }}",commentURL :"{{ commentURL }}",annotation_mode:{% if view == 'annotations' %}1{% else %}0{% endif %},
+    barAttachToggle:"#barAttachToggle",newSquareNoteToggle:"#newSquareNoteToggle",newCircleNoteToggle:"#newCircleNoteToggle",newNoteForm:"#newNoteForm"
+    };
 
-    var pageID = {{ pageimage.id }};
-    var zoomify_url = "{{ zoomifyURL }}";
-
-    var regionURL = "{{ regionURL }}";
-    var noteURL = "{{ noteURL }}";
-
-    var workid = {{ work.id }};
     {% if selectedregionid > 0 %}selectedregionid={{ selectedregionid }};
     {% else %}selectedregionid=0; {% endif %}
 </script>
-<script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview_functions.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview_ol.js"></script>
+<script data-main="{{ STATIC_URL }}javascripts/pageview-main.js" type="text/javascript" src="{{ STATIC_URL }}javascripts/require.min.js"></script>
+
+<!--<script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-
+        //TODO: Hidden until annotations update
         {% if view == 'annotations' %}
-        showAnnotationTools();
+       // showAnnotationTools();
         {% else %}
-        hideAnnotationTools();
+       // hideAnnotationTools();
         {% endif %}
     });
 </script>
 
 <script src="{{ STATIC_URL }}vendor/foundation/js/vendor/jquery.cookie.js"></script>
-
+-->
 <script type="text/javascript">
-    $(document).ready( function() {
+
+//TODO until added to require
+   $(document).ready( function() {
         if (cookie_get('joyride') != 'ridden') {
             $(document).foundation('joyride', 'start');
         }
@@ -281,3 +278,5 @@
 </script>
 
 {% endblock %}
+
+

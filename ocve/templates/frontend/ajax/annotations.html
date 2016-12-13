@@ -10,7 +10,7 @@
             <h4 class="comm">Commentary <span class="label radius secondary">{{ comments.count }}</span> <i class="fa fa-caret-down right"></i></h4>
             <div class="collapseme">
                 {% for c in comments %}
-                <div id="comment-{{ c.id }}" class="annotation-box noteBarHighlight">
+                <div id="comment-{{ c.id }}" class="annotation-box commentary noteBarHighlight">
                     <p class="annotation-details">
                     {% for br in c.getBarRegions %}
                     {% for b in br.bar.all %}
@@ -21,7 +21,7 @@
 
                     <p class="annotation-posted">By OCVE, {{ c.timestamp }}</p>
 
-                    <div class="annotation">
+                    <div class="annotation"  data-noteid="{{ c.id }}">
                         <p>{{ c.notetext | safe }}</p>
                     </div>
                 </div>
@@ -46,15 +46,15 @@
                     </p>
 
                     {% if c.noteregions|length > 0 %}
-                    <div class="annotation noteRegionHighlight"  data-noteid="{{ c.id }}">
+                    <div class="annotation noteRegionHighlight" data-notetype="{{ c.type.id }}"  data-noteid="{{ c.id }}">
                         <p>{{ c.notetext |safe }}</p>
                     </div>
                     {% endif %}
 
                     <p class="annotation-posted">By {{ c.user }}, {{ c.timestamp }}
                     {% if c.user.id == request.user.id %}
-                    <a href="#" class="updateNote" data-noteid="{{ c.id }}">Update</a>
-                    <a href="#" class="deleteNote" data-noteid="{{ c.id }}">Delete</a>
+
+                    <a href="{% url 'delete-note' c.id%}/?view=annotations" class="deleteNote" data-noteid="{{ c.id }}">Delete</a>
                     {% endif %}
                     </p>
 
