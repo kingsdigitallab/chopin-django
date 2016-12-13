@@ -50,7 +50,7 @@ def deleteNote(request, id):
         'messages': rendered_messages
     }
 
-    return redirect(reverse(ocvePageImageview,id=pageimageid)+"?view='annotations'")
+    return redirect(reverse(ocvePageImageview,kwargs={'id':pageimageid})+"?view='annotations'")
 
 
 # Takes an annotation form and updates
