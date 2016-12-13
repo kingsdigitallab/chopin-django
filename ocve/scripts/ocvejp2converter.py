@@ -20,16 +20,15 @@ import logging
 import multiprocessing
 import os
 import os.path
-import shlex
 import subprocess
 import types
 import re
 from shutil import move
+import fcntl
+import sys
 
 import progressbar as pb
 
-import fcntl
-import sys
 
 logging.basicConfig(format='%(asctime)-15s %(message)s')
 logger = logging.getLogger('Main logger')

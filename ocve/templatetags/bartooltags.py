@@ -1,6 +1,5 @@
 from django import template
-from django.conf import settings
-from ocve.bartools import toGeos
+
 from ocve.models import BarCollection
 
 

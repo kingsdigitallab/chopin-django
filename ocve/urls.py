@@ -1,12 +1,11 @@
 __author__ = 'Elliot'
 from django.conf.urls import patterns, include, url
+from haystack.forms import FacetedSearchForm
+from haystack.query import SearchQuerySet
 
 from annotationviews import *
 from dbmi.uploader import newsourcefiles, posth
 from views import *
-
-from haystack.forms import FacetedSearchForm
-from haystack.query import SearchQuerySet, SQ
 from catalogue.views import FacetedSearchView
 
 

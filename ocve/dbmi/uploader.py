@@ -1,14 +1,15 @@
 __author__ = 'Elliot'
 import os
 import logging
+import subprocess
 
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
-from ocve.bartools import *
 from django.conf import settings
-import subprocess
 from django.views.decorators.csrf import csrf_exempt
+
+from ocve.bartools import *
 
 
 logger = logging.getLogger('chopin')

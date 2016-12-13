@@ -1,7 +1,5 @@
-from django.core.management.base import BaseCommand, NoArgsCommand
 import logging
 import subprocess
-from optparse import make_option
 import os
 
 

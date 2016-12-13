@@ -6,11 +6,12 @@ import numpy as np
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
-from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from django.db import connection
+
 from ocve.models import *
 from ocve.bartools import BarRegionThumbnail
-from django.db import connection, transaction
+
 
 
 # *** Spine Views ***
