@@ -3,8 +3,12 @@
 # Edit admin_custom.py instead
 from django.contrib import admin
 
-from admin_custom import *
+
 from models import *
+from admin_generic import *
+from admin_custom import *
+from django.contrib import admin
+
 
 admin.site.register(SourceComponent_WorkComponent, SourceComponent_WorkComponentAdmin)
 admin.site.register(WorkComponent, WorkComponentAdmin)
