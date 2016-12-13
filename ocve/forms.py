@@ -1,5 +1,5 @@
 __author__ = 'Elliot'
-from django.forms import *
+from django.forms import HiddenInput,ModelForm,Select,modelformset_factory
 from django import forms
 from models import *
 from tinymce.widgets import TinyMCE
@@ -48,13 +48,20 @@ class SourceInformationForm(ModelForm):
 
 class AnnotationForm(ModelForm):
 
+    def __init__(self,*args,**kwargs):
+        super (AnnotationForm,self ).__init__(*args,**kwargs) # populates the post
+        self.fields['type'].queryset = AnnotationType.objects.filter(id__gt=2)
+
+
     class Meta:
         model = Annotation
-        fields = ['id','notetext','noteregions','pageimage','user']
+        fields = ['id','notetext','noteregions','pageimage','user','type']
         widgets = { 'id':HiddenInput(),
                     'user':HiddenInput(),
                     'pageimage':HiddenInput(),
-                    'noteregions':HiddenInput()
+                    'noteregions':HiddenInput(),
+                    'geometry':HiddenInput(),
+                    'type':Select(choices=( ('3','Private'),('4','Public') ))
         }
 
 
