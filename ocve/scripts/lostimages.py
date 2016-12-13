@@ -1,5 +1,8 @@
-import os, subprocess
+import os
+import subprocess
+
 from django.utils import encoding
+
 from ocve.models import *
 
 

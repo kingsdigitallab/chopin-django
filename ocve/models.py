@@ -1,15 +1,15 @@
-from django.db import models
-from django.conf import settings
-from models import *
-from django.contrib.auth.models import User,UserManager
+import hashlib
+
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
 from django.db import models
 from django.utils.encoding import force_unicode
+
+from models import *
 from catalogue.templatetags.catalogue_tags import add_special_characters
 
-import hashlib
 
 # Create your models here.
 

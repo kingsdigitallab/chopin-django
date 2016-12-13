@@ -12,7 +12,6 @@ from sourceeditor import *
 from ocve.uitools import generateThumbnails
 import shutil
 import os
-from django.core import management
 from ocve.scripts.updateliv import updateliv
 
 from django import template

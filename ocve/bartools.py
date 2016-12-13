@@ -1,10 +1,10 @@
-import imagetools
-
 __author__ = 'Elliot'
-from models import *
 from django.utils.datastructures import MultiValueDictKeyError
 from django.conf import settings
 from django.db import connection
+
+from models import *
+
 
 def mergeBarNumbers():
     cursor = connection.cursor()

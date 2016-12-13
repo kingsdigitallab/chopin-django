@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 
-from django import template
-
-from django.utils.safestring import mark_safe
 from json import dumps
+
+from django import template
+from django.utils.safestring import mark_safe
+
 from catalogue.templatetags.catalogue_tags import add_special_characters
-import re
 
 register = template.Library()
 
