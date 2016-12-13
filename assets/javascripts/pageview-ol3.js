@@ -358,6 +358,7 @@ define(["jquery", "ol3"], function ($, ol) {
             //
 
             $('#newNoteForm').submit(function (event) {
+            	
                 saveNote();
             });
             $('a.updateNote').click(function () {
@@ -781,6 +782,7 @@ define(["jquery", "ol3"], function ($, ol) {
         if (features){            
             var feature = features.getArray()[0];   
             var noteid = feature.getProperties().noteid;            
+            console.log(feature.getProperties().barid);
             if (noteid > 0){
                 var text=$('#comment-'+noteid+' div.annotation p').html();
                 var noteTypeid = $('#comment-'+noteid+' div.annotation').data('notetype'); 
@@ -792,8 +794,16 @@ define(["jquery", "ol3"], function ($, ol) {
                 $('#id_notetext').val('');
 
             }
+            if (feature.getProperties().barid != undefined){
+            	//Bar note selected for modify
+            	//Go back to bar select interaction
+            	initDrawInteraction("Bar");
+            	//select current bar.           	
+
+            }else{
             
             updateFormGeometry(feature);
+        	}
         }
     }
 
@@ -919,7 +929,7 @@ define(["jquery", "ol3"], function ($, ol) {
         console.log('Form Updated');
     }
 
-    var toggleCommentary = function () {
+    toggleCommentary = function () {
 
         if (commentLayer.getVisible() == false) {
             commentLayer.setVisible(true);
@@ -946,9 +956,9 @@ define(["jquery", "ol3"], function ($, ol) {
 
     saveNote = function () {
         //Are bars in the bar layer selected?
-        var barString = "";
-        if (barLayer.getFeatures().getArray().length > 0) {
-            var barFeatures = barLayer.getFeatures().getArray();
+        var barString = "";        
+        if (annotationInteraction.getFeatures().getArray().length > 0) {
+            var barFeatures = annotationInteraction.getFeatures().getArray();
             for (var v in barFeatures) {
                 //Serialize
                 if (barString.length > 0) {
