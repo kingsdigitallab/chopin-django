@@ -59,7 +59,7 @@
                     </p>
 
                     {% if not c.noteregions %}
-                    <div class="annotation">
+                    <div class="annotation" data-notetype="{{ c.type.id }}"  data-noteid="{{ c.id }}>
                         <p>{% autoescape off %}{{ c.notetext |safe }}{% endautoescape %}</p>
                     </div>
                     {% endif %}
