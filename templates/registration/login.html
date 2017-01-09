@@ -9,7 +9,9 @@
     <div class="row">
         <div class="small-12 large-6 large-offset-3 columns">
         {% block title %}<h1>Log in</h1><hr>{% endblock %}
+        {% if form.username %}
         <h4>Login failed.  <em><a href="/ocve/accounts/password/reset">Forgot your password?</a></em></h4>
+        {% endif %}
             <form action="{% url "auth_login" %}" method="post" id="login-form">
             {% csrf_token %}
             <input id="id_username" name="username" type="text" placeholder="Username">
