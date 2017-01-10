@@ -48,7 +48,7 @@ def correctCropping(id, offsetX, offsetY):
 
 
 def barRegionsByPageImage(Id):
-    regions = BarRegion.objects.filter(pageimage__id=Id).distinct()
+    regions = BarRegion.objects.filter(pageimage__id=Id).filter(bar__barnumber__gte=0).distinct()
     regions =sorted(regions,key=lambda region:region.getLowestBarNumber())
     return regions
 
