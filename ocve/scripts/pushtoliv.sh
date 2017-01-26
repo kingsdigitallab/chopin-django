@@ -15,7 +15,7 @@ printf "Pushtolive begin $(date +%F_%T) \n" >> ${log_file}
 pg_dump -w -c -O -h db-pg-1.cch.kcl.ac.uk -U app_ocve app_ocve_merged > ${live_dump} 2>>${log_file}
 
 #Backup staging
-pg_dump -w -c -O -h db-pg-1.cch.kcl.ac.uk -U app_ocve -t ocve_* -T ocve_Annotation*  app_ocve_merged_stg > ${stg_dump} 2>>${log_file}
+pg_dump -w -c -O -h db-pg-1.cch.kcl.ac.uk -U app_ocve -t ocve_*  app_ocve_merged_stg > ${stg_dump} 2>>${log_file}
 
 #Upload staging to live if file ok
 if [ -s $stg_dump ]; then
