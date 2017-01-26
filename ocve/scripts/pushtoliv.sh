@@ -25,8 +25,8 @@ if [ -s $stg_dump ]; then
     pg_dump -w -a -h db-pg-1.cch.kcl.ac.uk --table=ocve_annotation_barregion --table=ocve_annotation -U app_ocve app_ocve_merged > ${notes_dump} 2>>${log_file}
 
     #delete notes set on live
-    psql app_ocve_merged -c "delete from ocve_annotation_barregion;"
-    psql app_ocve_merged -c "delete from ocve_annotation;"
+    psql -w -h db-pg-1.cch.kcl.ac.uk -U app_ocve app_ocve_merged -c "delete from ocve_annotation_barregion;"
+    psql -w -h db-pg-1.cch.kcl.ac.uk -U app_ocve app_ocve_merged -c "delete from ocve_annotation;"
 
     #upload to live
     psql -w -h db-pg-1.cch.kcl.ac.uk -U app_ocve app_ocve_merged < ${stg_dump} 2>>${log_file}
