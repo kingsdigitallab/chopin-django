@@ -1,4 +1,6 @@
 #Rebuild the Json data for the web front end
+from chopin import settings
+
 __author__ = 'elliotthall'
 from django.core.management.base import BaseCommand, NoArgsCommand
 import logging
