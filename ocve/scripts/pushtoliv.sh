@@ -22,7 +22,7 @@ if [ -s $stg_dump ]; then
     #Add line to log
     printf "$(date +%F_%T): Uploading to live \n" >> ${log_file}
     #Backup notes from live
-    pg_dump -w -a -h db-pg-1.cch.kcl.ac.uk --table=ocve_annotation_barbaregion --table=ocve_annotation -U app_ocve app_ocve_merged > ${notes_dump} 2>>${log_file}
+    pg_dump -w -a -h db-pg-1.cch.kcl.ac.uk --table=ocve_annotation_barregion --table=ocve_annotation -U app_ocve app_ocve_merged > ${notes_dump} 2>>${log_file}
 
     #delete notes set on live
     psql app_ocve_merged -c "delete from ocve_annotation_barregion;"
