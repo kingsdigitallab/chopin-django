@@ -18,9 +18,13 @@ class Command(BaseCommand):
         #Get all pageimages that are to be shown (in stg or live)
         pages=PageImage.objects.filter(Q(page__sourcecomponent__source__ocve=1) | Q(page__sourcecomponent__source__cfeo=1))
         #Check for file
+        x=0
         for pageimage in pages:
             fname = os.path.join(settings.THUMBNAIL_DIR, str(pageimage.id) + ".jpg")
             if not os.path.isfile(fname):
                 #Missing, write
                 log.info('Writing thumbnail '+fname)
-                generateThumbnail(pageimage)
+                print('Writing thumbnail '+fname)
+                x+=1
+                #generateThumbnail(pageimage)
+        print('Total:'+str(x))
