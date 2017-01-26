@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand, NoArgsCommand
 import logging
 import subprocess
 from optparse import make_option
-
+from ocve.uitools import generateThumbnail
 from ocve.models import PageImage
 from django.db.models import Q
 import os
@@ -25,8 +25,8 @@ class Command(BaseCommand):
             fname = os.path.join(settings.THUMBNAIL_DIR, str(pageimage.id) + ".jpg")
             if not os.path.isfile(fname):
                 #Missing, write
-                log.info('Writing thumbnail '+fname)
+                #log.info('Writing thumbnail '+fname)
                 print('Writing thumbnail '+fname)
                 x+=1
-                #generateThumbnail(pageimage)
+                generateThumbnail(pageimage)
         print('Total:'+str(x))
