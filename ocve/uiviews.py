@@ -328,10 +328,11 @@ def getPageImageWork(pi,source):
 
 #Annotation.objects.filter(type_id=1).delete()
 @csrf_exempt
-def ocvePageImageview(request, id,selectedregionid=0):
+def ocvePageImageview(request, id,selectedregionid=0,view='full'):
     mode = "OCVE"
-    noteURL = "/ocve/getAnnotationRegions/" + id + "/"
-    regionURL = "/ocve/getBarRegions/" + id + "/"
+    noteURL = "/ocve/getAnnotationRegions/" + str(id) + "/"
+    commentURL = "/ocve/getCommentRegions/" + str(id) + "/"
+    regionURL = "/ocve/getBarRegions/" + str(id) + "/"
     template="frontend/pageview.html"
 
     try:
@@ -341,7 +342,8 @@ def ocvePageImageview(request, id,selectedregionid=0):
     except MultiValueDictKeyError:
         pass
 
-    view = request.GET.get('view')
+    if request.GET.get('view'):
+        view = request.GET.get('view')
 
     pi = PageImage.objects.get(id=id)
     p = pi.page
@@ -376,7 +378,7 @@ def ocvePageImageview(request, id,selectedregionid=0):
         and p.sourcecomponent_id=sc.id
         and sc.source_id=""" + str(source.id) + " order by bar.barnumber")
 
-    notes = Annotation.objects.filter(pageimage_id=id, type_id=1)
+    notes = Annotation.objects.filter(pageimage_id=id, type_id__gt=2)
     comments = Annotation.objects.filter(pageimage_id=id, type_id=2)
     [next_page, prev_page] = getNextPrevPages(pi, pageimages)
     work=getPageImageWork(pi,source)
@@ -400,7 +402,7 @@ def ocvePageImageview(request, id,selectedregionid=0):
         'source': source, 'prev': prev_page, 'next': next_page,
         'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL,
         'pageimages': pageimages, 'mode': mode, 'zoomifyURL': zoomifyURL,
-        'regionURL': regionURL, 'noteURL': noteURL, 'page': p,
+        'regionURL': regionURL, 'noteURL': noteURL,'commentURL': commentURL, 'page': p,
         'pageimage': pi, 'view': view},
         context_instance=RequestContext(request))
 
