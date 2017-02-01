@@ -335,7 +335,7 @@ define(["jquery", "ol3"], function ($, ol) {
 
         //
         //Bind annotation events to elements
-        if ($(newNoteForm).length > 0) {
+        if ($(pageimage.newNoteForm).length > 0) {
 
 
             //Bind annotation tool events            
