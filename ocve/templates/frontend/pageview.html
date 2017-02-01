@@ -291,16 +291,6 @@
             src="{{ STATIC_URL }}javascripts/require.min.js"></script>
 
     <script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            //TODO: Hidden until annotations update
-            {% if view == 'annotations' %}
-                // showAnnotationTools();
-            {% else %}
-                // hideAnnotationTools();
-            {% endif %}
-        });
-    </script>
 
     <script src="{{ STATIC_URL }}vendor/foundation/js/vendor/jquery.cookie.js"></script>
     -->
