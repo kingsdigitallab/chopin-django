@@ -29,7 +29,7 @@ class Command(BaseCommand):
         live_dump = '/vol/ocve3/dumps/pg_liv_dump.sql'
         if options['revert']:
             #Revert scripts
-            revertstat = ['psql', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'app_ocv', 'app_ocve_merged', '<', live_dump]
+            revertstat = ['psql', '-h', 'db-pg-1.cch.kcl.ac.uk', '-U', 'app_ocve', 'app_ocve_merged', '<', live_dump]
             proc = subprocess.Popen(revertstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             err = proc.communicate()[1]
             if err:
