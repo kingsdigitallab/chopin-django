@@ -12,7 +12,6 @@
 
  */
 
-define(["jquery", "ol3"], function ($, ol) {
     ol3 = ol;
     var hover;
     //Bars defined by the databaase 
@@ -990,5 +989,4 @@ define(["jquery", "ol3"], function ($, ol) {
         $(note).child('div.annotation p').html(notetext);
     }
 
-    return initMap(ol);
-});
+
