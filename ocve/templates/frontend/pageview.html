@@ -287,10 +287,8 @@
         {% if selectedregionid > 0 %}selectedregionid={{ selectedregionid }};
             {% else %}selectedregionid = 0; {% endif %}
     </script>
-    <script data-main="{{ STATIC_URL }}javascripts/pageview-main.js" type="text/javascript"
-            src="{{ STATIC_URL }}javascripts/require.min.js"></script>
-
-    <script type="text/javascript" src="{{ STATIC_URL }}javascripts/pageview.js"></script>
+    <script src="{% static 'vendor/OpenLayers/3.18.2/ol.js' %}"></script>
+    <script src="{% static 'javascripts/pageview-ol3.js' %}"></script>
 
     <script src="{{ STATIC_URL }}vendor/foundation/js/vendor/jquery.cookie.js"></script>
 
