@@ -1,0 +1,11 @@
+{% load  catalogue_tags %}
+{{object.label}}
+{% if object.genres %}
+{{object.genres}}
+{%endif%}
+{%if object.workinformation%}
+{{ object.workinformation.generalinfo |clean}}
+{{ object.workinformation.relevantmanuscripts |clean}}
+{{ object.workinformation.analysis |clean}}
+{{ object.workinformation.OCVE |clean}}
+{% endif%}

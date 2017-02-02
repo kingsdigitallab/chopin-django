@@ -1,0 +1,51 @@
+$primary-color: #2a86ad;
+
+/** CFEO Compare */
+.add-to-compare-bar {
+    position: relative;
+    display: none;
+    // padding: 20px 0;
+    z-index: 998;
+
+    .columns {
+        // margin-top: 2rem;
+        z-index: 997;
+        a {
+            padding: 1rem !important;
+        }
+    }
+}
+
+.add-to-compare-bar a {
+    display: block;
+    background-color: rgb(232, 232, 232);
+    text-align: center;
+    width: 100%;
+    padding: 10px 0;
+}
+
+.add-to-compare-bar a:hover {
+    // background-color: rgb(212, 212, 212);
+    background-color: $primary-color !important;
+    color: #fff !important;
+}
+
+.add-to-compare-notification {
+    display: none;
+    
+    .columns {
+        // margin-top: 3rem;
+        z-index: 996;
+    }
+
+    .alert-box {
+        padding: 1rem !important;
+    }
+
+}
+
+/* Responsive images for the compare pageview */
+
+.openseadragon-container {
+    display: block;
+}
