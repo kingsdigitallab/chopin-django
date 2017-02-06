@@ -117,7 +117,7 @@ class BarRegionGeo:
         if version == "OL3":
             self.initOL3(br, rx, ry, w, h)
         elif version == "OL2":
-            self.initOL3(br, rx, ry, w, h)
+            self.initOL2(br, rx, ry, w, h)
 
     # Adapt coordinates to openlayers display
 
