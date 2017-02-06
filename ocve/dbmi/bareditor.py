@@ -22,7 +22,7 @@ STATIC_URL = settings.STATIC_URL
 editBarsURL = '/ocve/editbars/'
 
 def editBars(request, id):
-    regionURL = "/ocve/getBarRegions/" + str(id) + "/"
+    regionURL = "/ocve/getOL2BarRegions/" + str(id) + "/"
     zoomifyURL = settings.IIP_URL + "?zoomify="
     p = None
     regionString = ''

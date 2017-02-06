@@ -24,9 +24,13 @@ def uploadOCVE(request):
 
 @csrf_exempt
 def getBarRegions(request, id):
-    geos = getGeoJSON(id)
+    geos = getGeoJSON(id,"OL3")
     return render_to_response('geojson.html', {'geoRegions': geos, 'grouped': 0})
 
+@csrf_exempt
+def getOL2BarRegions(request, id):
+    geos = getGeoJSON(id,"OL2")
+    return render_to_response('geojson.html', {'geoRegions': geos, 'grouped': 0})
 
 
 def getViewInPageRegions(request, id, barid):

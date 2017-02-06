@@ -26,7 +26,7 @@ class noteGeos:
         self.geos = []
 
         if self.barregions.count() > 0:
-            self.geos = toGeos(self.barregions)
+            self.geos = toGeos(self.barregions,"OL3")
 
 # Delete user annotation
 @csrf_exempt
