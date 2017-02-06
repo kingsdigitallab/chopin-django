@@ -9,8 +9,7 @@ from haystack.forms import FacetedSearchForm
 from haystack.query import SearchQuerySet, SQ
 from catalogue.views import FacetedSearchView
 
-
-#sqs = SearchQuerySet().filter(SQ(document='Source') | SQ(document='Opus')).filter(ocve=True).filter(live=True).order_by('orderno').facet('document')
+# sqs = SearchQuerySet().filter(SQ(document='Source') | SQ(document='Opus')).filter(ocve=True).filter(live=True).order_by('orderno').facet('document')
 sqs = SearchQuerySet().order_by('orderno').facet('resource').facet('document')
 
 urlpatterns = patterns('',
@@ -19,7 +18,7 @@ urlpatterns = patterns('',
 
                        # UI URLS
                        (r'^browse/barview$', barview),
-                       #(r'^correctsi/$', correctSourceInformation ),
+                       # (r'^correctsi/$', correctSourceInformation ),
                        (r'^browse/acview/(?P<acHash>[\d|\w]+)/$', acview),
                        (r'^browse/sourcejs/$', sourcejs),
                        url(r'^browse/$', browse, name='ocve_browse'),
@@ -46,6 +45,7 @@ urlpatterns = patterns('',
                        (r'^data/verifyImages/', verifyImages),
 
                        (r'^getBarRegions/(?P<id>\d+)/$', getBarRegions),
+                       (r'^getOL2BarRegions/(?P<id>\d+)/$', getOL2BarRegions),
                        (r'^getBarRegions/(?P<id>\d+)/(?P<barid>\d+)/$',
                         getViewInPageRegions),
                        (r'^getGroupedBarRegions/(?P<id>\d+)/$',
