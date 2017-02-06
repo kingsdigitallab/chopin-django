@@ -115,9 +115,9 @@ def updateBarRegionFromFeature(br, f):
 class BarRegionGeo:
     def __init__(self, br, rx, ry, w, h,version):
         if version == "OL3":
-            initOL3(br, rx, ry, w, h)
+            self.initOL3(br, rx, ry, w, h)
         elif version == "OL2":
-            initOL3(br, rx, ry, w, h)
+            self.initOL3(br, rx, ry, w, h)
 
     # Adapt coordinates to openlayers display
 
