@@ -58,8 +58,7 @@
             </div>
 
 
-
-            <div class="large-10 columns">
+            <div class="large-12 columns">
                 <div class="row">
                     {% if view != 'annotations' %}
                         <div class="large-12 columns">
@@ -211,10 +210,9 @@
         pageimage = {
             workid:{{ work.id }},
             pageID:{{ pageimage.id }},
-            zoomify_width:{{ pageimage.width }},
-            zoomify_height:{{ pageimage.height }}
-            ,
-            zoomify_url: "{{ zoomifyURL }}",
+            zoomify_width: 4103,
+            zoomify_height: 3294,
+            zoomify_url: "https://mofa-images.dighum.kcl.ac.uk/iip/iipsrv.fcgi?zoomify=jp2/ocve/8360.jp2/",
             regionURL: "{{ regionURL }}",
             noteURL: "{{ noteURL }}",
             commentURL: "{{ commentURL }}",
@@ -233,12 +231,43 @@
 
     <script src="{{ STATIC_URL }}vendor/foundation/js/vendor/jquery.cookie.js"></script>
 
- <script type="text/javascript">
+    <script type="text/javascript">
 
         //TODO until added to require#}
         $(document).ready(function () {
-            initMap();
-           if (cookie_get('joyride') != 'ridden') {
+            //initMap();
+            var imgCenter = [pageimage.zoomify_width / 2, -pageimage.zoomify_height / 2];
+            var crossOrigin = 'anonymous';
+
+            // Maps always need a projection, but Zoomify layers are not geo-referenced, and
+            // are only measured in pixels.  So, we create a fake projection that the map
+            // can use to properly display the layer.
+            var proj = new ol.proj.Projection({
+                code: 'ZOOMIFY',
+                units: 'pixels',
+                extent: [0, 0, pageimage.zoomify_width, pageimage.zoomify_height]
+            });
+
+            var source = new ol.source.Zoomify({
+                url: pageimage.zoomify_url,
+                size: [pageimage.zoomify_width, pageimage.zoomify_height],
+                crossOrigin: crossOrigin
+            });
+
+            var map = new ol.Map({
+                layers: [
+                    new ol.layer.Tile({
+                        source: source
+                    })
+                ],
+                target: 'map',
+                view: new ol.View({
+                    projection: proj,
+                    center: imgCenter,
+                    zoom: 1
+                })
+            });
+            if (cookie_get('joyride') != 'ridden') {
                 $(document).foundation('joyride', 'start');
             }
 
