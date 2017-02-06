@@ -533,7 +533,6 @@ keyboardShortcuts = function (event) {
 
 $(document).ready(function () {
 
-
     $('#smoothTest').click(function () {
         var selected = vlayer.selectedFeatures.slice(0);
         if (selected && selected.length > 1) {
@@ -611,9 +610,6 @@ $(document).ready(function () {
     map.addControl(new OpenLayers.Control.MousePosition());
     map.addControl(new OpenLayers.Control.PanZoomBar());
     map.addControl(mouse);
-    //map.addControl(new OpenLayers.Control.KeyboardDefaults());
-    //map.addControl(new OpenLayers.Control.EditingToolbar(vlayer));
-    // map.addControl(new OpenLayers.Control.OverviewMap());
 
     /*Initialise toolbar*/
 
