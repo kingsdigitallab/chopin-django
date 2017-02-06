@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+{% load catalogue_tags staticfiles %}
+
+{% block meta_title %}OCVE {{ source.getAcCode }} {{ pageimage.textlabel }}{% endblock %}
+
+{% block custom_stylesheets %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{{ STATIC_URL }}custom_css/bareditor.css" type="text/css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}vendor/OpenLayers/3.18.2/ol.css" type="text/css">
+    <style type="text/css">
+        /*Hide the OpenLayers logo*/
+        .ol-attribution.ol-logo-only {
+            display: none;
+        }
+
+        #map {
+            height: 100%;
+        }
+    </style>
+{% endblock custom_stylesheets %}
+
+{% block header_scripts %}
+{% endblock header_scripts %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+    <section class="main content-section page-view">
+        <div class="row">
+            <div class="large-3 columns">
+                <p>
+                    <a href="#" onclick="$(document).foundation('joyride', 'start');" title="Help text">
+                        <i class="fa fa-question-circle"></i> Help guide: take a quick tour
+                    </a>
+                </p>
+            </div>
+            <div class="large-9 columns">
+                <h4>
+                    <div class="opus-title">
+                        {% if workinfoexists %}
+                            <a href="#" data-reveal-ajax="/ocve/browse/workinformation/{{ work.id }}/"
+                               data-reveal-id="opus-info" title="Work overview"
+                               id="zero">{{ work.label | add_special_characters }}</a>{% else %}
+                            {{ work.label | add_special_characters }}{% endif %},
+                        <a href="#" data-reveal-id="witness-info"
+                           data-reveal-ajax="/ocve/browse/sourceinformation/{{ source.id }}/" title="Witness overview"
+                           id="zerob">{{ source.getAcCode | add_special_characters }}</a>,
+                        {{ pageimage.textlabel | add_special_characters }}
+                    </div>
+                </h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="large-12 columns">
+                <div id="messages">
+                    {% include 'frontend/messages.html' %}
+                </div>
+            </div>
+
+
+
+            <div class="large-10 columns">
+                <div class="row">
+                    {% if view != 'annotations' %}
+                        <div class="large-12 columns">
+                            <div data-alert class="alert-box radius secondary">
+                                <i class="fa fa-info-circle"></i> <strong>User tips:</strong>
+                                <ul class="compact-list">
+                                    <li>Hover over the image to see bar numbers.</li>
+                                    <li>Click on a bar to display the variations of that bar in all available sources.
+                                    </li>
+                                </ul>
+                                <a href="#" class="close">&times;</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div id="pageimage"
+                         class="large-{% if view == 'annotations' %}8{% else %}12{% endif %} columns{% if view == 'annotations' %} fixed-image{% endif %}">
+                        <div id="copyright">
+                            <img src="{% static 'images/public-domain-mark.png' %}" alt="Public Domain"
+                                 class="image-cc">
+                            {{ source.getSourceInformation.copyright|safe }}
+                        </div>
+                        <span id="zeroc"></span>{# Do not remove. Needed for helptext #}
+                        <div id="map"></div>
+                    </div>
+
+                    {% if view == 'annotations' %}
+                        <div id="annotations" class="large-4 columns">
+                            <div id="annotationTools">
+                                <p><strong>Annotation tools</strong></p>
+                                {% if notes.count == 0 and comments.count == 0 %}
+                                    <p>This image has no annotations yet.</p>
+                                    {% if user.is_authenticated == False %}
+                                        <p><a href="/ocve/accounts/login-page/?next={{ request.path }}">Login</a> to add
+                                            an annotation. </p>
+                                    {% endif %}
+
+                                {% endif %}
+                                {% if user.is_authenticated %}
+                                    <ul class="no-bullet">
+
+                                    <li id="cinque"><a id="barAttachToggle" href="#"><i class="fa fa-link"></i> Show bar
+                                        numbers for annotation</a></li>
+                                    <li id="sei"><a id="newSquareNoteToggle" href="#"><i class="fa fa-square-o"></i>
+                                        Create square annotation</a></li>
+                                    <li id="sette"><a id="newCircleNoteToggle" href="#"><i
+                                            class="fa fa-circle-thin"></i> Create circle annotation</a></li>
+                                    <li id="sette"><a id="modifyNoteToggle" href="#"><i class="fa fa-circle-thin"></i>
+                                        Modify note</a></li>
+                                    <li id="sette"><a id="moveNoteToggle" href="#"><i class="fa fa-circle-thin"></i>
+                                        Move note</a></li>
+                                {% endif %}
+                                {% if notes.count > 0 or comments.count > 0 %}
+                                    <li id="otto"><a href="#" class="com"><i class="fa fa-eye"></i> Show/hide commentary
+                                        on the image</a></li>
+                                    <li id="nove"><a href="#" class="not"><i class="fa fa-eye"></i> Show/hide notes on
+                                        the image</a></li>
+                                {% endif %}
+                                </ul>
+
+                            </div>
+
+                            <div class="page-comments">
+                                {% include 'frontend/ajax/annotations.html' with without_wrapper=True %}
+
+                                <div id="newNote">
+                                    {% if user.is_authenticated %}
+                                        <form id="newNoteForm" method="POST" action="/ocve/saveNote/">
+                                            <table>
+                                                {{ annotationForm }}
+                                            </table>
+                                            <button id="createNote" type="submit" class="tiny radius">Save</button>
+                                            <input type="hidden" id="annotation_id" name="annotation_id" value="0">
+                                            <input type="hidden" id="featureid" name="featureid" value="0">
+                                            <input type="hidden" id="noteBars" name="noteBars" value="">
+                                            <button id="cancelNote" type="submit" class="tiny radius">Cancel</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block footer %}
+    {{ block.super }}
+
+    <div id="witness-info" class="reveal-modal" data-reveal>
+
+    </div>
+
+    <div id="opus-info" class="reveal-modal" data-reveal>
+
+    </div>
+
+    <!-- Joyride -->
+    <ol class="joyride-list" data-joyride>
+        <li data-id="zero" data-text="Next" data-options="tip_location: top; prev_button: false">
+            <p>See more information about the work.</p>
+        </li>
+        <li data-id="zerob" data-text="Next" data-prev-text="Prev" data-options="tip_location: top">
+            <p>See witness overview.</p>
+        </li>
+        <li data-id="zeroc" data-text="Next" data-prev-text="Prev" data-options="tip_location: top">
+            <p>Click on a bar to display the variants of that bar in all available sources.</p>
+        </li>
+        <li data-id="uno" data-text="Next" data-prev-text="Prev" data-options="tip_location: top">
+            <p>Navigate to the previous page.</p>
+        </li>
+        <li data-id="due" data-button="Next" data-prev-text="Prev" data-options="tip_location: top">
+            <p>Navigate to the next page.</p>
+        </li>
+        <li data-id="tre" data-button="Next" data-prev-text="Prev" data-options="tip_location: top">
+            <p>You might already know what page you're looking for. This dropdown will let you choose a specific
+                page.</p>
+        </li>
+        <li data-id="quattro" {% if view == 'annotations' %}data-button="Next"{% else %}
+            data-button="Start exploring!"{% endif %} data-prev-text="Prev" data-options="tip_location: top">
+            <p>Show / Hide the annotation tools.</p>
+        </li>
+        {% if view == 'annotations' %}
+            <li data-id="cinque" data-button="Next" data-prev-text="Prev" data-options="tip_location: top">
+                <p>Show / Hide bars and click on one to attach an annotation.</p>
+            </li>
+            <li data-id="sei" data-button="Next" data-prev-text="Prev" data-options="tip_location: top">
+                <p>Draw a square shaped annotation on the image.</p>
+            </li>
+            <li data-id="sette" data-button="Next" data-prev-text="Prev" data-options="tip_location: top">
+                <p>Or a circle one.</p>
+            </li>
+            <li data-id="otto" data-button="Next" data-prev-text="Prev" data-options="tip_location: top">
+                <p>Show / Hide commentary on the image.</p>
+            </li>
+            <li data-id="nove" data-button="Start exploring!" data-options="tip_location: top">
+                <p>Show / Hide notes on the image.</p>
+            </li>
+        {% endif %}
+    </ol>
+{% endblock %}
+
+{% block footer_scripts %}
+    {{ block.super }}
+    <script src="{{ STATIC_URL }}javascripts/slick.min.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+
+        pageimage = {
+            workid:{{ work.id }},
+            pageID:{{ pageimage.id }},
+            zoomify_width:{{ pageimage.width }},
+            zoomify_height:{{ pageimage.height }}
+            ,
+            zoomify_url: "{{ zoomifyURL }}",
+            regionURL: "{{ regionURL }}",
+            noteURL: "{{ noteURL }}",
+            commentURL: "{{ commentURL }}",
+            annotation_mode: {% if view == 'annotations' %}1{% else %}0{% endif %},
+            barAttachToggle: "#barAttachToggle",
+            newSquareNoteToggle: "#newSquareNoteToggle",
+            newCircleNoteToggle: "#newCircleNoteToggle",
+            newNoteForm: "#newNoteForm"
+        };
+
+        {% if selectedregionid > 0 %}selectedregionid={{ selectedregionid }};
+            {% else %}selectedregionid = 0; {% endif %}
+    </script>
+    <script src="{% static 'vendor/OpenLayers/3.18.2/ol.js' %}"></script>
+    <script src="{% static 'javascripts/pageview-ol3.js' %}"></script>
+
+    <script src="{{ STATIC_URL }}vendor/foundation/js/vendor/jquery.cookie.js"></script>
+
+ <script type="text/javascript">
+
+        //TODO until added to require#}
+        $(document).ready(function () {
+            initMap();
+           if (cookie_get('joyride') != 'ridden') {
+                $(document).foundation('joyride', 'start');
+            }
+
+            cookie_set('joyride', 'ridden', 30);
+        });
+    </script>
+
+{% endblock %}
+
+
