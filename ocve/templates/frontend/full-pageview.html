@@ -203,8 +203,7 @@
 {% endblock %}
 
 {% block footer_scripts %}
-    {{ block.super }}
-    <script src="{{ STATIC_URL }}javascripts/slick.min.js" type="text/javascript" charset="utf-8"></script>
+
     <script type="text/javascript">
 
         pageimage = {
@@ -227,9 +226,6 @@
             {% else %}selectedregionid = 0; {% endif %}
     </script>
     <script src="{% static 'vendor/OpenLayers/3.18.2/ol.js' %}"></script>
-    <script src="{% static 'javascripts/pageview-ol3.js' %}"></script>
-
-    <script src="{{ STATIC_URL }}vendor/foundation/js/vendor/jquery.cookie.js"></script>
 
     <script type="text/javascript">
 
@@ -276,5 +272,3 @@
     </script>
 
 {% endblock %}
-
-
