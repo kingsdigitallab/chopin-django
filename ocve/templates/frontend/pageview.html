@@ -136,8 +136,10 @@
                     <div id="pageimage"
                          class="large-{% if view == 'annotations' %}8{% else %}12{% endif %} columns{% if view == 'annotations' %} fixed-image{% endif %}">
                         <div id="copyright">
+                            {% if pi.copyright == False%}
                             <img src="{% static 'images/public-domain-mark.png' %}" alt="Public Domain"
                                  class="image-cc">
+                            {% endif %}
                             {{ source.getSourceInformation.copyright|safe }}
                         </div>
                         <span id="zeroc"></span>{# Do not remove. Needed for helptext #}
