@@ -110,7 +110,10 @@
             </div>
             <div class="large-9 columns">
                 <div id="copyright">
-                    <img src="{% static 'images/public-domain-mark.png' %}" alt="Public Domain" class="image-cc">
+                     {% if pi.copyright == False%}
+                            <img src="{% static 'images/public-domain-mark.png' %}" alt="Public Domain"
+                                 class="image-cc">
+                            {% endif %}
                     {{ source.getSourceInformation.copyright|safe }}
                 </div>
                 <div id="pageimage">

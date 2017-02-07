@@ -125,6 +125,25 @@ def defaultpageorder(request,id):
     return HttpResponseRedirect("/ocve/sourceeditor/"+id+"/")
 
 @csrf_exempt
+def updatecopyright(request):
+    copyright = False
+    try:
+        copyright = request.POST["copyright"]
+        copyright=True
+    except MultiValueDictKeyError:
+        pass
+    try:
+        pageimage_id = request.POST["pageimage_id"]
+        pi=PageImage.objects.get(id=int(pageimage_id))
+        pi.copyright=copyright
+        pi.save()
+        result="Copyright Updated"
+    except ObjectDoesNotExist:
+        result="ERROR in updatecopyright"
+    return result
+
+
+@csrf_exempt
 def updatepagetype(request,id):
     result=""
     try:
