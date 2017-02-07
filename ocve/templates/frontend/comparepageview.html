@@ -21,6 +21,10 @@
         </header>
         <img src="/iip/iipsrv.fcgi?FIF={{ pi_left.getJP2Path }}&CVT=JPG" height="800" width="500" id="image_one" class="osd-iip">
         <div id="copyright">
+        {% if pi_left.copyright == False%}
+                            <img src="{% static 'images/public-domain-mark.png' %}" alt="Public Domain"
+                                 class="image-cc">
+                            {% endif %}
             {{ pi_left.page.sourcecomponent.source.getSourceInformation.copyright|safe }}
         </div>
         {% else %}
@@ -38,6 +42,10 @@
         </header>
         <img src="/iip/iipsrv.fcgi?FIF={{ pi_right.getJP2Path }}&CVT=JPG" height="800" width="500" id="image_two" class="osd-iip">
         <div id="copyright">
+        {% if pi_right.copyright == False%}
+                            <img src="{% static 'images/public-domain-mark.png' %}" alt="Public Domain"
+                                 class="image-cc">
+                            {% endif %}
             {{ pi_right.page.sourcecomponent.source.getSourceInformation.copyright|safe}}
         </div>
         {% else %}
