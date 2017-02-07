@@ -209,9 +209,9 @@
         pageimage = {
             workid:{{ work.id }},
             pageID:{{ pageimage.id }},
-            zoomify_width: 4103,
-            zoomify_height: 3294,
-            zoomify_url: "https://mofa-images.dighum.kcl.ac.uk/iip/iipsrv.fcgi?zoomify=jp2/ocve/8360.jp2/",
+            zoomify_width: 3122,
+            zoomify_height: 2530,
+            zoomify_url: "/iip/iipsrv.fcgi?zoomify=jp2/5816screenshot.jp2/",
             regionURL: "{{ regionURL }}",
             noteURL: "{{ noteURL }}",
             commentURL: "{{ commentURL }}",
@@ -250,7 +250,7 @@
                 crossOrigin: crossOrigin
             });
 
-            var map = new ol.Map({
+         /*   var map = new ol.Map({
                 layers: [
                     new ol.layer.Tile({
                         source: source
@@ -262,13 +262,23 @@
                     center: imgCenter,
                     zoom: 1
                 })
-            });
-            if (cookie_get('joyride') != 'ridden') {
-                $(document).foundation('joyride', 'start');
-            }
+            });*/
+var map = new ol.Map({
+  view: new ol.View({
+    center: [0, 0],
+    zoom: 1
+  }),
+  layers: [
+    new ol.layer.Tile({
+      source: source
+    })
+  ],
+  target: 'map'
+});
+       
+            
 
-            cookie_set('joyride', 'ridden', 30);
-        });
+               });
     </script>
 
 {% endblock %}
