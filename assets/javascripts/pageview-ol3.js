@@ -68,7 +68,7 @@
                         width: 1
                     }),
                     text: new ol.style.Text({
-                        font: '18px Courier New, monospace',
+                        font: '14px Courier New, monospace',
                         text: feature.get('label'),
                         offsetX: offsetX,
                         offsetY: offsetY,
