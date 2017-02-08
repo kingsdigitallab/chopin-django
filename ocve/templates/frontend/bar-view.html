@@ -111,7 +111,7 @@
                                 </div>
                                 <div class="image">
                                     {% for url in r.getBarImageURL %}
-                                    <img src="{{ IIP_URL }}?FIF={{ url }}" alt="{{ r.getSource.getAcCode | add_special_characters }} page {{ r.pi.page.label | add_special_characters }}">
+                                    <img src="{{ IIP_URL }}?FIF={{ url }}">
                                     {% endfor %}
                                     <div class="close">
                                         <a href="#" class="ctrl close closeSource" data-source-id="{{ r.getSource.id }}"><span class="fa fa-times-circle"></span></a>
