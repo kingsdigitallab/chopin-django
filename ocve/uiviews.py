@@ -33,7 +33,8 @@ def cfeoacview(request, acHash, mode="OCVE"):
     return acview(request, acHash, 'CFEO')
 
 
-# Takes a passed hashed accode from annotated catalogue and displays the source in browse
+# Takes a passed hashed accode from annotated catalogue and displays the
+# source in browse
 def acview(request, acHash, mode="OCVE"):
     filters = []
 
@@ -66,15 +67,22 @@ def shelfmarkview(request, acHash, mode="OCVE"):
     foundMark = ""
     filterString = ""
     for si in SourceInformation.objects.all():
-        if hashlib.md5(si.shelfmark.encode('UTF-8')).hexdigest() == str(acHash):
+        if hashlib.md5(si.shelfmark.encode('UTF-8')
+                       ).hexdigest() == str(acHash):
             foundMark = si.shelfmark
             work = si.source.getWork()
-            filters.append({'type': 'Work', 'id': work.id, 'selection': work.label})
-            filters.append({'type': 'Source', 'id': si.source.id, 'selection': si.source})
+            filters.append(
+                {'type': 'Work', 'id': work.id, 'selection': work.label})
+            filters.append(
+                {'type': 'Source', 'id': si.source.id, 'selection': si.source})
             filterString += '<br>{type:Work,id:' + str(
                 work.id) + ',selection:' + work.label + ' type:Source,mark:' + si.shelfmark + ',id:' + str(
                 si.source.id) + ',selection:' + si.source.label + ',type:' + si.source.sourcetype.type + '}\n'
-    return HttpResponse(u'shelfmark found as:' + foundMark + "<br><br> Filters:" + filterString)
+    return HttpResponse(
+        u'shelfmark found as:' +
+        foundMark +
+        "<br><br> Filters:" +
+        filterString)
     # return browse(request,mode,filters)
 
 
@@ -138,27 +146,34 @@ def fixsourceinformation(request):
             methods = PrintingMethod.objects.filter(method=printingmethod)
             if methods.count() > 0:
                 pm = methods[0]
-            SourceInformation_PrintingMethod(sourceinformation=si, printingmethod=pm).save()
+            SourceInformation_PrintingMethod(
+                sourceinformation=si, printingmethod=pm).save()
 
         sourceDesc = convertEntities(sourceDesc)
-        publicationTitleMatch = re.search("<label>.*title[\:]*</label>\s*<value>(.*?)</value>", sourceDesc,
-                                          re.IGNORECASE | re.MULTILINE)
+        publicationTitleMatch = re.search(
+            "<label>.*title[\:]*</label>\s*<value>(.*?)</value>",
+            sourceDesc,
+            re.IGNORECASE | re.MULTILINE)
         if publicationTitleMatch is not None:
             pubtitle = publicationTitleMatch.group(1)
             if len(si.title) == 0:
                 si.title = pubtitle
         else:
             log += '\nNo title parsed for ' + str(row[1])
-        match = re.search("<label>.*Source of images[\:]*\s*</label>\s*<value>(.*?)</value>", sourceDesc,
-                          re.IGNORECASE | re.MULTILINE)
+        match = re.search(
+            "<label>.*Source of images[\:]*\s*</label>\s*<value>(.*?)</value>",
+            sourceDesc,
+            re.IGNORECASE | re.MULTILINE)
         if match is not None:
             imagesource = match.group(1)
             if len(si.imagesource) == 0:
                 si.imagesource = imagesource
         else:
             log += '\nNo imagesource parsed for ' + str(row[1])
-        match = re.search("<component id=\"keyFeatures\">\s*<heading>Key features:</heading>\s*(.*?)</component>",
-                          sourceDesc, re.IGNORECASE | re.MULTILINE)
+        match = re.search(
+            "<component id=\"keyFeatures\">\s*<heading>Key features:</heading>\s*(.*?)</component>",
+            sourceDesc,
+            re.IGNORECASE | re.MULTILINE)
         if match is not None:
             keyFeatures = match.group(1)
             keyFeatures = cleanXML(keyFeatures)
@@ -180,10 +195,12 @@ def browse_source(request, id):
     if sources.count > 0:
         source = sources[0]
         work = source.getWork()
-        if source.cfeo == True:
+        if source.cfeo:
             mode = "CFEO"
-        filters.append({'type': 'Work', 'id': work.id, 'selection': work.label})
-        filters.append({'type': 'Source', 'id': source.id, 'selection': source.label})
+        filters.append(
+            {'type': 'Work', 'id': work.id, 'selection': work.label})
+        filters.append({'type': 'Source', 'id': source.id,
+                        'selection': source.label})
     return browse(request, mode, filters)
 
 
@@ -193,7 +210,8 @@ def browse_work(request, id):
     works = Work.objects.filter(id=id)
     if works.count > 0:
         work = works[0]
-        filters.append({'type': 'Work', 'id': work.id, 'selection': work.label})
+        filters.append(
+            {'type': 'Work', 'id': work.id, 'selection': work.label})
     return browse(request, mode, filters)
 
 
@@ -201,11 +219,13 @@ def browse(request, mode="OCVE", defaultFilters=None):
     serializeSource(Source.objects.filter(id=18170))
     bars = Bar.objects.all()
     # Filter Items
-    for si in SourceInformation.objects.filter(contentssummary__startswith='<p></p>'):
+    for si in SourceInformation.objects.filter(
+            contentssummary__startswith='<p></p>'):
         si.contentssummary = si.contentssummary.replace('<p></p>', '')
         si.save()
     try:
-        if defaultFilters is None and request.session[mode + '_current_filters']:
+        if defaultFilters is None and request.session[
+                mode + '_current_filters']:
             filterJSON = request.session[mode + '_current_filters']
             defaultFilters = json.loads(filterJSON, encoding='utf-8')
     except KeyError:
@@ -280,7 +300,9 @@ def browse(request, mode="OCVE", defaultFilters=None):
                 sourcecomponent_instrument__sourcecomponent__source__cfeo=True).distinct()
 
         for w in works:
-            if len(w.workinformation.analysis) > 0 or len(w.workinformation.generalinfo) > 0 or len(
+            if len(
+                    w.workinformation.analysis) > 0 or len(
+                    w.workinformation.generalinfo) > 0 or len(
                     w.workinformation.relevantmanuscripts) > 0:
                 workinfos.append(w.id)
 
@@ -406,7 +428,7 @@ def ocvePageImageview(request, id, selectedregionid=0, view='full'):
         'pageimages': pageimages, 'mode': mode, 'zoomifyURL': zoomifyURL,
         'regionURL': regionURL, 'noteURL': noteURL, 'commentURL': commentURL, 'page': p,
         'pageimage': pi, 'view': view},
-                              context_instance=RequestContext(request))
+        context_instance=RequestContext(request))
 
 
 def addImageDimensions(pi):
@@ -424,7 +446,9 @@ def cfeoImagePreview(request, id):
 def imagePreview(request, id, mode="OCVE"):
     pi = PageImage.objects.get(id=id)
     return render_to_response('frontend/image-preview.html',
-                              {'mode': mode, 'pageimage': pi, 'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL})
+                              {'mode': mode,
+                               'pageimage': pi,
+                               'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL})
 
 
 def ocveViewInPage(request, id, barid):
@@ -434,18 +458,26 @@ def ocveViewInPage(request, id, barid):
         addImageDimensions(pi)
     p = pi.page
     source = pi.page.sourcecomponent.source
-    pageimages = PageImage.objects.filter(page__sourcecomponent__source=pi.page.sourcecomponent.source,
-                                          page__pagetype_id=3).order_by("page")
+    pageimages = PageImage.objects.filter(
+        page__sourcecomponent__source=pi.page.sourcecomponent.source,
+        page__pagetype_id=3).order_by("page")
     opus = Opus.objects.filter(
         workcomponent__sourcecomponent_workcomponent__sourcecomponent__page__pageimage=pi).distinct()
-    work = \
-    Work.objects.filter(workcomponent__sourcecomponent_workcomponent__sourcecomponent__page__pageimage=pi).distinct()[0]
+    work = Work.objects.filter(
+        workcomponent__sourcecomponent_workcomponent__sourcecomponent__page__pageimage=pi).distinct()[0]
     zoomifyURL = pi.getZoomifyPath()
     mode = "OCVE"
     return render_to_response('frontend/pageview.html',
-                              {'work': work, 'source': source, 'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL,
-                               'pageimages': pageimages, 'mode': mode, 'opus': opus, 'zoomifyURL': zoomifyURL,
-                               'regionURL': regionURL, 'page': p, 'pageimage': pi},
+                              {'work': work,
+                               'source': source,
+                               'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL,
+                               'pageimages': pageimages,
+                               'mode': mode,
+                               'opus': opus,
+                               'zoomifyURL': zoomifyURL,
+                               'regionURL': regionURL,
+                               'page': p,
+                               'pageimage': pi},
                               context_instance=RequestContext(request))
 
 
@@ -455,7 +487,8 @@ def cfeoPageImageview(request, id):
     p = pi.page
     if pi.width == 0:
         addImageDimensions(pi)
-    pageimages = PageImage.objects.filter(page__sourcecomponent__source=pi.page.sourcecomponent.source).order_by("page")
+    pageimages = PageImage.objects.filter(
+        page__sourcecomponent__source=pi.page.sourcecomponent.source).order_by("page")
     source = pi.page.sourcecomponent.source
     ac = source.getAcCode()
     achash = hashlib.md5(ac.encode('UTF-8')).hexdigest()
@@ -463,9 +496,17 @@ def cfeoPageImageview(request, id):
     work = getPageImageWork(pi, source)
     seaDragonURL = pi.getZoomifyPath()
     return render_to_response('frontend/cfeopageview.html',
-                              {'achash': achash, 'work': work, 'source': source, 'prev': prev, 'next': next,
-                               'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL, 'pageimages': pageimages, 'mode': mode,
-                               'seaDragonURL': seaDragonURL, 'page': p, 'pageimage': pi},
+                              {'achash': achash,
+                               'work': work,
+                               'source': source,
+                               'prev': prev,
+                               'next': next,
+                               'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL,
+                               'pageimages': pageimages,
+                               'mode': mode,
+                               'seaDragonURL': seaDragonURL,
+                               'page': p,
+                               'pageimage': pi},
                               context_instance=RequestContext(request))
 
 
@@ -512,12 +553,19 @@ def cfeoWorkInformation(request, id):
 def sourceinformation(request, id, mode="OCVE"):
     source = Source.objects.get(id=id)
     si = SourceInformation.objects.get(source__id=id)
-    pageimages = PageImage.objects.filter(page__sourcecomponent__source=source).order_by('page__orderno')
+    pageimages = PageImage.objects.filter(
+        page__sourcecomponent__source=source).order_by('page__orderno')
     work = source.getWork()
     si = cleanSourceInformationHTML(si)
     return render_to_response('frontend/sourceinformation.html',
-                              {'pageimages': pageimages, 'mode': mode, 'work': work, 'source': source, 'si': si,
-                               'IMAGE_SERVER_URL': IMAGE_SERVER_URL, }, context_instance=RequestContext(request))
+                              {'pageimages': pageimages,
+                               'mode': mode,
+                               'work': work,
+                               'source': source,
+                               'si': si,
+                               'IMAGE_SERVER_URL': IMAGE_SERVER_URL,
+                               },
+                              context_instance=RequestContext(request))
 
 
 @csrf_exempt
@@ -562,10 +610,13 @@ def barview(request):
         pageimage = PageImage.objects.get(id=pageimageid)
         # source__sourcecomponent__sourcecomponent_workcomponent__workcomponent__work=work
         if 'i' in bar.barlabel:
-            spine = BarSpine.objects.filter(sourcecomponent__page__pageimage=pageimage,
-                                            bar__barlabel=str(bar.barnumber) + 'i')
+            spine = BarSpine.objects.filter(
+                sourcecomponent__page__pageimage=pageimage,
+                bar__barlabel=str(
+                    bar.barnumber) + 'i')
         else:
-            spine = BarSpine.objects.filter(sourcecomponent__page__pageimage=pageimage, bar=bar)
+            spine = BarSpine.objects.filter(
+                sourcecomponent__page__pageimage=pageimage, bar=bar)
         if spine.count() > 0:
             orderno = spine[0].orderno
 
@@ -659,7 +710,7 @@ def ajaxChangeCollectionName(request):
             else:
                 status = 0
 
-        except Exception, e:
+        except Exception as e:
             status = 0
     else:
         status = 0
@@ -673,12 +724,13 @@ def ajaxAddCollection(request):
         try:
             new_name = request.POST["new_collection_name"]
 
-            collection = BarCollection(user_id=request.user.id, name=new_name, xystring="")
+            collection = BarCollection(
+                user_id=request.user.id, name=new_name, xystring="")
             collection.save()
 
             status = collection.id
 
-        except Exception, e:
+        except Exception as e:
             status = 0
     else:
         status = 0
@@ -694,8 +746,8 @@ def ajaxAddImageToCollectionModal(request):
     else:
         collections = None
 
-    return render_to_response('frontend/ajax/add-image-to-collection-modal.html', {"collections": collections, },
-                              context_instance=RequestContext(request))
+    return render_to_response('frontend/ajax/add-image-to-collection-modal.html', {
+                              "collections": collections, }, context_instance=RequestContext(request))
 
 
 # Ajax call for adding image to collection
@@ -724,7 +776,7 @@ def ajaxAddImageToCollection(request):
             else:
                 status = 0
 
-        except Exception, e:
+        except Exception as e:
             status = 0
     else:
         status = 0
@@ -761,7 +813,7 @@ def ajaxDeleteImageFromCollection(request):
             else:
                 status = 3
 
-        except Exception, e:
+        except Exception as e:
             status = 4
     else:
         status = 0
@@ -782,7 +834,7 @@ def ajaxDeleteCollection(request):
             else:
                 status = 0
 
-        except Exception, e:
+        except Exception as e:
             status = 0
     else:
         status = 0
@@ -791,5 +843,6 @@ def ajaxDeleteCollection(request):
 
 
 def iipredirect(request, path):
-    newurl = u'http://ocve3-images.dighum.kcl.ac.uk:6081/iip/' + path + '?' + request.GET.urlencode()
+    newurl = u'http://ocve3-images.dighum.kcl.ac.uk:6081/iip/' + \
+        path + '?' + request.GET.urlencode()
     return HttpResponseRedirect(newurl)
