@@ -45,7 +45,7 @@ def getViewInPageRegions(request, id, barid):
 
 @csrf_exempt
 def getGroupedBarRegions(request, id):
-    geos = getGeoJSON(id)
+    geos = getGeoJSON(id,"OL2")
     return render_to_response(
         'geojson.html', {
             'geoRegions': geos, 'grouped': 1})
