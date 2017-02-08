@@ -1,0 +1,35 @@
+@import "../vendor/foundation/scss/normalize";
+
+@import "fonts";
+
+@import "ocve", "settings";
+
+@import "../vendor/foundation/scss/foundation";
+
+$fa-font-path: "../vendor/font-awesome/fonts";
+@import "../vendor/font-awesome/scss/font-awesome";
+
+$borderColor: #e7e7e7;
+$workspaceNavColor: #e7e7e7;
+$menuToggleColor: darken( $workspaceNavColor, 5%);
+$buttonColor: $primary-color;
+
+$footerColor: #e7e7e7;
+$collectionsColor: #a8a8a8;
+
+
+@mixin borderRadius($radius) {
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    border-radius: $radius;
+}
+
+@import "app",
+"animations",
+"browse",
+"expandable-list",
+"faceted-navigation",
+"footer",
+"header",
+"local-navigation",
+"slick";
