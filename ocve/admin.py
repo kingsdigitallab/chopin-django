@@ -7,8 +7,9 @@ from admin_custom import *
 from django.contrib import admin
 
 
-
-admin.site.register(SourceComponent_WorkComponent, SourceComponent_WorkComponentAdmin)
+admin.site.register(
+    SourceComponent_WorkComponent,
+    SourceComponent_WorkComponentAdmin)
 admin.site.register(WorkComponent, WorkComponentAdmin)
 admin.site.register(Work, WorkAdmin)
 admin.site.register(Opus, OpusAdmin)

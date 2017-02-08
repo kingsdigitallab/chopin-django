@@ -7,64 +7,72 @@ from uiviews import *
 IIP_URL = settings.IIP_URL
 IMAGE_SERVER_URL = settings.IMAGE_SERVER_URL
 
-#Image format for all uploaded pages
-#Forced rather than detected because only tifs should be uploaded
+# Image format for all uploaded pages
+# Forced rather than detected because only tifs should be uploaded
 UPLOAD_EXTENSION = '.tif'
 
-#Error reporting template
+# Error reporting template
 errorPage = 'error.html'
-
-
-
 
 
 def uploadOCVE(request):
     #log = upload(request)
     return HttpResponse(log)
 
+
 @csrf_exempt
 def getBarRegions(request, id):
-    geos = getGeoJSON(id,"OL3")
-    return render_to_response('geojson.html', {'geoRegions': geos, 'grouped': 0})
+    geos = getGeoJSON(id, "OL3")
+    return render_to_response(
+        'geojson.html', {
+            'geoRegions': geos, 'grouped': 0})
+
 
 @csrf_exempt
 def getOL2BarRegions(request, id):
-    geos = getGeoJSON(id,"OL2")
-    return render_to_response('geojson.html', {'geoRegions': geos, 'grouped': 0})
+    geos = getGeoJSON(id, "OL2")
+    return render_to_response(
+        'geojson.html', {
+            'geoRegions': geos, 'grouped': 0})
 
 
 def getViewInPageRegions(request, id, barid):
-    geos = getViewInPageJSON(id,barid)
-    return render_to_response('geojson.html', {'geoRegions': geos, 'grouped': 0})
+    geos = getViewInPageJSON(id, barid)
+    return render_to_response(
+        'geojson.html', {
+            'geoRegions': geos, 'grouped': 0})
 
 
 @csrf_exempt
 def getGroupedBarRegions(request, id):
     geos = getGeoJSON(id)
-    return render_to_response('geojson.html', {'geoRegions': geos, 'grouped': 1})
-
-
+    return render_to_response(
+        'geojson.html', {
+            'geoRegions': geos, 'grouped': 1})
 
 
 def updateSourceComponent(request):
-    page_id=int(request.POST['page_id'])
-    component_id=int(request.POST['sourcecomponent_id'])
-    p=Page.objects.get(id=page_id)
-    sc=SourceComponent.objects.get(id=component_id)
+    page_id = int(request.POST['page_id'])
+    component_id = int(request.POST['sourcecomponent_id'])
+    p = Page.objects.get(id=page_id)
+    sc = SourceComponent.objects.get(id=component_id)
     if p is not None and sc is not None:
-        p.sourcecomponent=sc
+        p.sourcecomponent = sc
         p.save()
-    return HttpResponseRedirect("/ocve/structure/18153/#"+str(page_id))
+    return HttpResponseRedirect("/ocve/structure/18153/#" + str(page_id))
 
 
 def login_page(request):
-    return render_to_response('registration/login-page.html',{},context_instance=RequestContext(request))
+    return render_to_response(
+        'registration/login-page.html',
+        {},
+        context_instance=RequestContext(request))
 
 
 def user_profile(request):
     if request.user and request.user.id:
-        annotations=Annotation.objects.filter(user_id=request.user.id)
+        annotations = Annotation.objects.filter(user_id=request.user.id)
 
     return render_to_response("registration/user_profile.html",
-            {'annotations':annotations},
-        context_instance=RequestContext(request))
+                              {'annotations': annotations},
+                              context_instance=RequestContext(request))

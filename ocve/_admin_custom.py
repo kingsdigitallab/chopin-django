@@ -1,155 +1,229 @@
 # auto generated from an XMI file
-# this file can be edit, 
-# make sure it is renamed into "admin_custom.py" (without the underscore at the beginning)
+# this file can be edit,
+# make sure it is renamed into "admin_custom.py" (without the underscore
+# at the beginning)
 from models import *
 from admin_generic import *
 from django.contrib import admin
- 
+
 
 #
 class SourceInformation_YearInline(SourceInformation_YearInline):
-	pass
+    pass
 
 #
+
+
 class SourceComponent_InstrumentInline(SourceComponent_InstrumentInline):
-	pass
+    pass
 
 #
-class SourceInformation_PrintingMethodInline(SourceInformation_PrintingMethodInline):
-	pass
+
+
+class SourceInformation_PrintingMethodInline(
+        SourceInformation_PrintingMethodInline):
+    pass
 
 #
+
+
 class Genre_WorkInline(Genre_WorkInline):
-	pass
+    pass
 
 #
+
+
 class Annotation_BarRegionInline(Annotation_BarRegionInline):
-	pass
+    pass
 
 #
+
+
 class WorkComponentAdmin(WorkComponentAdmin):
-	pass
+    pass
 
 #
+
+
 class WorkAdmin(WorkAdmin):
-	pass
+    pass
 
 #
+
+
 class OpusAdmin(OpusAdmin):
-	pass
+    pass
 
 #
+
+
 class BarRegionAdmin(BarRegionAdmin):
-	pass
+    pass
 
 #
+
+
 class BarAdmin(BarAdmin):
-	pass
+    pass
 
 #
+
+
 class SourceAdmin(SourceAdmin):
-	pass
+    pass
 
 #
+
+
 class GenreAdmin(GenreAdmin):
-	pass
+    pass
 
 #
+
+
 class toneNoteAdmin(toneNoteAdmin):
-	pass
+    pass
 
 #
+
+
 class InstrumentAdmin(InstrumentAdmin):
-	pass
+    pass
 
 #
+
+
 class toneKeyAdmin(toneKeyAdmin):
-	pass
+    pass
 
 #
+
+
 class SourceComponentAdmin(SourceComponentAdmin):
-	pass
+    pass
 
 #
+
+
 class PublisherAdmin(PublisherAdmin):
-	pass
+    pass
 
 #
+
+
 class WorkComponentTypeAdmin(WorkComponentTypeAdmin):
-	pass
+    pass
 
 #
+
+
 class instrumentComponentAdmin(instrumentComponentAdmin):
-	pass
+    pass
 
 #
+
+
 class WorkCollectionAdmin(WorkCollectionAdmin):
-	pass
+    pass
 
 #
+
+
 class SourceInformationAdmin(SourceInformationAdmin):
-	pass
+    pass
 
 #
+
+
 class PageImageAdmin(PageImageAdmin):
-	pass
+    pass
 
 #
+
+
 class PageTypeAdmin(PageTypeAdmin):
-	pass
+    pass
 
 #
+
+
 class CollectionTypeAdmin(CollectionTypeAdmin):
-	pass
+    pass
 
 #
+
+
 class SourceComponentTypeAdmin(SourceComponentTypeAdmin):
-	pass
+    pass
 
 #
+
+
 class PageAdmin(PageAdmin):
-	pass
+    pass
 
 #
+
+
 class ArchiveAdmin(ArchiveAdmin):
-	pass
+    pass
 
 #
+
+
 class CityAdmin(CityAdmin):
-	pass
+    pass
 
 #
+
+
 class CountryAdmin(CountryAdmin):
-	pass
+    pass
 
 #
+
+
 class SourceTypeAdmin(SourceTypeAdmin):
-	pass
+    pass
 
 #
+
+
 class YearAdmin(YearAdmin):
-	pass
+    pass
 
 #
+
+
 class DedicateeAdmin(DedicateeAdmin):
-	pass
+    pass
 
 #
+
+
 class PrintingMethodAdmin(PrintingMethodAdmin):
-	pass
+    pass
 
 #
+
+
 class WorkInformationAdmin(WorkInformationAdmin):
-	pass
+    pass
 
 #
+
+
 class AnnotationAdmin(AnnotationAdmin):
-	pass
+    pass
 
 #
+
+
 class TreeAdmin(TreeAdmin):
-	pass
+    pass
 
 #
+
+
 class TreeTypeAdmin(TreeTypeAdmin):
-	pass
+    pass
