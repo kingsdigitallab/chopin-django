@@ -365,7 +365,7 @@ def ocvePageImageview(request, id, selectedregionid=0, view='full'):
     noteURL = "/ocve/getAnnotationRegions/" + str(id) + "/"
     commentURL = "/ocve/getCommentRegions/" + str(id) + "/"
     regionURL = "/ocve/getBarRegions/" + str(id) + "/"
-    template = "frontend/pageview.html"
+    template = "frontend/full-pageview.html"
 
     if request.GET.get('view'):
         view = request.GET.get('view')
