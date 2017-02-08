@@ -54,8 +54,8 @@
                     //Move number to top left so it doesn't obscure bar
                     var width = feature.getGeometry().getExtent()[2] - feature.getGeometry().getExtent()[0];
                     var factor = 1 / resolution;
-                    var paddingX = 25;
-                    var paddingY = 30;
+                    var paddingX = 55;
+                    var paddingY = 40;
                     var offsetX = Math.round((width * factor) / 2) * -1 + (paddingX * factor);
                     var height = feature.getGeometry().getExtent()[3] - feature.getGeometry().getExtent()[1];
                     var offsetY = Math.round((height * factor) / 2) * -1 + (paddingY * factor);
