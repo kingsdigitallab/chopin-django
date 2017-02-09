@@ -13,6 +13,6 @@ convert ${inputfile} convert.bmp
 # extended canvas
 convert convert.bmp -gravity NorthWest -background white -extent ${new_width}x${new_height} xt.bmp
 #Convert to jp2
-kdu_compress -i xt.bmp -o ${outputfile} -rate -,4,2.34,1.36,0.797,0.466,0.272,0.159,0.0929,0.0543,0.0317,0.0185 Creversible=yes Clevels=5 Stiles={1024,1024} Cblk={64,64} Corder=RPCL
+kdu_compress -i xt.bmp -o ${outputfile} -rate -,4,2.34,1.36,0.797,0.466,0.272,0.159,0.0929,0.0543,0.0317,0.0185 Creversible=yes Clevels=5 Stiles=\{1024,1024\} Cblk=\{64,64\} Corder=RPCL
 rm xt.bmp
 rm convert.bmp
