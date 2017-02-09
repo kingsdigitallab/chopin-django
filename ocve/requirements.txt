@@ -1,5 +1,5 @@
-django-registration-redux
-django-tinymce
+django - registration - redux
+django - tinymce
 xlwt
 xlrd
 progressbar

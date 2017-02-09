@@ -3,7 +3,7 @@ import shlex
 
 
 __author__ = 'Elliott Hall'
-#All view functions for editing bar information
+# All view functions for editing bar information
 from ocve.imagetools import verifyImagesViaIIP
 from django.contrib.auth.decorators import login_required
 from bareditor import editBarsURL
@@ -17,33 +17,43 @@ from ocve.scripts.updateliv import updateliv
 
 from django import template
 IMAGE_SERVER_URL = settings.IMAGE_SERVER_URL
-IMAGEFOLDER= settings.IMAGEFOLDER
+IMAGEFOLDER = settings.IMAGEFOLDER
 
 register = template.Library()
 
 UPLOAD_EXTENSION = settings.UPLOAD_EXTENSION
 STATIC_URL = settings.STATIC_URL
 
-#Index page for the DBMi/ bar editor
-#I have made this a template so logging/edit status summaries can be attached later if needed
+# Index page for the DBMi/ bar editor
+# I have made this a template so logging/edit status summaries can be
+# attached later if needed
+
+
 def dbmiView(request):
-    return render_to_response('dbmi/editindex.html', context_instance=RequestContext(request))
+    return render_to_response(
+        'dbmi/editindex.html',
+        context_instance=RequestContext(request))
 
 
 def fixrangeview(request):
-    #log=fixBarRange()
+    # log=fixBarRange()
     uploadOCVEOpus28()
     return HttpResponse(log)
-
-
 
 
 @login_required
 def selectSource(request):
     sForm = NewSourceForm()
     convert = lambda text: ('', int(text)) if text.isdigit() else (text, 0)
-    newSources = sorted(NewSource.objects.all(), key=lambda a: [convert(c) for c in re.split('([0-9]+)', a.sourcecode)])
-    return render_to_response('dbmi/selectsource.html', {'newSourceForm': sForm, 'newSources': newSources},
+    newSources = sorted(
+        NewSource.objects.all(),
+        key=lambda a: [
+            convert(c) for c in re.split(
+                '([0-9]+)',
+                a.sourcecode)])
+    return render_to_response('dbmi/selectsource.html',
+                              {'newSourceForm': sForm,
+                               'newSources': newSources},
                               context_instance=RequestContext(request))
 
 
@@ -52,7 +62,7 @@ def addSource(request):
     s = NewSourceForm(request.POST)
     errormsg = ''
     try:
-        #Check to make sure sourcecode does not exist
+        # Check to make sure sourcecode does not exist
         sc = request.POST['sourcecode']
         if sc is None or sc.__len__() == 0:
             errormsg = 'Please provide a source code'
@@ -66,8 +76,12 @@ def addSource(request):
     except MultiValueDictKeyError:
         errormsg = 'Please provide a source code'
     newSources = NewSource.objects.all()
-    return render_to_response('dbmi/selectsource.html', {'errormsg': errormsg, 'newSourceForm': s, 'newSources': newSources},
+    return render_to_response('dbmi/selectsource.html',
+                              {'errormsg': errormsg,
+                               'newSourceForm': s,
+                               'newSources': newSources},
                               context_instance=RequestContext(request))
+
 
 @csrf_exempt
 def addPages(request):
@@ -77,23 +91,38 @@ def addPages(request):
             if request.FILES is not None:
                 fname = request.FILES['Filedata'].name
                 if fname.__len__() > 0:
-                    npi = NewPageImage(source=s, filename=fname, surrogate=1, versionnumber=1, permission=False,
-                                       permissionnote='', height=0, width=0, startbar=0, endbar=0, corrected=0)
+                    npi = NewPageImage(
+                        source=s,
+                        filename=fname,
+                        surrogate=1,
+                        versionnumber=1,
+                        permission=False,
+                        permissionnote='',
+                        height=0,
+                        width=0,
+                        startbar=0,
+                        endbar=0,
+                        corrected=0)
                     npi.save()
-                    handle_uploaded_file(request.FILES['Filedata'], str(npi.id) + UPLOAD_EXTENSION)
+                    handle_uploaded_file(
+                        request.FILES['Filedata'], str(
+                            npi.id) + UPLOAD_EXTENSION)
                     # remove alpha channel from uploaded tif
-                    os.system('convert '+IMAGEFOLDER+'upload/%s.tif -alpha Off '+IMAGEFOLDER+'upload/%s.tif' % (
-                    str(npi.id), str(npi.id)))
-                    os.system('kdu_compress -i '+IMAGEFOLDER+'upload/' + str(
-                        npi.id) + '.tif -o '+IMAGEFOLDER+'jp2/newjp2/' + str(
-                        npi.id) + '.jp2 -rate -,4,2.34,1.36,0.797,0.466,0.272,0.159,0.0929,0.0543,0.0317,0.0185 Creversible=yes Clevels=5 Stiles=\{1024,1024\} Cblk=\{64,64\} Corder=RPCL Cmodes=BYPASS')
+                    os.system('convert ' +
+                              IMAGEFOLDER +
+                              'upload/%s.tif -alpha Off ' +
+                              IMAGEFOLDER +
+                              'upload/%s.tif' %
+                              (str(npi.id), str(npi.id)))
+                    os.system('kdu_compress -i ' + IMAGEFOLDER + 'upload/' + str(npi.id) + '.tif -o ' + IMAGEFOLDER + 'jp2/newjp2/' + str(npi.id) + \
+                              '.jp2 -rate -,4,2.34,1.36,0.797,0.466,0.272,0.159,0.0929,0.0543,0.0317,0.0185 Creversible=yes Clevels=5 Stiles=\{1024,1024\} Cblk=\{64,64\} Corder=RPCL Cmodes=BYPASS')
         except MultiValueDictKeyError:
             pass
     return HttpResponse("")
 
 
-#Apply the offsets passed from editor tool to all regions on page
-#signal that page has been corrected.
+# Apply the offsets passed from editor tool to all regions on page
+# signal that page has been corrected.
 @csrf_exempt
 def correctCrop(request):
     id = str(request.POST['pageID'])
@@ -114,12 +143,15 @@ def addToSource(request, id):
     oldSources = Source.objects.all()
 
     return render_to_response('uploadPage.html',
-                              {'source': newS, 'newPages': newPages, 'sources': sources, 'oldSources': oldSources,
+                              {'source': newS,
+                               'newPages': newPages,
+                               'sources': sources,
+                               'oldSources': oldSources,
                                'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL},
                               context_instance=RequestContext(request))
 
 
-#Mark the current editing status of a page/source
+# Mark the current editing status of a page/source
 @csrf_exempt
 def updateStatus(request):
     sourceid = 0
@@ -135,7 +167,7 @@ def updateStatus(request):
         except MultiValueDictKeyError:
             pass
     if sourceid > 0:
-        #Apply this status update to all of source's pages?
+        # Apply this status update to all of source's pages?
         andpages = 0
         try:
             andpages = int(request.POST['andpages'])
@@ -148,14 +180,15 @@ def updateStatus(request):
             ls.editstatus = status
             ls.save()
             if andpages == 1:
-                pls = PageLegacy.objects.filter(pageimage__page__sourcecomponent__source=s)
+                pls = PageLegacy.objects.filter(
+                    pageimage__page__sourcecomponent__source=s)
                 for pl in pls:
                     pl.editstatus = status
                     pl.save()
         except ObjectDoesNotExist:
             print 'Bad source ' + str(id)
-            #TODO: Use reverse() for sustainability when it works
-        #return uncorrectedSource(request,sourceid)
+            # TODO: Use reverse() for sustainability when it works
+        # return uncorrectedSource(request,sourceid)
         return HttpResponseRedirect('/ocve/sourceview/' + str(sourceid) + '/')
     if pageid > 0:
         try:
@@ -166,7 +199,7 @@ def updateStatus(request):
             pl.save()
         except ObjectDoesNotExist:
             print 'Bad page ' + str(id)
-            #TODO: Use reverse() for sustainability when it works
+            # TODO: Use reverse() for sustainability when it works
         return HttpResponseRedirect(editBarsURL + str(pageid) + '/')
 
 
@@ -195,7 +228,8 @@ def modifyPage(request):
                                 np.save()
                             except ObjectDoesNotExist:
                                 pass
-                    # added support for adding uploaded images to cfeo legacy sources
+                    # added support for adding uploaded images to cfeo legacy
+                    # sources
                     except:
                         oldsource = Source.objects.get(id=nsid)
                         for nid in npids:
@@ -203,11 +237,16 @@ def modifyPage(request):
                             spage = Page(label='uploaded', sourcecomponent=sc)
                             spage.save()
                             np = NewPageImage.objects.get(id=nid)
-                            spageimage = PageImage(page=spage, startbar=0, endbar=0, corrected=0, height=0,
-                                                   width=np.width)
+                            spageimage = PageImage(
+                                page=spage, startbar=0, endbar=0, corrected=0, height=0, width=np.width)
                             spageimage.save()
-                            pagelegacy = PageLegacy(pageimage=spageimage, jp2='newjp2/' + str(np.id) + '.jp2',
-                                                    editstatus=EditStatus.objects.get(id=2), cropCorrected=1)
+                            pagelegacy = PageLegacy(
+                                pageimage=spageimage,
+                                jp2='newjp2/' + str(
+                                    np.id) + '.jp2',
+                                editstatus=EditStatus.objects.get(
+                                    id=2),
+                                cropCorrected=1)
                             pagelegacy.save()
                             np.linked = 0
                             np.save()
@@ -226,8 +265,10 @@ def modifyPage(request):
                                 np.save()
                                 newid = np.id
                                 pl = PageLegacy.objects.filter()
-                                oldpath = IMAGEFOLDER+'jp2/newjp2/' + str(nid) + '.jp2'
-                                newpath = IMAGEFOLDER+'jp2/newjp2/' + str(newid) + '.jp2'
+                                oldpath = IMAGEFOLDER + \
+                                    'jp2/newjp2/' + str(nid) + '.jp2'
+                                newpath = IMAGEFOLDER + \
+                                    'jp2/newjp2/' + str(newid) + '.jp2'
                                 shutil.copyfile(oldpath, newpath)
                                 np.linked = 0
                                 np.filename = str(newid) + '.jp2'
@@ -241,13 +282,17 @@ def modifyPage(request):
 
 def uncorrectedSource(request, id):
     source = Source.objects.get(id=id)
-    pages = PageImage.objects.filter(page__sourcecomponent__source=source).order_by('page__orderno')
+    pages = PageImage.objects.filter(
+        page__sourcecomponent__source=source).order_by('page__orderno')
     sourceStatuses = EditStatus.objects.all()
-    return render_to_response('dbmi/correctview.html', {'source': source, 'pages': pages, 'statuses': sourceStatuses},
+    return render_to_response('dbmi/correctview.html',
+                              {'source': source,
+                               'pages': pages,
+                               'statuses': sourceStatuses},
                               context_instance=RequestContext(request))
 
 
-#OCVE sources that have yet to be corrected for Sarah
+# OCVE sources that have yet to be corrected for Sarah
 #.filter(sourcelegacy__corrected=0)
 def sourceView(request, m):
     mode = int(m)
@@ -263,39 +308,42 @@ def sourceView(request, m):
     except MultiValueDictKeyError:
         try:
             ordermode = int(request.session.__getitem__('sourceViewOrderMode'))
-            filterComplete = int(request.session.__getitem__('sourceViewFilterComplete'))
+            filterComplete = int(
+                request.session.__getitem__('sourceViewFilterComplete'))
         except KeyError:
             pass
     if mode == 1:
-        #By accode
+        # By accode
         sourceQuery = Source.objects.all().distinct().order_by('sourceinformation__accode')
     elif mode == 2:
-        #OCVE 1 only sources and Mellon-flagged CFEO sources
-        sourceQuery = Source.objects.filter(sourcelegacy__needsBarLines=1).distinct()
+        # OCVE 1 only sources and Mellon-flagged CFEO sources
+        sourceQuery = Source.objects.filter(
+            sourcelegacy__needsBarLines=1).distinct()
         title = 'Annotated Sources'
     elif mode == 3:
-        #CFEO sources only
+        # CFEO sources only
         sourceQuery = Source.objects.filter(sourcelegacy__cfeoKey__gt=0)
     elif mode == 4:
-        #all
+        # all
         sourceQuery = Source.objects.all().order_by(
             'sourcecomponent__sourcecomponent_workcomponent__workcomponent__opus', 'label')
-        #filter out sources marked as complete if user requests it
+        # filter out sources marked as complete if user requests it
     if filterComplete == 1:
         sourceQuery = sourceQuery.exclude(sourcelegacy__editstatus__id=10)
     x = 0
     keys = []
     sourceQuery = sourceQuery.distinct()
-    #Order the sources based on user input, or by opus if none selected
+    # Order the sources based on user input, or by opus if none selected
     if ordermode == 1:
-        #sourceQuery=sourceQuery.order_by('sourcecomponent__sourcecomponent_workcomponent__workcomponent__opus__opusno')
+        # sourceQuery=sourceQuery.order_by('sourcecomponent__sourcecomponent_workcomponent__workcomponent__opus__opusno')
         sourceQuery = sourceQuery.annotate(
             opusno=Max('sourcecomponent__sourcecomponent_workcomponent__workcomponent__opus__opusno')).order_by(
             'opusno')
     elif ordermode == 2:
-        #edit status
-        #sourceQuery=sourceQuery.order_by('sourcelegacy__editstatus__id')
-        sourceQuery = sourceQuery.annotate(editStatus=Max('sourcelegacy__editstatus__id')).order_by('editStatus')
+        # edit status
+        # sourceQuery=sourceQuery.order_by('sourcelegacy__editstatus__id')
+        sourceQuery = sourceQuery.annotate(editStatus=Max(
+            'sourcelegacy__editstatus__id')).order_by('editStatus')
     sourcecounts = {}
     stats = EditStatus.objects.all()
     sources = []
@@ -303,13 +351,13 @@ def sourceView(request, m):
     request.session.__setitem__('sourceViewMode', mode)
     for s in stats:
         sourcecounts[s] = 0
-        #for s in sourceQuery:
+        # for s in sourceQuery:
     for s in sourceQuery:
         try:
             if keys.index(s.id) > -1:
                 nothing = 0
         except ValueError:
-            if s.getEditStatus() <> "":
+            if s.getEditStatus() != "":
                 sources.append(s)
                 keys.append(s.id)
                 sourcecounts[s.getEditStatus()] += 1
@@ -320,13 +368,16 @@ def sourceView(request, m):
             #            x += 1
 
     return render_to_response('dbmi/correctview.html',
-                              {'title': title, 'sources': sources, 'sourcecounts': sourcecounts, 'ordermode': ordermode,
+                              {'title': title,
+                               'sources': sources,
+                               'sourcecounts': sourcecounts,
+                               'ordermode': ordermode,
                                'filterComplete': filterComplete},
                               context_instance=RequestContext(request))
 
 
 def loadEditPage(request, id):
-    #pageID=request.POST['pageId']
+    # pageID=request.POST['pageId']
     pageID = 4
     page = Page.objects.get(id=id)
     pageimage = PageImage.objects.filter(page=page)
@@ -336,12 +387,14 @@ def loadEditPage(request, id):
     for r in regions:
         b = BarRegionThumbnail(r, page, pageimage[0])
         regionThumbs.append(b)
-        #geos=toGeos(regions)
-    #TODO:  How are we limiting bar number choices?
-    #availBars=Bar.objects.filter(barnumber__range=(77,9fe9))
-    return render_to_response('annotation.html', {'page': page, 'regionThumbs': regionThumbs, 'legacy': l},
+        # geos=toGeos(regions)
+    # TODO:  How are we limiting bar number choices?
+    # availBars=Bar.objects.filter(barnumber__range=(77,9fe9))
+    return render_to_response('annotation.html',
+                              {'page': page,
+                               'regionThumbs': regionThumbs,
+                               'legacy': l},
                               context_instance=RequestContext(request))
-
 
 
 def findUnverifiedImages(request):
@@ -358,7 +411,12 @@ def findUnverifiedImages(request):
     multiple = 0
     verified = 0
     for u in unv:
-        command = str("find "+IMAGEFOLDER+"jp2 -iname " + u.filename + ".jp2")
+        command = str(
+            "find " +
+            IMAGEFOLDER +
+            "jp2 -iname " +
+            u.filename +
+            ".jp2")
         args = shlex.split(command)
         proc = subprocess.Popen(args, stdout=subprocess.PIPE)
         (out, err) = proc.communicate()
@@ -367,17 +425,18 @@ def findUnverifiedImages(request):
             if out.count("\n") > 1:
                 multiple += 1
                 paths = out.split("\n")
-                #for p in paths:
+                # for p in paths:
                 # p=p.replace("/vol/ocve2/images","")
-                #v=verifyImageDimensions(u.pageimage,path)
-                #if v==1:
+                # v=verifyImageDimensions(u.pageimage,path)
+                # if v==1:
                 #   out=p
             else:
                 path = out.replace("\n", "")
                 path = path.replace("/vol/ocve2/images/", "")
                 v = verifyImageDimensions(u.pageimage, path)
                 #out="<img title=\""+path+"\" src=\"http://ocve2.cch.kcl.ac.uk/iip/iipsrv.fcgi?FIF="+path+"&cnt=1&QLT=70&HEI=100&CVT=JPG\">"
-                out = "<img title=\"" + path + "\" src=\"/iip/iipsrv.fcgi?FIF=" + path + "&cnt=1&QLT=70&HEI=100&CVT=JPG\">"
+                out = "<img title=\"" + path + "\" src=\"/iip/iipsrv.fcgi?FIF=" + \
+                    path + "&cnt=1&QLT=70&HEI=100&CVT=JPG\">"
                 u.jp2 = path
                 u.save()
                 if v == 1:
@@ -385,7 +444,7 @@ def findUnverifiedImages(request):
                 else:
                     found += 1
         else:
-            #Not where it should be, try to find in
+            # Not where it should be, try to find in
             missing += 1
             miss = 1
 
@@ -394,7 +453,7 @@ def findUnverifiedImages(request):
                 log = log + "<tr><td>" + str(u.pageimage.id) + "</td><td>" + str(
                     u.filename) + "</td><td>" + out + "</td></tr>"
             elif mode == 1 and miss == 1:
-                #missing only
+                # missing only
                 log = log + "<tr><td>" + str(u.pageimage.id) + "</td><td>" + str(
                     u.filename) + "</td><td>" + out + "</td></tr>"
         except UnicodeDecodeError:
@@ -404,117 +463,138 @@ def findUnverifiedImages(request):
         verified) + "</li><li>Multiple: " + str(multiple) + "</li></ul></body></html>"
     return HttpResponse(log)
 
+
 @csrf_exempt
 def iipPage(request, id):
-    source=None
+    source = None
     try:
         np = NewPageImage.objects.get(id=id)
         source = np.source
         #zoomifyURL = "https://ocve2-stg.cch.kcl.ac.uk/iip/iipsrv.fcgi"
-        jp2Path='jp2/newjp2/'+str(np.id)+'.jp2'
+        jp2Path = 'jp2/newjp2/' + str(np.id) + '.jp2'
     except ObjectDoesNotExist:
-        np=PageImage.objects.get(id=id)
-        source=Source.objects.filter(sourcecomponent__page__pageimage__id=id)[0]
-        jp2Path=np.getJP2Path()
-    return render_to_response('dbmi/newpage.html', {'np': np, 'source': source, 'jp2Path': jp2Path, 'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL},
-        context_instance=RequestContext(request))
-
+        np = PageImage.objects.get(id=id)
+        source = Source.objects.filter(
+            sourcecomponent__page__pageimage__id=id)[0]
+        jp2Path = np.getJP2Path()
+    return render_to_response('dbmi/newpage.html',
+                              {'np': np,
+                               'source': source,
+                               'jp2Path': jp2Path,
+                               'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL},
+                              context_instance=RequestContext(request))
 
 
 def sourcesbywork(request):
     works = Work.objects.all()
     return render_to_response('dbmi/sourcesbywork.html',
-                              {'works': works, 'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL, },
+                              {'works': works,
+                               'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL,
+                               },
                               context_instance=RequestContext(request))
 
-#New sources view for quick edits and management
+# New sources view for quick edits and management
+
+
 @csrf_exempt
 def sources(request):
-    order='orderno'
-    filter=''
+    order = 'orderno'
+    filter = ''
     try:
-        order=request.GET['order']
+        order = request.GET['order']
     except MultiValueDictKeyError:
         pass
     try:
-        filter=request.GET['filter']
+        filter = request.GET['filter']
     except MultiValueDictKeyError:
         pass
 
     if filter == 'ocve':
-            sources=Source.objects.filter(ocve=True).order_by(order)
+        sources = Source.objects.filter(ocve=True).order_by(order)
     elif filter == 'cfeo':
-            sources=Source.objects.filter(cfeo=True).order_by(order)
+        sources = Source.objects.filter(cfeo=True).order_by(order)
     else:
-        sources=Source.objects.all().order_by(order)
-    return render_to_response('dbmi/sources.html', {'sources': sources,'order':order,'filter':filter})
+        sources = Source.objects.all().order_by(order)
+    return render_to_response(
+        'dbmi/sources.html', {'sources': sources, 'order': order, 'filter': filter})
 
 
-#Quick list of all works to link to workadmin
+# Quick list of all works to link to workadmin
 @csrf_exempt
 def works(request):
-    works=Work.objects.all()
+    works = Work.objects.all()
     return render_to_response('dbmi/works.html', {'works': works})
 
-#A custom admin view to show the relevant objects for a single opus
-#and a quick list of the sources attached to it
-@csrf_exempt
-def workadmin(request,id):
-    w = Work.objects.get(id=id)
-    wform=WorkForm(instance=w)
-    #Work information
-    winfoform=WorkInformationForm(instance=w.workinformation)
-    comps=WorkComponent.objects.filter(work=w)
-    compFormset=WorkComponentFormset(queryset=comps)
-    sources=w.getSources()
-    return render_to_response('dbmi/workadmin.html', {'work': w, 'compFormset':compFormset,'workform': wform,'workinformationform': winfoform,'workcomponents':comps, 'sources':sources}      ,
-        context_instance=RequestContext(request))
+# A custom admin view to show the relevant objects for a single opus
+# and a quick list of the sources attached to it
+
 
 @csrf_exempt
-def savework(request,id):
-    workform=WorkForm(request.POST,instance=Work.objects.get(id=id))
-    w=workform.save(commit=False)
+def workadmin(request, id):
+    w = Work.objects.get(id=id)
+    wform = WorkForm(instance=w)
+    # Work information
+    winfoform = WorkInformationForm(instance=w.workinformation)
+    comps = WorkComponent.objects.filter(work=w)
+    compFormset = WorkComponentFormset(queryset=comps)
+    sources = w.getSources()
+    return render_to_response('dbmi/workadmin.html',
+                              {'work': w,
+                               'compFormset': compFormset,
+                               'workform': wform,
+                               'workinformationform': winfoform,
+                               'workcomponents': comps,
+                               'sources': sources},
+                              context_instance=RequestContext(request))
+
+
+@csrf_exempt
+def savework(request, id):
+    workform = WorkForm(request.POST, instance=Work.objects.get(id=id))
+    w = workform.save(commit=False)
     try:
         for changed in workform.changed_data:
-                if changed == 'genre':
-                    genres=workform.cleaned_data['genre']
-                    for g in genres:
-                        Genre_Work(work=w,genre=g).save()
+            if changed == 'genre':
+                genres = workform.cleaned_data['genre']
+                for g in genres:
+                    Genre_Work(work=w, genre=g).save()
     except MultiValueDictKeyError:
-            pass
+        pass
     w.save()
-    return HttpResponseRedirect("/ocve/workadmin/"+id+"/")
+    return HttpResponseRedirect("/ocve/workadmin/" + id + "/")
+
 
 @csrf_exempt
-def saveworkinformation(request,id):
-    wi=WorkInformation.objects.get(id=id)
-    workinfoform=WorkInformationForm(request.POST,instance=wi)
+def saveworkinformation(request, id):
+    wi = WorkInformation.objects.get(id=id)
+    workinfoform = WorkInformationForm(request.POST, instance=wi)
     workinfoform.save()
     w = Work.objects.get(workinformation=wi)
-    return HttpResponseRedirect("/ocve/workadmin/"+str(w.id)+"/")
+    return HttpResponseRedirect("/ocve/workadmin/" + str(w.id) + "/")
+
 
 @csrf_exempt
-def saveworkcomponents(request,id):
-    compFormset=WorkComponentFormset(request.POST)
+def saveworkcomponents(request, id):
+    compFormset = WorkComponentFormset(request.POST)
     compFormset.save()
-    return HttpResponseRedirect("/ocve/workadmin/"+str(id)+"/")
+    return HttpResponseRedirect("/ocve/workadmin/" + str(id) + "/")
 
-#Serialize all deepzoom previews as thumbnail images for browsing
+# Serialize all deepzoom previews as thumbnail images for browsing
+
+
 def generateAllThumbnails(request):
-    log=generateThumbnails(Source.objects.filter(Q(ocve=1)|Q(cfeo=1)))
+    log = generateThumbnails(Source.objects.filter(Q(ocve=1) | Q(cfeo=1)))
     return HttpResponse(log)
 
-def generateSourceThumbnails(request,id):
-    sources=Source.objects.filter(id=id)
-    log=generateThumbnails(sources)
+
+def generateSourceThumbnails(request, id):
+    sources = Source.objects.filter(id=id)
+    log = generateThumbnails(sources)
     return HttpResponse(log)
+
 
 def pushtoliv(request):
-    #management.call_command('pushtoliv')
+    # management.call_command('pushtoliv')
     updateliv(0)
     #os.system('python manage.py pushtoliv')
     return HttpResponse("Live updated")
-
-
-
-
