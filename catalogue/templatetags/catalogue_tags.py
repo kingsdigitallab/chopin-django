@@ -89,7 +89,7 @@ def main_menu(context, root, current_page=None):
     pages that have the show_in_menus setting on are returned."""
     menu_pages = root.get_children().filter(live=True, show_in_menus=True)
 
-    return {'request': context['request'], 'root': root,
+    return {'request': context['request'], 'root': root, 'BASE_URL':context['BASE_URL'],
             'current_page': current_page, 'menu_pages': menu_pages}
 
 @register.filter
