@@ -6,128 +6,146 @@ from django.contrib import admin
 from admin_custom import *
 
 #
+
+
 class SourceInformation_YearInline(admin.TabularInline):
 
-	model = SourceInformation_Year
-	extra = 1
+    model = SourceInformation_Year
+    extra = 1
 
 #
+
+
 class SourceComponent_InstrumentInline(admin.TabularInline):
 
-	model = SourceComponent_Instrument
-	extra = 1
+    model = SourceComponent_Instrument
+    extra = 1
 
 #
+
+
 class SourceInformation_PrintingMethodInline(admin.TabularInline):
 
-	model = SourceInformation_PrintingMethod
-	extra = 1
+    model = SourceInformation_PrintingMethod
+    extra = 1
 
 #
+
+
 class Genre_WorkInline(admin.TabularInline):
 
-	model = Genre_Work
-	extra = 1
+    model = Genre_Work
+    extra = 1
 
 #
+
+
 class Annotation_BarRegionInline(admin.TabularInline):
 
-	model = Annotation_BarRegion
-	extra = 1
+    model = Annotation_BarRegion
+    extra = 1
 
 #
+
+
 class WorkAdmin(admin.ModelAdmin):
-	model = Work
+    model = Work
 
-	verbose_name = 'Work'
-	verbose_name_plural = 'Works'
+    verbose_name = 'Work'
+    verbose_name_plural = 'Works'
 
-	#inlines = (Genre_WorkInline, )
+    #inlines = (Genre_WorkInline, )
 
 
 #
 class OpusAdmin(admin.ModelAdmin):
-	model = Opus
+    model = Opus
 
-	verbose_name = 'Opus'
-	verbose_name_plural = 'Opuses'
+    verbose_name = 'Opus'
+    verbose_name_plural = 'Opuses'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class BarRegionAdmin(admin.ModelAdmin):
-	model = BarRegion
+    model = BarRegion
 
-	verbose_name = 'BarRegion'
-	verbose_name_plural = 'BarRegions'
+    verbose_name = 'BarRegion'
+    verbose_name_plural = 'BarRegions'
 
-	inlines = (Annotation_BarRegionInline, )
+    inlines = (Annotation_BarRegionInline, )
 
 
 #
 class BarAdmin(admin.ModelAdmin):
-	model = Bar
+    model = Bar
 
-	verbose_name = 'Bar'
-	verbose_name_plural = 'Bars'
+    verbose_name = 'Bar'
+    verbose_name_plural = 'Bars'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class SourceAdmin(admin.ModelAdmin):
-	model = Source
-	verbose_name = 'Source'
-	verbose_name_plural = 'Sources'
-	inlines = (SourceInformationInline,)
+    model = Source
+    verbose_name = 'Source'
+    verbose_name_plural = 'Sources'
+    inlines = (SourceInformationInline,)
 #
+
+
 class GenreAdmin(admin.ModelAdmin):
-	model = Genre
+    model = Genre
 
-	verbose_name = 'Genre'
-	verbose_name_plural = 'Genres'
+    verbose_name = 'Genre'
+    verbose_name_plural = 'Genres'
 
-	inlines = (Genre_WorkInline, )
+    inlines = (Genre_WorkInline, )
 
 
 #
 class keyPitchAdmin(admin.ModelAdmin):
-	model = keyPitch
+    model = keyPitch
 
-	verbose_name = 'keyPitch'
-	verbose_name_plural = 'keyPitchs'
+    verbose_name = 'keyPitch'
+    verbose_name_plural = 'keyPitchs'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class InstrumentAdmin(admin.ModelAdmin):
-	model = Instrument
+    model = Instrument
 
-	verbose_name = 'Instrument'
-	verbose_name_plural = 'Instruments'
+    verbose_name = 'Instrument'
+    verbose_name_plural = 'Instruments'
 
-	inlines = (SourceComponent_InstrumentInline, )
+    inlines = (SourceComponent_InstrumentInline, )
 
 
 #
 class keyModeAdmin(admin.ModelAdmin):
-	model = keyMode
+    model = keyMode
 
-	verbose_name = 'keyMode'
-	verbose_name_plural = 'keyModes'
+    verbose_name = 'keyMode'
+    verbose_name_plural = 'keyModes'
 
-	inlines = ()
+    inlines = ()
 #
+
+
 class SourceComponentAdmin(admin.ModelAdmin):
-	model = SourceComponent
+    model = SourceComponent
 
-	verbose_name = 'SourceComponent'
-	verbose_name_plural = 'SourceComponents'
+    verbose_name = 'SourceComponent'
+    verbose_name_plural = 'SourceComponents'
 
-	inlines = (SourceComponent_InstrumentInline, )
+    inlines = (SourceComponent_InstrumentInline, )
 #
+
+
 class WorkComponentAdmin(admin.ModelAdmin):
     model = WorkComponent
     verbose_name = 'WorkComponent'
@@ -135,20 +153,31 @@ class WorkComponentAdmin(admin.ModelAdmin):
     list_display = ('label', 'work',)
     raw_id_fields = ('work',)
 #
+
+
 class SourceComponent_WorkComponentAdmin(admin.ModelAdmin):
     model = SourceComponent_WorkComponent
-    list_display = ( 'id', 'workcomponent', 'workcomp_id', 'sourcecomponent', 'workcomponent_work', 'sourcecomponent_work', 'sourcecomponent_source',  'sourcecomponent_cfeolabel' )
+    list_display = (
+        'id',
+        'workcomponent',
+        'workcomp_id',
+        'sourcecomponent',
+        'workcomponent_work',
+        'sourcecomponent_work',
+        'sourcecomponent_source',
+        'sourcecomponent_cfeolabel')
     raw_id_fields = ('sourcecomponent', 'workcomponent',)
-
 
     def workcomp_id(self, instance):
         return instance.workcomponent.id
 
     def workcomponent_work(self, instance):
-        return "%s (%s)" % ( instance.workcomponent.work, instance.workcomponent.work.id )
+        return "%s (%s)" % (instance.workcomponent.work,
+                            instance.workcomponent.work.id)
 
     def sourcecomponent_work(self, instance):
-        return "%s (%s)" % ( instance.sourcecomponent.source.getWork(), instance.sourcecomponent.source.getWork().id,)
+        return "%s (%s)" % (instance.sourcecomponent.source.getWork(),
+                            instance.sourcecomponent.source.getWork().id,)
 
     def sourcecomponent_source(self, instance):
         return "%s" % (instance.sourcecomponent.source,)
@@ -157,206 +186,214 @@ class SourceComponent_WorkComponentAdmin(admin.ModelAdmin):
         return "%s" % (instance.sourcecomponent.source.cfeolabel,)
 
     def same_work(self, instance):
-        if (instance.workcomponent.work.id == instance.sourcecomponent.source.getWork().id):
+        if (instance.workcomponent.work.id ==
+                instance.sourcecomponent.source.getWork().id):
             return "True"
         else:
             return "False"
 #
+
+
 class PublisherAdmin(admin.ModelAdmin):
-	model = Publisher
+    model = Publisher
 
-	verbose_name = 'Publisher'
-	verbose_name_plural = 'Publishers'
+    verbose_name = 'Publisher'
+    verbose_name_plural = 'Publishers'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class WorkComponentTypeAdmin(admin.ModelAdmin):
-	model = WorkComponentType
+    model = WorkComponentType
 
-	verbose_name = 'WorkComponentType'
-	verbose_name_plural = 'WorkComponentTypes'
+    verbose_name = 'WorkComponentType'
+    verbose_name_plural = 'WorkComponentTypes'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class instrumentComponentAdmin(admin.ModelAdmin):
-	model = instrumentComponent
+    model = instrumentComponent
 
-	verbose_name = 'instrumentComponent'
-	verbose_name_plural = 'instrumentComponents'
+    verbose_name = 'instrumentComponent'
+    verbose_name_plural = 'instrumentComponents'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class WorkCollectionAdmin(admin.ModelAdmin):
-	model = WorkCollection
+    model = WorkCollection
 
-	verbose_name = 'WorkCollection'
-	verbose_name_plural = 'WorkCollections'
+    verbose_name = 'WorkCollection'
+    verbose_name_plural = 'WorkCollections'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class SourceInformationAdmin(admin.ModelAdmin):
-	model = SourceInformation
+    model = SourceInformation
 
-	verbose_name = 'SourceInformation'
-	verbose_name_plural = 'SourceInformations'
+    verbose_name = 'SourceInformation'
+    verbose_name_plural = 'SourceInformations'
 
-	inlines = (SourceInformation_YearInline, SourceInformation_PrintingMethodInline, )
+    inlines = (
+        SourceInformation_YearInline,
+        SourceInformation_PrintingMethodInline,
+    )
 
 
 #
 class PageImageAdmin(admin.ModelAdmin):
-	model = PageImage
+    model = PageImage
 
-	verbose_name = 'PageImage'
-	verbose_name_plural = 'PageImages'
+    verbose_name = 'PageImage'
+    verbose_name_plural = 'PageImages'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class PageTypeAdmin(admin.ModelAdmin):
-	model = PageType
+    model = PageType
 
-	verbose_name = 'PageType'
-	verbose_name_plural = 'PageTypes'
+    verbose_name = 'PageType'
+    verbose_name_plural = 'PageTypes'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class CollectionTypeAdmin(admin.ModelAdmin):
-	model = CollectionType
+    model = CollectionType
 
-	verbose_name = 'CollectionType'
-	verbose_name_plural = 'CollectionTypes'
+    verbose_name = 'CollectionType'
+    verbose_name_plural = 'CollectionTypes'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class SourceComponentTypeAdmin(admin.ModelAdmin):
-	model = SourceComponentType
+    model = SourceComponentType
 
-	verbose_name = 'SourceComponentType'
-	verbose_name_plural = 'SourceComponentTypes'
+    verbose_name = 'SourceComponentType'
+    verbose_name_plural = 'SourceComponentTypes'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class PageAdmin(admin.ModelAdmin):
-	model = Page
+    model = Page
 
-	verbose_name = 'Page'
-	verbose_name_plural = 'Pages'
+    verbose_name = 'Page'
+    verbose_name_plural = 'Pages'
 
-	inlines = ()
+    inlines = ()
+
 
 class PageLegacyAdmin(admin.ModelAdmin):
-	model = PageLegacy
+    model = PageLegacy
 
-	verbose_name = 'PageLegacy'
-	verbose_name_plural = 'Pagelegacy'
+    verbose_name = 'PageLegacy'
+    verbose_name_plural = 'Pagelegacy'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class ArchiveAdmin(admin.ModelAdmin):
-	model = Archive
+    model = Archive
 
-	verbose_name = 'Archive'
-	verbose_name_plural = 'Archives'
+    verbose_name = 'Archive'
+    verbose_name_plural = 'Archives'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class CityAdmin(admin.ModelAdmin):
-	model = City
+    model = City
 
-	verbose_name = 'City'
-	verbose_name_plural = 'Cities'
+    verbose_name = 'City'
+    verbose_name_plural = 'Cities'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class CountryAdmin(admin.ModelAdmin):
-	model = Country
+    model = Country
 
-	verbose_name = 'Country'
-	verbose_name_plural = 'Countries'
+    verbose_name = 'Country'
+    verbose_name_plural = 'Countries'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class SourceTypeAdmin(admin.ModelAdmin):
-	model = SourceType
+    model = SourceType
 
-	verbose_name = 'SourceType'
-	verbose_name_plural = 'SourceTypes'
+    verbose_name = 'SourceType'
+    verbose_name_plural = 'SourceTypes'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class YearAdmin(admin.ModelAdmin):
-	model = Year
+    model = Year
 
-	verbose_name = 'Year'
-	verbose_name_plural = 'Years'
+    verbose_name = 'Year'
+    verbose_name_plural = 'Years'
 
-	inlines = (SourceInformation_YearInline, )
+    inlines = (SourceInformation_YearInline, )
 
 
 #
 class DedicateeAdmin(admin.ModelAdmin):
-	model = Dedicatee
+    model = Dedicatee
 
-	verbose_name = 'Dedicatee'
-	verbose_name_plural = 'Dedicatees'
+    verbose_name = 'Dedicatee'
+    verbose_name_plural = 'Dedicatees'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class PrintingMethodAdmin(admin.ModelAdmin):
-	model = PrintingMethod
+    model = PrintingMethod
 
-	verbose_name = 'PrintingMethod'
-	verbose_name_plural = 'PrintingMethods'
+    verbose_name = 'PrintingMethod'
+    verbose_name_plural = 'PrintingMethods'
 
-	inlines = (SourceInformation_PrintingMethodInline, )
+    inlines = (SourceInformation_PrintingMethodInline, )
 
 
 #
 class WorkInformationAdmin(admin.ModelAdmin):
-	model = WorkInformation
+    model = WorkInformation
 
-	verbose_name = 'WorkInformation'
-	verbose_name_plural = 'WorkInformations'
+    verbose_name = 'WorkInformation'
+    verbose_name_plural = 'WorkInformations'
 
-	inlines = ()
+    inlines = ()
 
 
 #
 class AnnotationAdmin(admin.ModelAdmin):
-	model = Annotation
+    model = Annotation
 
-	verbose_name = 'Annotation'
-	verbose_name_plural = 'Annotations'
+    verbose_name = 'Annotation'
+    verbose_name_plural = 'Annotations'
 
-	inlines = (Annotation_BarRegionInline, )
+    inlines = (Annotation_BarRegionInline, )
+
 
 class AnnotationTypeAdmin(admin.ModelAdmin):
     model = AnnotationType
@@ -367,12 +404,12 @@ class AnnotationTypeAdmin(admin.ModelAdmin):
 
 #
 class AcCodeAdmin(admin.ModelAdmin):
-	model = AcCode
+    model = AcCode
 
-	verbose_name = 'AcCode'
-	verbose_name_plural = 'AcCodes'
+    verbose_name = 'AcCode'
+    verbose_name_plural = 'AcCodes'
 
-	inlines = ()
+    inlines = ()
 
 
 #

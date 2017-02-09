@@ -18,6 +18,8 @@ import re
 # Note edit views
 
 # Mini wrapper class for geojson
+
+
 class noteGeos:
 
     def __init__(self, annotation):
@@ -26,16 +28,18 @@ class noteGeos:
         self.geos = []
 
         if self.barregions.count() > 0:
-            self.geos = toGeos(self.barregions,"OL3")
+            self.geos = toGeos(self.barregions, "OL3")
 
 # Delete user annotation
+
+
 @csrf_exempt
 @login_required
 def deleteNote(request, id):
-    pageimageid=0
+    pageimageid = 0
     try:
-        a=Annotation.objects.get(id=id)
-        pageimageid=a.pageimage_id
+        a = Annotation.objects.get(id=id)
+        pageimageid = a.pageimage_id
         a.delete()
     except:
         pass
@@ -48,7 +52,8 @@ def deleteNote(request, id):
         'messages': rendered_messages
     }
 
-    return redirect('/ocve/browse/pageview/'+str(a.pageimage_id)+'/?view=annotations')
+    return redirect('/ocve/browse/pageview/' +
+                    str(a.pageimage_id) + '/?view=annotations')
 
 
 # Takes an annotation form and updates
@@ -88,9 +93,9 @@ def saveNote(request):
         # geotext = geotext.replace('POLYGON((', '').replace('))', '').replace(
         #     ',', '],[').replace(' ', ',')
         # new_annotation.noteregions = '[' + geotext + ']'
-        m=re.search("coordinates\"\:\[\[(\[.*\])\]\]", geotext)
-        if m != None:
-            new_annotation.noteregions=m.group(1)
+        m = re.search("coordinates\"\:\[\[(\[.*\])\]\]", geotext)
+        if m is not None:
+            new_annotation.noteregions = m.group(1)
         new_annotation.save()
 
     # Recalculate which bar regions intersect with this note
@@ -119,7 +124,9 @@ def saveNote(request):
         'messages': rendered_messages
     }
 
-    return redirect('/ocve/browse/pageview/'+str(new_annotation.pageimage_id)+'/?view=annotations')
+    return redirect('/ocve/browse/pageview/' +
+                    str(new_annotation.pageimage_id) +
+                    '/?view=annotations')
 
 
 @csrf_exempt
@@ -133,20 +140,21 @@ def getAnnotations(request, id):
 
 @csrf_exempt
 def getNoteRegions(request, id):
-    return getAnnotationRegions(request,id,1)
+    return getAnnotationRegions(request, id, 1)
+
 
 @csrf_exempt
 def getCommentRegions(request, id):
-    return getAnnotationRegions(request,id,2)
+    return getAnnotationRegions(request, id, 2)
 
 
 @csrf_exempt
-def getAnnotationRegions(request, id,noteType=2):
+def getAnnotationRegions(request, id, noteType=2):
     if noteType == 1:
-        #User annotations
+        # User annotations
         notes = Annotation.objects.filter(pageimage_id=id, type_id__gt=2)
     else:
-        #OCVE Commentary
+        # OCVE Commentary
         notes = Annotation.objects.filter(pageimage_id=id, type_id=2)
     annotations = []
 
