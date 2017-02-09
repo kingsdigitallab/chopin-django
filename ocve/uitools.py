@@ -2,7 +2,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 __author__ = 'Elliott Hall'
 # Various queries and reusable functions that will be employed in the ui.
-#Kept here for the sake of hygiene, and hopefully resuability
+# Kept here for the sake of hygiene, and hopefully resuability
 from models import *
 import json
 import os
@@ -21,7 +21,9 @@ from django.db.models import Q
 
 norm = 'NFKC'
 
-#All instruments in a single opus
+# All instruments in a single opus
+
+
 def getInstrumentsByOpus(opus):
     return Instrument.objects.filter(
         sourcecomponent_instrument__sourcecomponent__sourcecomponent_workcomponent__workcomponent__opus=opus).distinct()
@@ -31,15 +33,17 @@ def getBarBySource(bar, source):
     return Bar.objects.filter(barregion__page__sourcecomponent__source=source)
 
 
-#Get sources within an opus that have bar
+# Get sources within an opus that have bar
 def getSourcesByBar(bar, opus):
-    return Source.objects.filter(sourcecomponent__page__pageimage__barregion__bar=bar,
-                                 sourcecomponent__sourcecomponent_workcomponent__workcomponent__opus=opus).distinct()
+    return Source.objects.filter(
+        sourcecomponent__page__pageimage__barregion__bar=bar,
+        sourcecomponent__sourcecomponent_workcomponent__workcomponent__opus=opus).distinct()
 
 
 def getRegionsByBarOpus(bar, opus):
-    return BarRegion.objects.filter(bar=bar,
-                                    pageimage__page__sourcecomponent__sourcecomponent_workcomponent__workcomponent__opus=opus).distinct()
+    return BarRegion.objects.filter(
+        bar=bar,
+        pageimage__page__sourcecomponent__sourcecomponent_workcomponent__workcomponent__opus=opus).distinct()
 
 
 def getAvailableBarsByOpus(opus):
@@ -47,10 +51,11 @@ def getAvailableBarsByOpus(opus):
         barregion__page__sourcecomponent__sourcecomponent_workcomponent__workcomponent__opus=opus).distinct()
 
 
-#Overwrite source component label with its work components if link exists
+# Overwrite source component label with its work components if link exists
 def overwritesourcecomponentlabels(source):
     for sc in SourceComponent.objects.filter(source=source):
-        wc = WorkComponent.objects.filter(sourcecomponent_workcomponent__sourcecomponent=sc)
+        wc = WorkComponent.objects.filter(
+            sourcecomponent_workcomponent__sourcecomponent=sc)
         if wc.count() > 0:
             sc.label = wc[0].label
             sc.label = add_special_characters(sc.label)
@@ -62,7 +67,7 @@ def setPageImageTextLabel(source):
     for pi in pageimages:
         m = re.search("([\[]*[\d|ivx]+[\]]*)(.*)", pi.page.label)
         if m is not None and len(m.group(2)) > 0:
-            #Correct page problem Polonaise No. 1,
+            # Correct page problem Polonaise No. 1,
             page = pi.page
             l = page.label
             l = l.replace(m.group(2), '')
@@ -80,31 +85,34 @@ def setPageImageTextLabel(source):
                         textlabel = textlabel + ', '
         if pi.endbar != '0':
             textlabel = textlabel + " bs " + pi.startbar + u'\u2013' + pi.endbar
-            #if len(pi.textlabel) == 0:
+            # if len(pi.textlabel) == 0:
         pi.textlabel = textlabel
         pi.save()
 
 
 class SourceComponentItem:
+
     def __init__(self, sourcecomponent):
         self.id = sourcecomponent.id
         self.label = sourcecomponent.label
         instruments = []
-        for i in Instrument.objects.filter(sourcecomponent_instrument__sourcecomponent=sourcecomponent).distinct():
+        for i in Instrument.objects.filter(
+                sourcecomponent_instrument__sourcecomponent=sourcecomponent).distinct():
             instruments.append(int(i.id))
         self.instruments = instruments
         self.source_id = sourcecomponent.source_id
         self.orderno = sourcecomponent.orderno
-        #May not be needed
-        #w=Work.objects.filter(workcomponent__workcomponent_sourcecomponent__sourcecomponent=sourcecomponent)
-        #if w.count() > 0:
+        # May not be needed
+        # w=Work.objects.filter(workcomponent__workcomponent_sourcecomponent__sourcecomponent=sourcecomponent)
+        # if w.count() > 0:
         #    self.work=w.id
-        #else:
-        #Non-music pages
+        # else:
+        # Non-music pages
         #    self.work=0
 
     def toJson(self):
-        scjson = "{'id': " + str(self.id) + ", 'label': " + json.dumps(self.label) + ", "
+        scjson = "{'id': " + str(self.id) + ", 'label': " + \
+            json.dumps(self.label) + ", "
         scjson += "'orderno': " + json.dumps(self.orderno) + ", "
         #scjson += "'work_id': " + json.dumps(self.work) + ", "
         scjson += "'source_id':" + json.dumps(self.source_id) + ','
@@ -113,8 +121,9 @@ class SourceComponentItem:
         return scjson
 
 
-#s.id,s.sourcetype_id,s.label,s.cfeolabel,w.id
+# s.id,s.sourcetype_id,s.label,s.cfeolabel,w.id
 class SourceSearchItem:
+
     def __init__(self, row, orderno, mode):
 
         self.orderno = orderno
@@ -128,14 +137,14 @@ class SourceSearchItem:
             self.label = row[3]
         self.label = _n(norm, self.label)
         self.label = add_special_characters(self.label)
-        #Anything not a manuscript is a printed edition
-        #Set first edition type to printed edition
+        # Anything not a manuscript is a printed edition
+        # Set first edition type to printed edition
         if int(row[1]) == 3:
             self.type = 1
         else:
             self.type = row[1]
         genres = []
-        #if source.getWork() is not None:
+        # if source.getWork() is not None:
         #    self.work = source.getWork().id
         for g in Genre.objects.filter(work__id=int(row[4])).distinct():
             genres.append(int(g.id))
@@ -154,14 +163,15 @@ class SourceSearchItem:
         self.dedicatee = row[5]
         self.publisher = row[6]
         self.platenumber = add_special_characters(row[7])
-        for y in Year.objects.filter(sourceinformation_year__sourceinformation_id=int(row[10])):
+        for y in Year.objects.filter(
+            sourceinformation_year__sourceinformation_id=int(
+                row[10])):
             years.append(y.year)
-        #else:
+        # else:
         #    self.dedicatee = ''
         #    self.publisher = ''
         #    self.platenumber = ''
         self.years = years
-
 
     def toJson(self):
         sourcejson = "{'id': " + str(self.id) + ", 'label': " + json.dumps(
@@ -191,31 +201,42 @@ class SourceSearchItem:
                 x += 1
                 sourcejson += ','
         sourcejson += "],"
-        sourcejson += "'Dedicatee': " + str(self.dedicatee) + ", 'Work':" + str(self.work)
+        sourcejson += "'Dedicatee': " + \
+            str(self.dedicatee) + ", 'Work':" + str(self.work)
         sourcejson += ",'Year': " + json.dumps(self.years) + ", "
         sourcejson += "'Publisher': " + str(self.publisher) + ","
         sourcejson += "'Type': " + str(self.type) + ","
         sourcejson += "'Pages': ["
         notes = []
         if self.mode == 'OCVE':
-            #Filter out non-musical pages like blanks, title pages etc.
-            #musicpage=PageType.objects.get(type='music')
+            # Filter out non-musical pages like blanks, title pages etc.
+            # musicpage=PageType.objects.get(type='music')
             blank = PageType.objects.get(type='blank')
             #tp=PageType.objects.get(type='title page')
-            #nonmusic=SourceComponentType.objects.get(type="Non-music")
+            # nonmusic=SourceComponentType.objects.get(type="Non-music")
             #.exclude(page__sourcecomponent__sourcecomponenttype=blank)
             #.exclude(page__sourcecomponent__sourcecomponenttype=nonmusic)
 
-            pages = PageImage.objects.filter(page__sourcecomponent__source_id=self.id).exclude(
-                page__pagetype_id__lt=2).exclude(page__pagetype=blank).order_by("page__sourcecomponent", "page")
+            pages = PageImage.objects.filter(
+                page__sourcecomponent__source_id=self.id).exclude(
+                page__pagetype_id__lt=2).exclude(
+                page__pagetype=blank).order_by(
+                "page__sourcecomponent",
+                "page")
 
         else:
-            pages = PageImage.objects.filter(page__sourcecomponent__source_id=self.id).order_by("page__sourcecomponent",
-                                                                                                "page")
+            pages = PageImage.objects.filter(
+                page__sourcecomponent__source_id=self.id).order_by(
+                "page__sourcecomponent", "page")
         for pi in pages:
             if pi != pages[0]:
                 sourcejson += ','
-            sourcejson += PageSearchItem(self.id, self.work, pi, self.dedicatee, self.publisher, self.years).toJson()
+            sourcejson += PageSearchItem(self.id,
+                                         self.work,
+                                         pi,
+                                         self.dedicatee,
+                                         self.publisher,
+                                         self.years).toJson()
         sourcejson += "]"
         sourcejson += ", 'orderno':" + json.dumps(self.orderno)
         sourcejson += "}"
@@ -224,6 +245,7 @@ class SourceSearchItem:
 
 #(page no with bar range)
 class PageSearchItem:
+
     def __init__(self, source, work, pageimage, dedicatee, publisher, years):
         self.id = pageimage.id
         self.source_id = source
@@ -246,7 +268,8 @@ class PageSearchItem:
             self.annotation = 0
 
         if work > 0:
-            wc = WorkComponent.objects.filter(sourcecomponent_workcomponent__sourcecomponent__page__pageimage=pageimage)
+            wc = WorkComponent.objects.filter(
+                sourcecomponent_workcomponent__sourcecomponent__page__pageimage=pageimage)
             if wc.count() > 0:
                 self.keypitch = wc[0].keypitch.id
                 self.keymode = wc[0].keymode.id
@@ -257,18 +280,21 @@ class PageSearchItem:
         self.dedicatee = dedicatee
         self.publisher = publisher
         self.years = years
-        #self.publicationDate=
-        #self.key=
+        # self.publicationDate=
+        # self.key=
 
     def toJson(self):
         pagejson = "{'id': " + str(self.id) + ", 'label': " + json.dumps(
             self.label) + ", 'source_id':" + json.dumps(self.source_id) + ','
-        pagejson += "'sourcecomponent_id': " + json.dumps(self.sourcecomponent_id) + ", "
-        pagejson += "'sourcecomponent_orderno': " + json.dumps(self.sourcecomponent_orderno) + ", "
+        pagejson += "'sourcecomponent_id': " + \
+            json.dumps(self.sourcecomponent_id) + ", "
+        pagejson += "'sourcecomponent_orderno': " + \
+            json.dumps(self.sourcecomponent_orderno) + ", "
         pagejson += "'Genre': " + json.dumps(self.genres) + ", "
         pagejson += "'Year': " + json.dumps(self.years) + ", "
         pagejson += "'annotation': " + json.dumps(self.annotation) + ", "
-        pagejson += "'Dedicatee': " + json.dumps(self.dedicatee) + ", 'Work':" + json.dumps(self.work)
+        pagejson += "'Dedicatee': " + \
+            json.dumps(self.dedicatee) + ", 'Work':" + json.dumps(self.work)
         pagejson += ", 'Publisher': " + json.dumps(self.publisher)
         pagejson += ", 'thumbnail_url':" + json.dumps(self.thumbnail_url)
         pagejson += ", 'width':" + json.dumps(self.width)
@@ -283,26 +309,30 @@ class PageSearchItem:
 
 def serializeOCVESourceJson():
     if settings.BUILD_LIVE_ONLY:
-        sourcecomponents = SourceComponent.objects.filter(source__ocve=True, source__live=True).distinct()
+        sourcecomponents = SourceComponent.objects.filter(
+            source__ocve=True, source__live=True).distinct()
     else:
-        sourcecomponents = SourceComponent.objects.filter(source__ocve=True).distinct()
+        sourcecomponents = SourceComponent.objects.filter(
+            source__ocve=True).distinct()
 
     serializeSourceJson(sourcecomponents, 'OCVEsourceJSON', 'OCVE')
 
 
 def serializeCFEOSourceJson():
-    #sources = Source.objects.filter(cfeo=True).order_by(
+    # sources = Source.objects.filter(cfeo=True).order_by(
     #    'sourcecomponent__sourcecomponent_workcomponent__workcomponent__work__orderno', 'orderno').distinct()
     if settings.BUILD_LIVE_ONLY:
-        sourcecomponents = SourceComponent.objects.filter(source__cfeo=True, source__live=True).distinct()
+        sourcecomponents = SourceComponent.objects.filter(
+            source__cfeo=True, source__live=True).distinct()
     else:
-        sourcecomponents = SourceComponent.objects.filter(source__cfeo=True).distinct()
+        sourcecomponents = SourceComponent.objects.filter(
+            source__cfeo=True).distinct()
     serializeSourceJson(sourcecomponents, 'CFEOsourceJSON', 'CFEO')
 
 
 def serializeSourceJson(sourcecomponents, filename, mode):
-    #sources=Source.objects.filter(sourcelegacy__witnessKey__gt=0).order_by('sourcecomponent__sourcecomponent_workcomponent__workcomponent__work__orderno','label').distinct()
-    #all sources with bar info
+    # sources=Source.objects.filter(sourcelegacy__witnessKey__gt=0).order_by('sourcecomponent__sourcecomponent_workcomponent__workcomponent__work__orderno','label').distinct()
+    # all sources with bar info
     destination = open(settings.SOURCEJSONPATH + '/' + filename + '.js', 'w')
     destination.write('var sourcecomponents = [')
     for idx, sc in enumerate(sourcecomponents):
@@ -333,9 +363,14 @@ def serializeSourceJson(sourcecomponents, filename, mode):
         orderno += 1
     destination.write(']')
     destination.close()
-    #Gzip results
+    # Gzip results
     f_in = open(settings.SOURCEJSONPATH + '/' + filename + '.js', 'rb')
-    f_out = gzip.open(settings.SOURCEJSONPATH + '/' + filename + '.js.gz', 'wb')
+    f_out = gzip.open(
+        settings.SOURCEJSONPATH +
+        '/' +
+        filename +
+        '.js.gz',
+        'wb')
     f_out.writelines(f_in)
     f_out.close()
     f_in.close()
@@ -349,16 +384,16 @@ def serializeAcCodeConnector():
     first = 0
     for s in sources:
         if s.getSourceInformation() is not None and s.getSourceInformation().accode is not None:
-            if s.cfeo == True or s.ocve == True:
+            if s.cfeo or s.ocve:
                 if first > 0:
                     destination.write(',\n')
                 accode = s.getSourceInformation().accode.accode
                 acHash = s.getSourceInformation().accode.accode_hash
-                acjson = "{'accode':" + json.dumps(accode) + ",'achash':" + json.dumps(acHash) + ",'id':" + json.dumps(
-                    s.id)
-                if s.cfeo == True:
+                acjson = "{'accode':" + json.dumps(accode) + ",'achash':" + json.dumps(
+                    acHash) + ",'id':" + json.dumps(s.id)
+                if s.cfeo:
                     acjson += ",'cfeo':1"
-                if s.ocve == True:
+                if s.ocve:
                     acjson += ",'ocve':1"
                 acjson += "}"
                 destination.write(acjson)
@@ -367,12 +402,14 @@ def serializeAcCodeConnector():
     destination.close()
 
 
-#Get the pageimages from a source, filtered to include only music pages and the title page
-#filter(Q(page__pagetype=musicpage)|Q(page__pagetype=tp)).
+# Get the pageimages from a source, filtered to include only music pages and the title page
+# filter(Q(page__pagetype=musicpage)|Q(page__pagetype=tp)).
 def getOCVEPageImages(source):
     try:
         blank = PageType.objects.get(type='blank')
-        pi = PageImage.objects.filter(page__sourcecomponent__source=source).exclude(page__pagetype_id__lt=2).exclude(
+        pi = PageImage.objects.filter(
+            page__sourcecomponent__source=source).exclude(
+            page__pagetype_id__lt=2).exclude(
             page__pagetype=blank).order_by('page__orderno')
         return pi
     except IndexError:
@@ -393,13 +430,15 @@ def generateThumbnails(sources):
 
 def generateThumbnail(pageimage):
     result = ""
-    #Get page legacy for jp2 path
+    # Get page legacy for jp2 path
     path = pageimage.getJP2Path()
     if len(path) > 0:
-        #Query iip server for deepzoom
+        # Query iip server for deepzoom
         path = settings.IMAGE_SERVER_URL + '?DeepZoom=' + path + '_files/0/0_0.jpg'
-        #Save in thumbnial using pageimage id
-        thumb = os.path.join(settings.THUMBNAIL_DIR, str(pageimage.id) + ".jpg")
+        # Save in thumbnial using pageimage id
+        thumb = os.path.join(
+            settings.THUMBNAIL_DIR, str(
+                pageimage.id) + ".jpg")
         result = "Saving " + path + " at " + thumb
         try:
             urllib.urlretrieve(path, thumb)

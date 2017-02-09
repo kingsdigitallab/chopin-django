@@ -16,6 +16,9 @@
         #map {
             height: 100%;
         }
+
+
+
     </style>
 {% endblock custom_stylesheets %}
 
@@ -136,9 +139,9 @@
                     <div id="pageimage"
                          class="large-{% if view == 'annotations' %}8{% else %}12{% endif %} columns{% if view == 'annotations' %} fixed-image{% endif %}">
                         <div id="copyright">
-                            {% if pi.copyright == False%}
-                            <img src="{% static 'images/public-domain-mark.png' %}" alt="Public Domain"
-                                 class="image-cc">
+                            {% if pi.copyright == False %}
+                                <img src="{% static 'images/public-domain-mark.png' %}" alt="Public Domain"
+                                     class="image-cc">
                             {% endif %}
                             {{ source.getSourceInformation.copyright|safe }}
                         </div>
@@ -294,12 +297,12 @@
 
     <script src="{{ STATIC_URL }}vendor/foundation/js/vendor/jquery.cookie.js"></script>
 
- <script type="text/javascript">
+    <script type="text/javascript">
 
         //TODO until added to require#}
         $(document).ready(function () {
             initMap();
-           if (cookie_get('joyride') != 'ridden') {
+            if (cookie_get('joyride') != 'ridden') {
                 $(document).foundation('joyride', 'start');
             }
 
