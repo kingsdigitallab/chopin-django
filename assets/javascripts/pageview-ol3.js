@@ -158,21 +158,33 @@
 
     //A hover interaction ol.interaction.Select
     //This makes the bar box visible on hover and position bar number
-    //Clickthrough in JQuery uses this select's selected features
+    //Clickthrough to bar view by click interaction
     initInteractions = function () {
 
        hover = new ol.interaction.Select({
-           addCondition: ol.events.condition.click,
+           //addCondition: ol.events.condition.click,
            condition: ol.events.condition.pointerMove,
            layers: [barLayer],
            style: styles.hover
-       });        
-       hover.on('select', function (e) {
-            var feature = e.selected[0];
-            console.log(feature);
-        });
+       });  
 
-        return hover
+       click = new ol.interaction.Select({
+           condition: ol.events.condition.click,
+           //condition: ol.events.condition.pointerMove,
+           layers: [barLayer],
+           style: styles.hover
+       });  
+
+       click.on('select', function (e) {
+            var feature = e.selected[0];
+             if (feature) {                     
+                     console.log(feature.get('label'));
+                     window.location = '/ocve/browse/barview?workid=' + pageimage.workid + '&pageimageid=' + pageimage.pageID + '&barid=' + feature.get("barid");
+                 }
+        });
+       olpage.addInteraction(hover);
+       olpage.addInteraction(click);
+        
     }
 
     //Load the map(page of music)
@@ -223,7 +235,11 @@
             controls: ol.control.defaults({
                 attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
                     collapsible: false
+                }),
+                zoomOptions:({
+                    duration : 1000
                 })
+                
             }),
 
             layers: [
@@ -250,7 +266,7 @@
         if (viewerFullHeight < imageFullHeight) {
             view.setCenter([x, y]);
         }
-
+        olpage.addControl(new ol.control.FullScreen());
         olpage.addControl(new ol.control.ZoomSlider());
         //For debug only
         //olpage.addControl(new ol.control.MousePosition());
@@ -280,16 +296,7 @@
             });
         } else {
             interactions = initInteractions();
-            //Extra click event for clickthrough to bars
-            jQuery('#map').click(function () {
-                var features = hover.getFeatures().getArray();
-                if (features.length > 0) {
-                    var feature = features[0];
-                    console.log(feature.get('label'));
-                    window.location = '/ocve/browse/barview?workid=' + pageimage.workid + '&pageimageid=' + pageimage.pageID + '&barid=' + feature.get("barid");
-                }
-            });
-            olpage.addInteraction(interactions);
+                
         }
 
         return olpage;
@@ -362,7 +369,7 @@
             //
 
             $('#newNoteForm').submit(function (event) {
-            	
+                
                 saveNote();
             });
             $('a.updateNote').click(function () {
@@ -799,15 +806,15 @@
 
             }
             if (feature.getProperties().barid != undefined){
-            	//Bar note selected for modify
-            	//Go back to bar select interaction
-            	initDrawInteraction("Bar");
-            	//select current bar.           	
+                //Bar note selected for modify
+                //Go back to bar select interaction
+                initDrawInteraction("Bar");
+                //select current bar.               
 
             }else{
             
             updateFormGeometry(feature);
-        	}
+            }
         }
     }
 
