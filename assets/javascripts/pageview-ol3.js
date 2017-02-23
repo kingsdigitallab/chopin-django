@@ -167,6 +167,11 @@
            layers: [barLayer],
            style: styles.hover
        });        
+       hover.on('select', function (e) {
+            var feature = e.selected[0];
+            console.log(feature);
+        });
+
         return hover
     }
 
