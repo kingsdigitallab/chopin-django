@@ -71,7 +71,7 @@
             class="label secondary" href="{{ request.get_full_path }}&amp;selected_facets=document:{{ result.document|urlencode }}">
             {{ result.document  }}
         </a>
-        <a href="{% if 'aco' not in result.resource %}/{% if BASE_URL in result.resource %}{{ BASE_URL}}{% else%}{{ result.resource.0 }}{% endif %}{% endif %}{{ result.url }}">{{ BASE_URL}} {{ result.title|safe|add_special_characters }}</a>
+        <a href="{% if 'aco' not in result.resource.0|lower %}/{% if BASE_URL in result.resource %}{{ BASE_URL}}{% else%}{{ result.resource.0|lower }}{% endif %}{% endif %}{{ result.url }}">{{ result.title|safe|add_special_characters }}</a>
         {% if not result.document = 'Impression' and not result.document = 'General information' %}
         <p>
             {% highlight result.text  with query html_tag 'strong' max_length 120 %}
