@@ -11,6 +11,7 @@ from ocve.forms import *
 from ocve.bartools import *
 from datatools import *
 from ocve.uitools import generateThumbnails
+from django.forms import model_to_dict
 
 import os
 
