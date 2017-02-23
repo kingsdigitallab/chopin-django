@@ -56,7 +56,8 @@ class WorkIndex(indexes.SearchIndex, indexes.Indexable):
                 work__id=obj.id).distinct()]
 
     def index_queryset(self, using=None):
-        return self.get_model().objects.order_by('orderno')
+        return self.get_model().objects.filter(
+            workcomponent__sourcecomponent_workcomponent__sourcecomponent__source__live=True).order_by('orderno')
 
 
 class SourceIndex(indexes.SearchIndex, indexes.Indexable):
