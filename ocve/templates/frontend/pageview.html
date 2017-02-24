@@ -7,19 +7,6 @@
     {{ block.super }}
     <link rel="stylesheet" href="{{ STATIC_URL }}custom_css/bareditor.css" type="text/css">
     <link rel="stylesheet" href="{{ STATIC_URL }}vendor/OpenLayers/3.18.2/ol.css" type="text/css">
-    <style type="text/css">
-        /*Hide the OpenLayers logo*/
-        .ol-attribution.ol-logo-only {
-            display: none;
-        }
-
-        #map {
-            height: 100%;
-        }
-
-
-
-    </style>
 {% endblock custom_stylesheets %}
 
 {% block header_scripts %}
@@ -93,7 +80,7 @@
                         <li id="tre">
                             <a href="#" data-dropdown="available-pages" class="small button expand">Jump to page <i
                                     class="fa fa-caret-down"></i></a>
-                            <ul id="available-pages" class="f-dropdown" data-dropdown-content="">
+                            <ul id="available-pages" class="f-dropdown" data-dropdown-content>
                                 {% for pi in pageimages %}
                                     <li>
                                         <a href="/{{ mode|lower }}/browse/pageview/{{ pi.id }}/">{{ pi.textlabel | add_special_characters }}</a>

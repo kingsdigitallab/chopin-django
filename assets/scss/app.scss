@@ -92,6 +92,15 @@ a:focus {
     }
 }
 
+/*Hide the OpenLayers logo*/
+.ol-attribution.ol-logo-only {
+    display: none;
+}
+
+#map {
+    height: 100%;
+}
+
 .osd-iip {
     display: block;
     width: 100%;
@@ -1068,6 +1077,11 @@ b.top-spacing {
             }
         }
     }
+}
+
+#available-pages {
+    max-height: 300px;
+    overflow: scroll;
 }
 
 .pageview-sub-nav {
