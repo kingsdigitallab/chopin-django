@@ -1477,14 +1477,17 @@ b.top-spacing {
 
 #map:-webkit-full-screen {
     height: 100% !important;
+    width: 100% !important;
 }
 
 #map:-ms-fullscreen {
     height: 100% !important;
+    width: 100% !important;
 }
 
 #map:fullscreen {
     height: 100% !important;
+    width: 100% !important;
 }
 
  #map .ol-zoomslider {
