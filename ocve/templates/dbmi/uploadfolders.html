@@ -1,0 +1,81 @@
+{% load staticfiles%}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Images uploaded by Folder</title>
+    <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            //Uncheck all by default to stop double attachment
+            $('input[name="folderName"]').attr('checked',false);
+
+            //Validate submit to make sure source and images both selected
+            $('#convertForm').submit(function(e){
+
+                if ($('input[name="addMethod"]:checked').val() == 'sourceKey' &&  $('#source_key').val() == 0){
+                    alert('Source Key selected, but no key added')
+                    e.preventDefault();
+                    return false;
+                }else if ($('input[name="addMethod"]:checked').val() == 'sourceSelect' &&  $('#source_id').val() == 0){
+                    alert('Source dropdown checked, but no source selected')
+                    e.preventDefault();
+                    return false;
+                }
+                if ($('input[name="folderName"]:checked').length == 0){
+                    alert('No folder selected');
+                    e.preventDefault();
+                    return false;
+                }
+
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>New images in /vol/ocve3/images/temp/</h1>
+<h2>{{ free }} (gigabytes) free</h2>
+<a href="/ocve/dbmi/">Back to DBMI</a>
+
+<form method="post" action="/ocve/convertimage/" id="convertForm">
+    <ul>
+        {% for folder,files in uploadFolder.items %}
+            <li>{{ folder }}
+                {% if files != None %}
+                    <input type="checkbox" name="folderName" value="{{ folder}}">
+                    <a href="/ocve/convertfolder/{{ folder|escape }}/">Convert folder to new source</a>
+                    <ul>
+                        {% for s in files %}
+                            <li>{{ s }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <input type="checkbox" name="imageName" value="{{ folder|escape }}">
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <input type="radio" name="addMethod" value="sourceSelect" checked="checked">
+    <label for="source_id">Add selected pages to source</label>
+    <select name="source_id" id="source_id">
+    <option value="0" selected="selected">-- Select a source --</option>
+        {% for source in sources %}
+            <option value="{{ source.id }}">{{ source.getAcCode }}</option>
+        {% endfor %}
+    </select>
+    <br>
+    <input type="radio" name="addMethod" value="sourceKey"> <label for="source_key">Quick add source key</label>
+    <input type="text" name="source_key" id="source_key" value="0">
+    <br>
+    <input type="submit" value="Add to source">
+</form>
+<h4>Logs</h4>
+<div id="log">
+    <p>
+        {% autoescape off %}
+    {{ log }}
+        {% endautoescape %}
+    </p>
+</div>
+</body>
+</html>

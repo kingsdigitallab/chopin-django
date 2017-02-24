@@ -1,0 +1,6 @@
+django - registration - redux
+django - tinymce
+xlwt
+xlrd
+progressbar
+numpy
