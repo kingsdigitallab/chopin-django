@@ -1470,21 +1470,29 @@ b.top-spacing {
     padding: 5px;
     width: 100%;
 }
-.map:-moz-full-screen {
-        height: 100%;
-      }
-      .map:-webkit-full-screen {
-        height: 100%;
-      }
-      .map:-ms-fullscreen {
-        height: 100%;
-      }
-      .map:fullscreen {
-        height: 100%;
-      }
-      .ol-rotate {
-        top: 3em;
-      }
+
+// .map:-moz-full-screen {
+//     height: 100% !important;
+// }
+
+.map:-webkit-full-screen {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.map:-ms-fullscreen {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.map:fullscreen {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.ol-rotate {
+    top: 3em;
+}
 
 /** Rich Text **/
 
