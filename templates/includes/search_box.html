@@ -1,0 +1,14 @@
+<div class="search-box">
+    <form action="{% if BASE_URL == 'aco' %}{% url 'haystack_search' %}{% elif BASE_URL == 'ocve' %}{% url 'ocve_haystack_search' %}{% elif BASE_URL == 'cfeo' %}{% url 'cfeo_haystack_search' %}{% else %}{% url 'haystack_search' %}{% endif %}" method="get">
+        <div class="row collapse">
+            <div class="large-10 columns">            
+                <input type="text" class="search-box-text" name="q"{% if query %} value="{{ query }}"{% endif %} placeholder="Enter keywords">
+            </div>
+            <div class="large-2 columns">
+                <button type="submit" class="search-button">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
