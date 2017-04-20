@@ -22,6 +22,7 @@ REPOSITORY = 'https://scm.cch.kcl.ac.uk/hg/chopin-django'
 
 env.user = settings.FABRIC_USER
 env.hosts = ['ocve3.dighum.kcl.ac.uk']
+env.gateway = 'ssh.cch.kcl.ac.uk'
 env.root_path = '/vol/ocve3/webroot/'
 env.envs_path = os.path.join(env.root_path, 'envs')
 
