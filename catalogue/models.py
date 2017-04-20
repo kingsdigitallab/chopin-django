@@ -365,6 +365,7 @@ class Copy(TimeStampedModel):
 
     class Meta:
         verbose_name_plural = 'Copies'
+        ordering = ['created']
 
     def __unicode__(self):
         return unicode(self.library)
