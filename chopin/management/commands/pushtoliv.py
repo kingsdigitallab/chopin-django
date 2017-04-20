@@ -6,7 +6,7 @@ from optparse import make_option
 
 logger = logging.getLogger(__name__)
 
-
+#IMPORTANT NOTE: superseded by scripts.pushtoliv.sh
 class Command(BaseCommand):
     help = """Dumps data from stg and pushes to live, along with static JSON.  NOTE: Works only on VM"""
 

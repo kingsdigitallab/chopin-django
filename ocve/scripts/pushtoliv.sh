@@ -34,11 +34,13 @@ if [ -s $stg_dump ]; then
     #restore notes to live
     psql -w -h db-pg-1.cch.kcl.ac.uk -U app_ocve app_ocve_merged < ${notes_dump} 2>>${log_file}
 
+    source /vol/ocve3/webroot/envs/chopin_liv/bin/activate
     #Rebuild website data on liv
-    /vol/ocve3/webroot/envs/stg/bin/python /vol/ocve3/webroot/liv/django/chopin/manage.py rebuild_json
+    python /vol/ocve3/webroot/liv/django/chopin/manage.py rebuild_json
 
     #Create missing thumbnails
-    /vol/ocve3/webroot/envs/stg/bin/python /vol/ocve3/webroot/stg/django/chopin/manage.py build_missing_thumbnails
+    python /vol/ocve3/webroot/stg/django/chopin/manage.py build_missing_thumbnails
+    deactivate
 else
     printf "ERROR: staging dump not generated.  Upload aborted \n"
 fi
