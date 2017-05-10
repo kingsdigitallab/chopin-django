@@ -14,5 +14,5 @@ class Migration(migrations.Migration):
     ]
 
     migrations.RunSQL(
-        ("ALTER TABLE catalogue_richtextpage drop column if EXISTS footnotes;"),
+        ("ALTER TABLE catalogue_richtextpage drop column footnotes;"),
     )
