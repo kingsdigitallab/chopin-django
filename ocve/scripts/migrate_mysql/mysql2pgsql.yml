@@ -15,7 +15,7 @@ destination:
  postgres:
   hostname: db-pg-1.cch.kcl.ac.uk
   port: 5432
-  username: ehall
+  username:
   password: 
   database: app_ocve_merged
 
