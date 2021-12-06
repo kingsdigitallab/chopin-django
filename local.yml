@@ -1,21 +1,22 @@
 version: '3'
 
 volumes:
-  local_mysql_data: { }
+  local_postgres_data: { }
   local_elasticsearch_data: { }
 
 services:
 
-  # NOTE: There are two dbs, app_mkcheur_liv, installed here.
-  # And app_mkcheur_stg, which will need to be manually installed.
   db:
-    image: library/mysql:5.7.35
-    command: --default-authentication-plugin=mysql_native_password
+    build:
+      context: .
+      dockerfile: ./compose/local/postgres/Dockerfile
     volumes:
-      - local_mysql_data:/var/lib/mysql
-    restart: always
+      - local_postgres_data:/var/lib/postgresql/data
     env_file:
-      - ./.envs/.local/.mysql
+      - ./.envs/.local/.postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
 
   elasticsearch:
     image: elasticsearch:7.10.1

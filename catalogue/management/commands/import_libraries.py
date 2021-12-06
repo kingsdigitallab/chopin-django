@@ -1,12 +1,12 @@
 # *-* coding: utf-8 *-*
 from django.core.management.base import BaseCommand, CommandError
 
-from wagtail.wagtailcore.models import Page
+from wagtail.core.models import Page
 
 import logging
 import os
 
-from pdf_import_utils import import_library
+from .pdf_import_utils import import_library
 
 
 class Command(BaseCommand):

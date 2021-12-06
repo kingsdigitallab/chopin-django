@@ -39,12 +39,12 @@ class PDFParser (object):
                 Literal('Modificatons') | Literal('Errors') | \
                 Literal('DMF') | Literal('ADF')
         copies_label = LineStart() + Literal('Copies')
-        all_chars = u''.join(unichr(c) for c in xrange(65536)
-                             if unicodedata.category(unichr(c)).startswith('L') )
+        all_chars = ''.join(chr(c) for c in range(65536)
+                             if unicodedata.category(chr(c)).startswith('L') )
         section_separator = LineEnd() + FollowedBy(label | copies_label |
                                                    StringEnd())
         section = SkipTo(section_separator)
-        library = Combine(Word(all_chars) + Literal(u'-') + Word(all_chars))
+        library = Combine(Word(all_chars) + Literal('-') + Word(all_chars))
         copy_separator = LineEnd() + FollowedBy(library) | \
                          LineEnd() + StringEnd() | StringEnd()
         copy = library + SkipTo(copy_separator) + Suppress(copy_separator)
@@ -74,7 +74,7 @@ class PDFParser (object):
             args = shlex.split(cmd)
             try:
                 subprocess.check_call(args)
-            except subprocess.CalledProcessError, err:
+            except subprocess.CalledProcessError as err:
                 self.logger.error(
                     'Failed to convert the PDF file to text: {}'.format(err))
 

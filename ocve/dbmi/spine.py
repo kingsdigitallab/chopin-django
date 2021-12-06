@@ -4,7 +4,7 @@ from xlwt import Workbook, easyxf
 from xlrd import open_workbook
 import numpy as np
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template.context import RequestContext
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -243,7 +243,7 @@ def importXLS(request):
         except ObjectDoesNotExist:
             result = "Parse Error"
     # Creates a default spine for a source.
-    return render_to_response('dbmi/importresult.html',
+    return render(request, 'dbmi/importresult.html',
                               {'result': result, 'work': work})
 
 
@@ -331,7 +331,7 @@ def spine(request):
         spines = sorted(barSpines, key=lambda sp: sp.source.orderno)
     # Get bar regions
     regions = spinesToRegionThumbs(spines)
-    return render_to_response('dbmi/showspine.html',
+    return render(request, 'dbmi/showspine.html',
                               {'work': work,
                                'orderno': orderno,
                                'prev': prev,
@@ -343,7 +343,7 @@ def spine(request):
 
 def worksforspine(request):
     works = Work.objects.all()
-    return render_to_response('dbmi/workspines.html', {'works': works},
+    return render(request, 'dbmi/workspines.html', {'works': works},
                               context_instance=RequestContext(request))
 
 
@@ -435,7 +435,7 @@ def spineeditor(request, work, sources):
         i += 1
         if spineFound == 0:
             break
-    return render_to_response('dbmi/editspine.html',
+    return render(request, 'dbmi/editspine.html',
                               {'work': work, 'sources': sources, 'tbody': tbody},
                               context_instance=RequestContext(request))
 

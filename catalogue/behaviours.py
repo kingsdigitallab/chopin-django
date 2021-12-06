@@ -1,6 +1,6 @@
 from django.db import models
 
-from wagtail.wagtailcore.fields import RichTextField
+from wagtail.core.fields import RichTextField
 
 
 class Introducable(models.Model):

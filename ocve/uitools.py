@@ -3,14 +3,14 @@ from django.utils.datastructures import MultiValueDictKeyError
 __author__ = 'Elliott Hall'
 # Various queries and reusable functions that will be employed in the ui.
 # Kept here for the sake of hygiene, and hopefully resuability
-from models import *
+from .models import *
 import json
 import os
 from unicodedata import normalize as _n
 from django.conf import settings
 from django.db import connection
 from catalogue.templatetags.catalogue_tags import get_impression_exists, add_special_characters
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import re
 from django.db import connection
 
@@ -84,7 +84,7 @@ def setPageImageTextLabel(source):
                     if pi.endbar != '0':
                         textlabel = textlabel + ', '
         if pi.endbar != '0':
-            textlabel = textlabel + " bs " + pi.startbar + u'\u2013' + pi.endbar
+            textlabel = textlabel + " bs " + pi.startbar + '\u2013' + pi.endbar
             # if len(pi.textlabel) == 0:
         pi.textlabel = textlabel
         pi.save()
@@ -441,7 +441,7 @@ def generateThumbnail(pageimage):
                 pageimage.id) + ".jpg")
         result = "Saving " + path + " at " + thumb
         try:
-            urllib.urlretrieve(path, thumb)
+            urllib.request.urlretrieve(path, thumb)
         except IOError:
             result = IOError.message
     return result

@@ -1,5 +1,5 @@
 import re
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from ocve.models import PageLegacy, SourceLegacy
 from ocve.models import PageImage
 from django.conf import settings
@@ -32,7 +32,7 @@ def buildOldPath(pi):
 # Use the iip server to get width/height of an image
 # Param full url to the image in iip format
 def getImageDimensions(fullurl):
-    meta = urllib.urlopen(
+    meta = urllib.request.urlopen(
         fullurl +
         '&obj=IIP,1.0&obj=Max-size&obj=Tile-size&obj=Resolution-number')
     dimensions = {'width': 0, 'height': 0}
@@ -70,7 +70,7 @@ def verifyImageDimensions(pi, oldPath):
                 pi.save()
                 found = 1
     except IOError:
-        print("Could not contact server at " + fullurl)
+        print(("Could not contact server at " + fullurl))
     return found
 
 # Request image information from the iip serv
@@ -97,7 +97,7 @@ def verifyImagesViaIIP():
             fullurl = 'jp2/cfeojp2-proc/' + oldPath + '&obj=IIP,1.0&obj=Max-size'
         else:
             fullurl = 'jp2/ocvejp2-proc/' + oldPath + '&obj=IIP,1.0&obj=Max-size'
-        meta = urllib.urlopen(fullurl)
+        meta = urllib.request.urlopen(fullurl)
         # found=0
         # for line in meta.readlines():
         #     m = re.search("Max-size:\s*(\d+)\s*(\d+)", line)
@@ -120,7 +120,7 @@ def verifyImagesViaIIP():
             if found is 0:
                 # Image not found, write to log
                 s = pi.page.sourcecomponent.source
-                print str(pi.id) + ' not found'
+                print(str(pi.id) + ' not found')
                 try:
                     log = log + '<li>' + s.label + ':  ' + pi.page.label + ' key:' + \
                         str(pi.id) + ' at path ' + oldPath + ':' + pl.filename + '</li>'

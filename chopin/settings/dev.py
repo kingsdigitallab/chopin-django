@@ -1,11 +1,11 @@
-from base import *  # noqa
+from .base import *  # noqa
 
 DEBUG = True
 
-CACHE_REDIS_DATABASE = '2'
-CACHES['default']['LOCATION'] = '127.0.0.1:6379:' + CACHE_REDIS_DATABASE
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379:' + CACHE_REDIS_DATABASE
-BROKER_URL = 'redis://127.0.0.1:6379:' + CACHE_REDIS_DATABASE
+# CACHE_REDIS_DATABASE = '2'
+# CACHES['default']['LOCATION'] = '127.0.0.1:6379:' + CACHE_REDIS_DATABASE
+# CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379:' + CACHE_REDIS_DATABASE
+# BROKER_URL = 'redis://127.0.0.1:6379:' + CACHE_REDIS_DATABASE
 
 INTERNAL_IPS = ('ocve3-dev.dighum.kcl.ac.uk', )
 
@@ -62,7 +62,7 @@ except ImportError:
 # -----------------------------------------------------------------------------
 
 try:
-    from local import *  # noqa
+    from .local import *  # noqa
 except ImportError:
     print('failed to import local settings')
     raise ImportError('Error importing local settings')

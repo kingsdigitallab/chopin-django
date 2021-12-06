@@ -40,7 +40,7 @@ def parseFile(folder,f):
                 tempfile = open(folder+'/.'+f,'r')
                 size=tempfile.readline().replace('\n','')
                 tempfile.close()
-                print size
+                print(size)
                 if int(os.stat(folder+'/'+f).st_size) == int(size):
                     #File finished, convert
                     #Make new folder if necessary
@@ -50,7 +50,7 @@ def parseFile(folder,f):
                     index=len(dir)
                     index-=1
                     if os.path.isdir(CONVERTED_UPLOAD_PATH+'/'+dir[index]) is False:
-                        print 'mkdir '+CONVERTED_UPLOAD_PATH+'/'+dir[index]
+                        print('mkdir '+CONVERTED_UPLOAD_PATH+'/'+dir[index])
                         os.system('mkdir "'+CONVERTED_UPLOAD_PATH+'/'+dir[index]+'"')
                     kdu_options='-rate -,4,2.34,1.36,0.797,0.466,0.272,0.159,0.0929,0.0543,0.0317,0.0185 Creversible=yes Clevels=5 Stiles=\{1024,1024\} Cblk=\{64,64\} Corder=RPCL Cmodes=BYPASS'
                     kdu_command='kdu_compress -i "'+folder+'/'+f+'" -o "'+CONVERTED_UPLOAD_PATH+'/'+dir[index]+'/'+str(f).split('.')[0]+'.jp2" '+kdu_options

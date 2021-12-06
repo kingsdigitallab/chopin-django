@@ -1,45 +1,40 @@
-from django.db import models
-from django.conf import settings
-from models import *
-from django.contrib.auth.models import User, UserManager
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
-from django.db import models
-from django.utils.encoding import force_unicode
-from catalogue.templatetags.catalogue_tags import add_special_characters
-
 import hashlib
 
-# Create your models here.
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import (
+    GenericForeignKey, GenericRelation
+)
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import (
+    ObjectDoesNotExist, MultipleObjectsReturned
+)
+from django.db import models
 
-
-def getUnicode(object):
-    if (object is None):
-        return u""
-    else:
-        return force_unicode(object)
-
-# class userManager(UserManager):
-#     pass
-#
-# User.objects=userManager()
+from catalogue.templatetags.catalogue_tags import add_special_characters
 
 
 class WorkComponent(models.Model):
     orderno = models.IntegerField(null=True, blank=True, )
     label = models.TextField(null=False, default="", blank=True, )
     music = models.IntegerField(null=True, blank=True, )
-    work = models.ForeignKey('Work', blank=False, null=False, default=1, )
+    work = models.ForeignKey(
+        'Work', blank=False, null=False, default=1, on_delete=models.CASCADE,
+    )
     keymode = models.ForeignKey(
         'keyMode',
         blank=False,
         null=False,
         default=1,
+        on_delete=models.CASCADE,
     )
     keypitch = models.ForeignKey(
-        'keyPitch', blank=False, null=False, default=1, )
-    opus = models.ForeignKey('Opus', blank=False, null=False, default=1, )
+        'keyPitch', blank=False, null=False, default=1,
+        on_delete=models.CASCADE
+    )
+    opus = models.ForeignKey(
+        'Opus', blank=False, null=False, default=1, on_delete=models.CASCADE
+    )
 
     class Meta:
         verbose_name = 'WorkComponent'
@@ -55,14 +50,15 @@ class Work(models.Model):
     genre = models.ManyToManyField(
         'Genre',
         blank=False,
-        null=False,
         default=1,
         through='Genre_Work',
     )
     workinformation = models.ForeignKey(
-        'WorkInformation', blank=False, null=False, default=1, )
+        'WorkInformation', blank=False, null=False, default=1,
+        on_delete=models.CASCADE)
     workcollection = models.ForeignKey(
-        'WorkCollection', blank=False, null=False, default=2, )
+        'WorkCollection', blank=False, null=False, default=2,
+        on_delete=models.CASCADE)
     orderno = models.IntegerField(null=True, blank=True, )
 
     class Meta:
@@ -79,6 +75,8 @@ class Work(models.Model):
 
     def getSpecialLabel(self):
         return add_special_characters(self.label)
+
+
 #
 
 
@@ -88,6 +86,7 @@ class Opus(models.Model):
     class Meta:
         verbose_name = 'Opus'
         verbose_name_plural = 'Opuses'
+
 
 Opus._meta.ordering = ["opusno"]
 
@@ -102,21 +101,25 @@ class BarRegion(models.Model):
     annotation = models.ManyToManyField(
         'Annotation',
         blank=True,
-        null=True,
-        through='Annotation_BarRegion',
+        through='Annotation_BarRegion'
     )
     pageimage = models.ForeignKey(
-        'PageImage', blank=False, null=False, default=1, )
+        'PageImage', blank=False, null=False, default=1,
+        on_delete=models.CASCADE
+    )
     page = models.ForeignKey(
         'Page',
         blank=False,
         null=False,
         default=1,
         related_name='barRegions',
+        on_delete=models.CASCADE
     )
     barid_old = models.IntegerField(null=True, blank=True, )
-    bar = models.ManyToManyField('Bar', blank=True, null=True,
-                                 through='Bar_BarRegion', )
+    bar = models.ManyToManyField(
+        'Bar', blank=True,
+        through='Bar_BarRegion'
+    )
 
     def getHighestBarNumber(self):
         num = 0
@@ -142,14 +145,19 @@ class BarRegion(models.Model):
 
     table_group = ''
 
+
 # Initial population with:  insert into ocve2real.ocve_bar_barregion
 # (bar_id,barregion_id) SELECT bar_id,id FROM ocve2real.ocve_barregion o;
 
 
 class Bar_BarRegion(models.Model):
-    bar = models.ForeignKey('Bar', blank=False, null=False, default=1, )
+    bar = models.ForeignKey(
+        'Bar', blank=False, null=False, default=1, on_delete=models.CASCADE
+    )
     barregion = models.ForeignKey(
-        'BarRegion', blank=False, null=False, default=1, )
+        'BarRegion', blank=False, null=False, default=1,
+        on_delete=models.CASCADE
+    )
 
 
 #
@@ -169,7 +177,8 @@ class Source(models.Model):
     label = models.TextField(null=False, default="", blank=True, )
     cfeolabel = models.TextField(null=False, default="", blank=True, )
     sourcetype = models.ForeignKey(
-        'SourceType', blank=False, null=False, default=1, )
+        'SourceType', blank=False, null=False, default=1,
+        on_delete=models.CASCADE)
     ocve = models.BooleanField(default=False)
     cfeo = models.BooleanField(default=False)
     live = models.BooleanField(default=False)
@@ -233,7 +242,8 @@ class Source(models.Model):
     # All instruments attached to a particular source
     def getInstruments(self):
         return Instrument.objects.filter(
-            sourcecomponent_instrument__sourcecomponent__source=self).distinct()
+            sourcecomponent_instrument__sourcecomponent__source=self
+        ).distinct()
 
     def getPrimaryPageImages(self):
         pi = PageImage.objects.filter(
@@ -243,6 +253,7 @@ class Source(models.Model):
 
     def getPages(self):
         return Page.objects.filter(sourcecomponent__source=self)
+
     table_group = ''
 
     def getFirstBarRegion(self):
@@ -309,7 +320,6 @@ class Instrument(models.Model):
     sourcecomponent = models.ManyToManyField(
         'SourceComponent',
         blank=True,
-        null=True,
         through='SourceComponent_Instrument',
     )
 
@@ -349,11 +359,15 @@ class SourceComponent(models.Model):
         null=False,
         default="",
         blank=True,
-        help_text=ur'''e.g song titles like "Wojack"''',
+        help_text=r'''e.g song titles like "Wojack"''',
     )
-    source = models.ForeignKey('Source', blank=False, null=False, default=1, )
+    source = models.ForeignKey(
+        'Source', blank=False, null=False, default=1, on_delete=models.CASCADE
+    )
     sourcecomponenttype = models.ForeignKey(
-        'SourceComponentType', blank=False, null=False, default=1, )
+        'SourceComponentType', blank=False, null=False, default=1,
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         verbose_name = 'SourceComponent'
@@ -384,7 +398,7 @@ class Meta:
     verbose_name_plural = 'Publishers'
 
     def __unicode__(self):
-        return u'%s' % (self.publisher)
+        return '%s' % (self.publisher)
 
 
 table_group = ''
@@ -409,9 +423,11 @@ class WorkComponentType(models.Model):
 #
 class instrumentComponent(models.Model):
     instrument = models.ForeignKey(
-        'Instrument', blank=False, null=False, default=1, )
+        'Instrument', blank=False, null=False, default=1,
+        on_delete=models.CASCADE)
     sourcecomponent = models.ForeignKey(
-        'SourceComponent', blank=False, null=False, default=1, )
+        'SourceComponent', blank=False, null=False, default=1,
+        on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'instrumentComponent'
@@ -425,7 +441,8 @@ class WorkCollection(models.Model):
     label = models.TextField(null=False, default="", blank=True, )
     overridelabel = models.TextField(null=False, default="", blank=True, )
     collectiontype = models.ForeignKey(
-        'CollectionType', blank=False, null=False, default=1, )
+        'CollectionType', blank=False, null=False, default=1,
+        on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'WorkCollection'
@@ -473,7 +490,8 @@ class SourceInformation(models.Model):
     notes = models.TextField(null=False, default="", blank=True, )
     datepublication = models.CharField(
         max_length=255, null=False, default="", blank=True, )
-    placepublication = models.ForeignKey('City', null=True, blank=True, )
+    placepublication = models.ForeignKey('City', null=True, blank=True,
+                                         on_delete=models.CASCADE)
     leaves = models.CharField(
         max_length=255,
         null=False,
@@ -503,18 +521,23 @@ class SourceInformation(models.Model):
         default="",
         blank=True,
     )
-    source = models.ForeignKey('Source', blank=False, null=False, default=1, )
+    source = models.ForeignKey('Source', blank=False, null=False, default=1,
+                               on_delete=models.CASCADE)
     publisher = models.ForeignKey(
-        'Publisher', blank=False, null=False, default=1, )
+        'Publisher', blank=False, null=False, default=1,
+        on_delete=models.CASCADE)
     archive = models.ForeignKey(
         'Archive',
         blank=False,
         null=False,
         default=1,
+        on_delete=models.CASCADE
     )
     dedicatee = models.ForeignKey(
-        'Dedicatee', blank=False, null=False, default=1, )
-    accode = models.ForeignKey('AcCode', blank=False, null=False, default=1, )
+        'Dedicatee', blank=False, null=False, default=1,
+        on_delete=models.CASCADE)
+    accode = models.ForeignKey('AcCode', blank=False, null=False, default=1,
+                               on_delete=models.CASCADE)
     displayedcopy = models.CharField(
         max_length=255, null=False, default="", blank=True, )
     printingmethod = models.ManyToManyField(
@@ -528,11 +551,12 @@ class SourceInformation(models.Model):
 
     table_group = ''
 
+
 #
 
 
 class BarSequence(models.Model):
-    #pageimage = models.ForeignKey('PageImage', blank=False, null=False,)
+    # pageimage = models.ForeignKey('PageImage', blank=False, null=False,)
     startbar = models.CharField(
         max_length=255,
         null=False,
@@ -545,9 +569,12 @@ class BarSequence(models.Model):
         default="",
         blank=True,
     )
-    content_type = models.ForeignKey(ContentType)
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE
+    )
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
+
 
 #
 
@@ -574,19 +601,23 @@ class PageImage(models.Model):
         blank=True,
     )
     corrected = models.IntegerField(null=True, blank=True, )
-    page = models.ForeignKey('Page', blank=False, null=False, default=1, )
-    barsequences = generic.GenericRelation(BarSequence, null=True, blank=True)
+    page = models.ForeignKey(
+        'Page', blank=False, null=False, default=1, on_delete=models.CASCADE
+    )
+    barsequences = GenericRelation(BarSequence, null=True, blank=True)
     copyright = models.BooleanField(default=True, null=False, blank=False, )
 
     def getInstruments(self):
         return Instrument.objects.filter(
-            sourcecomponent_instrument__sourcecomponent__page__pageimage=self).distinct()
+            sourcecomponent_instrument__sourcecomponent__page__pageimage
+            =self).distinct()
 
     class Meta:
         verbose_name = 'PageImage'
         verbose_name_plural = 'PageImages'
 
     table_group = ''
+
 
 #
 
@@ -604,6 +635,7 @@ class PageType(models.Model):
         verbose_name_plural = 'PageTypes'
 
     table_group = ''
+
 
 #
 
@@ -645,9 +677,13 @@ class Page(models.Model):
     orderno = models.IntegerField(null=True, blank=True, )
     preferredversion = models.IntegerField(null=True, blank=True, default=1)
     sourcecomponent = models.ForeignKey(
-        'SourceComponent', blank=False, null=False, default=1, )
+        'SourceComponent', blank=False, null=False, default=1,
+        on_delete=models.CASCADE
+    )
     pagetype = models.ForeignKey(
-        'PageType', blank=False, null=False, default=1, )
+        'PageType', blank=False, null=False, default=1,
+        on_delete=models.CASCADE
+    )
 
     def getWorkComponent(self):
         wc = WorkComponent.objects.filter(
@@ -679,7 +715,9 @@ class Archive(models.Model):
         blank=True,
     )
     notes = models.TextField(null=False, default="", blank=True, )
-    city = models.ForeignKey('City', blank=False, null=False, default=1, )
+    city = models.ForeignKey(
+        'City', blank=False, null=False, default=1, on_delete=models.CASCADE
+    )
 
     class Meta:
         verbose_name = 'Archive'
@@ -701,7 +739,8 @@ class City(models.Model):
         blank=False,
         null=False,
         default=1,
-        related_name='1',
+        related_name='city',
+        on_delete=models.CASCADE,
     )
 
     class Meta:
@@ -709,7 +748,7 @@ class City(models.Model):
         verbose_name_plural = 'Cities'
 
     def __unicode__(self):
-        return u'%s' % (self.city)
+        return '%s' % (self.city)
 
     table_group = ''
 
@@ -754,7 +793,6 @@ class Year(models.Model):
     sourceinformation = models.ManyToManyField(
         'SourceInformation',
         blank=False,
-        null=False,
         default=1,
         through='SourceInformation_Year',
     )
@@ -775,7 +813,9 @@ class Dedicatee(models.Model):
         blank=False,
         null=False,
         default=1,
-        related_name="alternate")
+        related_name="alternate",
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         ordering = ['dedicatee']
@@ -807,7 +847,7 @@ class WorkInformation(models.Model):
         null=False,
         default="",
         blank=True,
-        help_text=ur'''Publication History for this work''',
+        help_text=r'''Publication History for this work''',
     )
     relevantmanuscripts = models.TextField(
         null=False, default="", blank=True, )
@@ -816,7 +856,7 @@ class WorkInformation(models.Model):
         null=False,
         default="",
         blank=True,
-        help_text=ur'Only field displayed in OCVE work summary')
+        help_text=r'Only field displayed in OCVE work summary')
 
     class Meta:
         verbose_name = 'WorkInformation'
@@ -831,7 +871,9 @@ class AnnotationType(models.Model):
 
 
 class Annotation(models.Model):
-    user = models.ForeignKey(User, default=11)
+    user = models.ForeignKey(
+        User, default=11, on_delete=models.CASCADE
+    )
     notetext = models.TextField(null=False, default="", blank=True, )
     noteregions = models.TextField(null=False, default="", blank=True, )
     geometry = models.TextField(null=False, default="", blank=True, )
@@ -839,12 +881,16 @@ class Annotation(models.Model):
         'PageImage',
         blank=False,
         null=False,
-        default=1)
+        default=1,
+        on_delete=models.CASCADE
+    )
     type = models.ForeignKey(
         'AnnotationType',
         blank=False,
         null=False,
-        default=1)
+        default=1,
+        on_delete=models.CASCADE
+    )
     timestamp = models.DateTimeField(auto_now=True)
 
     def getBarRegions(self):
@@ -858,7 +904,9 @@ class Annotation(models.Model):
 
 
 class BarCollection(models.Model):
-    user = models.ForeignKey(User, default=11)
+    user = models.ForeignKey(
+        User, default=11, on_delete=models.CASCADE
+    )
     name = models.TextField(null=False, default="", blank=True, )
     xystring = models.TextField(null=False, default="", blank=True, )
     regions = models.ManyToManyField(BarRegion)
@@ -869,7 +917,9 @@ class AcCode(models.Model):
     accode = models.CharField(max_length=255, null=False, default='',
                               blank=True, unique=True)
     accode_hash = models.CharField(max_length=256, editable=False)
-    #sourceinformation = models.ForeignKey('SourceInformation', blank=False, null=False, default=1, )
+
+    # sourceinformation = models.ForeignKey('SourceInformation',
+    # blank=False, null=False, default=1, )
 
     class Meta:
         verbose_name = 'AcCode'
@@ -886,60 +936,108 @@ class AcCode(models.Model):
 
 #
 class SourceInformation_Year(models.Model):
-    sourceinformation = models.ForeignKey('SourceInformation')
-    year = models.ForeignKey('Year')
+    sourceinformation = models.ForeignKey(
+        'SourceInformation',
+        on_delete=models.CASCADE
+    )
+    year = models.ForeignKey(
+        'Year',
+        on_delete=models.CASCADE
+    )
+
 
 #
 
 
 class SourceComponent_Instrument(models.Model):
-    sourcecomponent = models.ForeignKey('SourceComponent')
-    instrument = models.ForeignKey('Instrument')
+    sourcecomponent = models.ForeignKey(
+        'SourceComponent',
+        on_delete=models.CASCADE
+    )
+    instrument = models.ForeignKey(
+        'Instrument',
+        on_delete=models.CASCADE,
+    )
 
 
 class SourceComponent_WorkComponent(models.Model):
-    sourcecomponent = models.ForeignKey('SourceComponent')
-    workcomponent = models.ForeignKey('WorkComponent')
+    sourcecomponent = models.ForeignKey(
+        'SourceComponent',
+        on_delete=models.CASCADE
+    )
+    workcomponent = models.ForeignKey(
+        'WorkComponent',
+        on_delete=models.CASCADE
+    )
+
+
 #
 
 
 class SourceInformation_PrintingMethod(models.Model):
-    sourceinformation = models.ForeignKey('SourceInformation')
-    printingmethod = models.ForeignKey('PrintingMethod')
+    sourceinformation = models.ForeignKey(
+        'SourceInformation',
+        on_delete=models.CASCADE
+    )
+    printingmethod = models.ForeignKey(
+        'PrintingMethod',
+        on_delete=models.CASCADE
+    )
+
 
 #
 
 
 class Genre_Work(models.Model):
-    genre = models.ForeignKey('Genre')
-    work = models.ForeignKey('Work')
+    genre = models.ForeignKey(
+        'Genre',
+        on_delete=models.CASCADE
+    )
+    work = models.ForeignKey(
+        'Work',
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         ordering = ['work']
+
 
 #
 
 
 class Annotation_BarRegion(models.Model):
-    annotation = models.ForeignKey('Annotation')
-    barregion = models.ForeignKey('BarRegion')
+    annotation = models.ForeignKey(
+        'Annotation',
+        on_delete=models.CASCADE
+    )
+    barregion = models.ForeignKey(
+        'BarRegion',
+        on_delete=models.CASCADE
+    )
 
 
 class BarSpine(models.Model):
     label = models.TextField(null=False, default="", blank=True, )
-    bar = models.ForeignKey('Bar', blank=False, null=False, default=1)
-    #page = models.ForeignKey('Page', blank=False, null=False, default=1 )
+    bar = models.ForeignKey(
+        'Bar', blank=False, null=False, default=1, on_delete=models.CASCADE
+    )
+    # page = models.ForeignKey('Page', blank=False, null=False, default=1 )
     sourcecomponent = models.ForeignKey(
-        'SourceComponent', blank=False, null=False, default=1)
+        'SourceComponent', blank=False, null=False, default=1,
+        on_delete=models.CASCADE
+    )
     orderno = models.IntegerField(null=True, blank=True, default=0)
-    source = models.ForeignKey('Source', blank=False, null=False, default=1)
+    source = models.ForeignKey('Source', blank=False, null=False, default=1,
+                               on_delete=models.CASCADE)
     implied = models.IntegerField(null=True, blank=True, default=0)
+
 
 BarSpine._meta.ordering = ["orderno", "source"]
 
 
 def country_unicode(self):
     return self.country
+
 
 Country.__unicode__ = country_unicode
 Country._meta.ordering = ["country"]
@@ -948,12 +1046,14 @@ Country._meta.ordering = ["country"]
 def archive_unicode(self):
     return self.name
 
+
 Archive.__unicode__ = archive_unicode
 Archive._meta.ordering = ["name"]
 
 
 def work_unicode(self):
     return self.label
+
 
 Work.__unicode__ = work_unicode
 Work._meta.ordering = ["orderno"]
@@ -962,12 +1062,15 @@ Work._meta.ordering = ["orderno"]
 def workComponent_unicode(self):
     return self.label
 
+
 WorkComponent.__unicode__ = workComponent_unicode
 WorkComponent._meta.ordering = ["orderno"]
 
 
 def source_unicode(self):
     return self.label
+
+
 Source._meta.ordering = ["label"]
 
 Source.__unicode__ = source_unicode
@@ -976,11 +1079,13 @@ Source.__unicode__ = source_unicode
 def sourcet_unicode(self):
     return self.type
 
+
 SourceType.__unicode__ = sourcet_unicode
 
 
 def sourcect_unicode(self):
     return self.type
+
 
 SourceComponentType.__unicode__ = sourcect_unicode
 
@@ -988,20 +1093,23 @@ SourceComponentType.__unicode__ = sourcect_unicode
 def WorkInformation_unicode(self):
     return str(self.id)
 
+
 WorkInformation.__unicode__ = WorkInformation_unicode
 
 
 def PrintingMethod_unicode(self):
     return self.method
 
+
 PrintingMethod.__unicode__ = PrintingMethod_unicode
 
 
 def SourceComponent_unicode(self):
     out = ''
-#    works=Work.objects.filter(workcomponent__sourcecomponent_workcomponent__sourcecomponent=self)
-#    for w in works:
-#        out+=w.label+" "
+    #    works=Work.objects.filter(
+    #    workcomponent__sourcecomponent_workcomponent__sourcecomponent=self)
+    #    for w in works:
+    #        out+=w.label+" "
     out += self.label
     return out
 
@@ -1018,6 +1126,7 @@ def getWorkComponentLabel(self):
         pass
     return label
 
+
 SourceComponent.getWorkComponentLabel = getWorkComponentLabel
 SourceComponent.__unicode__ = SourceComponent_unicode
 
@@ -1025,9 +1134,10 @@ SourceComponent.__unicode__ = SourceComponent_unicode
 def page_unicode(self):
     return self.label
 
+
 # class Page(Page):
- #     class Meta:
-  #      ordering = ["orderno"]
+#     class Meta:
+#      ordering = ["orderno"]
 
 Page.__unicode__ = page_unicode
 Page._meta.ordering = ["orderno"]
@@ -1041,16 +1151,20 @@ def barregion_unicode(self):
         label += b.barlabel
     return label
 
+
 # class BarRegion(BarRegion):
- #     class Meta:
-  #      ordering = ["bar.barnumber"]
+#     class Meta:
+#      ordering = ["bar.barnumber"]
 
 BarRegion.__unicode__ = barregion_unicode
-#BarRegion._meta.ordering = ["bar.barnumber"]
+
+
+# BarRegion._meta.ordering = ["bar.barnumber"]
 
 
 def opus_unicode(self):
     return str(self.opusno)
+
 
 Opus.__unicode__ = opus_unicode
 Opus._meta.ordering = ["opusno"]
@@ -1059,8 +1173,10 @@ Opus._meta.ordering = ["opusno"]
 def keyPitch_unicode(self):
     return self.keypitch
 
+
 keyPitch.__unicode__ = keyPitch_unicode
 keyPitch._meta.ordering = ["orderno"]
+
 
 # class toneNote(toneNote):
 
@@ -1068,12 +1184,14 @@ keyPitch._meta.ordering = ["orderno"]
 def keyMode_unicode(self):
     return self.keymode
 
+
 keyMode.__unicode__ = keyMode_unicode
 keyMode._meta.ordering = ["keymode"]
 
 
 def bar_unicode(self):
     return self.barlabel
+
 
 # class Bar(Bar):
 
@@ -1083,6 +1201,8 @@ Bar._meta.ordering = ["barnumber", "barlabel"]
 
 def pub_unicode(self):
     return self.publisher
+
+
 Publisher.__unicode__ = pub_unicode
 Publisher._meta.ordering = ["publisher"]
 
@@ -1090,23 +1210,29 @@ Publisher._meta.ordering = ["publisher"]
 def ins_unicode(self):
     return self.instrument
 
+
 Instrument.__unicode__ = ins_unicode
 Instrument._meta.ordering = ["instrument"]
 
 
 def genre_unicode(self):
     return self.genre
+
+
 Genre.__unicode__ = genre_unicode
 Genre._meta.ordering = ["genre"]
 
 
 def workc_unicode(self):
     return self.label
+
+
 WorkCollection.__unicode__ = workc_unicode
 
 
 def ac_unicode(self):
     return self.accode
+
 
 AcCode.__unicode__ = ac_unicode
 
@@ -1115,11 +1241,13 @@ def save(self, *args, **kwargs):
     self.accode_hash = hashlib.md5(self.accode.encode('UTF-8')).hexdigest()
     super(AcCode, self).save(*args, **kwargs)
 
+
 AcCode.save = save
 
 
 def dedicatee_unicode(self):
     return self.dedicatee
+
 
 Dedicatee.__unicode__ = dedicatee_unicode
 
@@ -1136,6 +1264,7 @@ class EditStatus(models.Model):
 def sourcestatus_unicode(self):
     return self.status
 
+
 EditStatus.__unicode__ = sourcestatus_unicode
 EditStatus._meta.ordering = ["id"]
 
@@ -1143,10 +1272,13 @@ EditStatus._meta.ordering = ["id"]
 class SourceLegacy(models.Model):
     cfeoKey = models.IntegerField(null=True, blank=True, default=0)
     witnessKey = models.IntegerField(null=True, blank=True, default=0)
-    source = models.ForeignKey('Source', blank=False, null=False, default=1)
+    source = models.ForeignKey(
+        'Source', blank=False, null=False, default=1, on_delete=models.CASCADE
+    )
     sourceDesc = models.TextField(null=False, default="", blank=True, )
     editstatus = models.ForeignKey(
-        'EditStatus', blank=False, null=False, default=1, )
+        'EditStatus', blank=False, null=False, default=1,
+        on_delete=models.CASCADE)
     mellon = models.BooleanField(default=False, null=False, blank=False)
     needsBarLines = models.BooleanField(default=False, null=False, blank=False)
 
@@ -1157,10 +1289,14 @@ class PageLegacy(models.Model):
     filename = models.TextField(null=False, default="", blank=True, )
     storageStructure = models.TextField(null=False, default="", blank=True, )
     pageimage = models.ForeignKey(
-        'PageImage', blank=False, null=False, default=1, )
+        'PageImage', blank=False, null=False, default=1,
+        on_delete=models.CASCADE
+    )
     cropCorrected = models.IntegerField(null=True, blank=True, default=0)
     editstatus = models.ForeignKey(
-        'EditStatus', blank=False, null=False, default=1, )
+        'EditStatus', blank=False, null=False, default=1,
+        on_delete=models.CASCADE
+    )
     jp2 = models.CharField(
         max_length=255,
         null=False,
@@ -1171,6 +1307,7 @@ class PageLegacy(models.Model):
     class Meta:
         verbose_name = 'Page Legacy'
         verbose_name_plural = 'Page Legacy'
+
 
 # For brand new images for brand new sources
 # Moved to normal structure after audit
@@ -1210,8 +1347,9 @@ class NewPageImage(models.Model):
         blank=False,
         null=False,
         default=1,
+        on_delete=models.CASCADE
     )
-    barsequences = generic.GenericRelation(BarSequence, null=True, blank=True)
+    barsequences = GenericRelation(BarSequence, null=True, blank=True)
 
     class Meta:
         verbose_name = 'NewPageImage'
@@ -1222,7 +1360,8 @@ class NewSource(models.Model):
     label = models.TextField(null=False, default="", blank=True, )
     library = models.TextField(null=False, default="", blank=True, )
     copyright = models.TextField(null=False, default="", blank=True, )
-    #sourcecode=models.CharField(max_length=255, null=False, default="", blank=True, )
+    # sourcecode=models.CharField(max_length=255, null=False, default="",
+    # blank=True, )
     sourcecreated = models.IntegerField(null=False, blank=False, default=0)
 
 
@@ -1233,6 +1372,7 @@ def newSource_unicode(self):
     if self.sourcecode is not None:
         label = label + " - " + self.sourcecode
     return label
+
 
 NewSource.__unicode__ = newSource_unicode
 
@@ -1265,7 +1405,7 @@ class NewSourceInformation(models.Model):
         null=False,
         default="",
         blank=True,
-        help_text=ur'''Edition text''',
+        help_text=r'''Edition text''',
     )
     shelfmark = models.CharField(
         max_length=255,
@@ -1311,18 +1451,23 @@ class NewSourceInformation(models.Model):
         blank=False,
         null=False,
         default=1,
+        on_delete=models.CASCADE
     )
     publisher = models.ForeignKey(
-        'Publisher', blank=False, null=False, default=1, )
+        'Publisher', blank=False, null=False, default=1,
+        on_delete=models.CASCADE)
     archive = models.ForeignKey(
         'Archive',
         blank=False,
         null=False,
         default=1,
+        on_delete=models.CASCADE
     )
     dedicatee = models.ForeignKey(
-        'Dedicatee', blank=False, null=False, default=1, )
-    accode = models.ForeignKey('AcCode', blank=False, null=False, default=1, )
+        'Dedicatee', blank=False, null=False, default=1,
+        on_delete=models.CASCADE)
+    accode = models.ForeignKey('AcCode', blank=False, null=False, default=1,
+                               on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'SourceInformation'
@@ -1344,12 +1489,14 @@ def getLegacy(self):
     except ObjectDoesNotExist:
         return ""
 
+
 Source.getEditStatus = getEditStatus
 Source.getLegacy = getLegacy
 
 
 def getYears(self):
     return Year.objects.filter(sourceinformation_year__sourceinformation=self)
+
 
 SourceInformation.getYears = getYears
 
@@ -1366,10 +1513,11 @@ def getJP2Path(self):
 
 def getZoomifyPath(self):
     fullurl = settings.IIP_URL + '?zoomify='
-    #pl = PageLegacy.objects.get(pageimage=self)
+    # pl = PageLegacy.objects.get(pageimage=self)
     jp2 = self.getJP2Path()
     fullurl = fullurl + jp2 + '/'
     return fullurl
+
 
 PageImage.getJP2Path = getJP2Path
 PageImage.getZoomifyPath = getZoomifyPath
@@ -1377,9 +1525,13 @@ PageImage.getZoomifyPath = getZoomifyPath
 
 def annotationType_unicode(self):
     return self.annotationType
+
+
 AnnotationType.__unicode__ = annotationType_unicode
 
 
 def year_unicode(self):
     return str(self.year)
+
+
 Year.__unicode__ = year_unicode

@@ -1,9 +1,9 @@
 from catalogue.models import _e, Work
-from pdf_import_utils import import_work
+from .pdf_import_utils import import_work
 
 from django.core.management.base import BaseCommand, CommandError
 
-from wagtail.wagtailcore.models import Page
+from wagtail.core.models import Page
 
 import logging
 import os

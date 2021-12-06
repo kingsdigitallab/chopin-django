@@ -12,12 +12,12 @@ from django.conf import settings
 from django.core.files import File
 from django.utils.text import slugify
 
-from wagtail.wagtaildocs.models import Document
-from wagtail.wagtailcore.models import Page
+from wagtail.documents.models import Document
+from wagtail.core.models import Page
 
-from models import (Copy, Impression, ImpressionCopy, Library, Publisher,
+from .models import (Copy, Impression, ImpressionCopy, Library, Publisher,
                     Work, safe_slugify)
-from pdf_parser import PDFParser
+from .pdf_parser import PDFParser
 
 
 class WorkImporter(object):
@@ -124,7 +124,7 @@ class WorkImporter(object):
                 sort_order = self._order_of_impressions.index(code.lower())
             except Exception:
                 self.logger.error(
-                    u'{0} missing from order of impressions, which consists of: {1}'.format(code, ', '.join(self._order_of_impressions)))
+                    '{0} missing from order of impressions, which consists of: {1}'.format(code, ', '.join(self._order_of_impressions)))
                 sort_order = 999
             impression.sort_order = sort_order
             impression.slug = safe_slugify(impression.title,
@@ -145,12 +145,12 @@ class WorkImporter(object):
         copies = parser.get_copies()
         # Special case some that are known not to work.
         if not copies:
-            if code == u'32–1a-Sm':
-                copies = {u'F-Pn': u'Ac.p. 2682 \u2013 333 x 251 mm (v). TP: annotation \u2018D\xe9pos\xe9 \xe0 la Direction\uf0bdN         1837 - No 197\u2019.'}
-            elif code == u'74–1-H':
-                copies = {u'F-Pn': u'4 O. 408 \uf02d 277 x 195 mm. TP: publisher\u2019s oval stamp. Wrapper (fawn): p. [1] \u2018F. CHOPIN.\uf0bdM\xe9lodies Polonaises\uf0bd - in\xe9dites en France -\uf0bdOp. 74.\uf0bdPo\xe9sies\n             Fran\xe7aises\uf0bdde VICTOR WILDER.\uf0bdPrix net. 5 Fr.\uf0bdParis, Maison J. MAHO, Editeur\uf0bdJ. Hamelle, Successeur\uf0bd25 faudourg [sic] Saint-Honor\xe9 25.\u2019, p. [2]\n             blank, pp. [3, 4] blank.',
-                          u'US-Cu': u'M1619.S46 \uf02d 270 x 190 mm. TP: publisher\u2019s oval stamp, stamp \u2018SCHOTT FR\xc8RES\uf0bdBRUXELLES\u2019.'}
-        keys = copies.keys()
+            if code == '32–1a-Sm':
+                copies = {'F-Pn': 'Ac.p. 2682 \u2013 333 x 251 mm (v). TP: annotation \u2018D\xe9pos\xe9 \xe0 la Direction\uf0bdN         1837 - No 197\u2019.'}
+            elif code == '74–1-H':
+                copies = {'F-Pn': '4 O. 408 \uf02d 277 x 195 mm. TP: publisher\u2019s oval stamp. Wrapper (fawn): p. [1] \u2018F. CHOPIN.\uf0bdM\xe9lodies Polonaises\uf0bd - in\xe9dites en France -\uf0bdOp. 74.\uf0bdPo\xe9sies\n             Fran\xe7aises\uf0bdde VICTOR WILDER.\uf0bdPrix net. 5 Fr.\uf0bdParis, Maison J. MAHO, Editeur\uf0bdJ. Hamelle, Successeur\uf0bd25 faudourg [sic] Saint-Honor\xe9 25.\u2019, p. [2]\n             blank, pp. [3, 4] blank.',
+                          'US-Cu': 'M1619.S46 \uf02d 270 x 190 mm. TP: publisher\u2019s oval stamp, stamp \u2018SCHOTT FR\xc8RES\uf0bdBRUXELLES\u2019.'}
+        keys = list(copies.keys())
         keys.sort()
         for key in keys:
             slug = slugify(key)
@@ -210,7 +210,7 @@ class WorkImporter(object):
         # iterate through each paragraph, appending all text (t) children to
         # that paragraphs text
         for p in p_list:
-            p_text = u''
+            p_text = ''
 
             # loop through each paragraph
             for element in p.iter():
@@ -221,7 +221,7 @@ class WorkImporter(object):
                 # sym (symbol) elements
                 elif element.tag == '{' + self.NS['w'] + '}sym':
                     # converts the symbol to unicode character
-                    char = unichr(int(
+                    char = chr(int(
                         element.get('{' + self.NS['w'] + '}char'), 16))
                     p_text = p_text + char
 

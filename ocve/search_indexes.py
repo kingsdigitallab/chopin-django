@@ -2,7 +2,7 @@ __author__ = 'Elliott Hall'
 
 from haystack import indexes
 
-from models import Work, Source, Genre
+from .models import Work, Source, Genre
 
 
 class WorkIndex(indexes.SearchIndex, indexes.Indexable):

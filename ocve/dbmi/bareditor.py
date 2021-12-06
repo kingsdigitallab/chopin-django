@@ -4,12 +4,12 @@ import json
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.conf import settings
 from ocve.forms import *
 from ocve.imagetools import verifyImageDimensions
 from ocve.bartools import *
-from datatools import *
+from .datatools import *
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -94,8 +94,8 @@ def editBars(request, id):
             next = None
     except ObjectDoesNotExist:
         errormsg = 'Page key invalid'
-        return render_to_response(errorPage, {'errormsg': errormsg})
-    return render_to_response('dbmi/bareditor.html',
+        return render(request, errorPage, {'errormsg': errormsg})
+    return render(request, 'dbmi/bareditor.html',
                               {'mode': 0,
                                'statuses': editStatuses,
                                'pages': pages,
@@ -108,7 +108,7 @@ def editBars(request, id):
                                'page': p,
                                'STATIC_URL': STATIC_URL,
                                'zoomifyURL': zoomifyURL},
-                              context_instance=RequestContext(request))
+                              )
 
 
 def cropCorrectView(request, id):
@@ -142,14 +142,14 @@ def cropCorrectView(request, id):
         zoomifyURL = pi.getZoomifyPath()
     except ObjectDoesNotExist:
         errormsg = 'Page key invalid'
-        return render_to_response(errorPage, {'errormsg': errormsg})
-    return render_to_response('dbmi/bareditor.html',
+        return render(request, errorPage, {'errormsg': errormsg})
+    return render(request, 'dbmi/bareditor.html',
                               {'mode': 1,
                                'regionURL': regionURL,
                                'pageimage': pi,
                                'page': p,
                                'zoomifyURL': zoomifyURL},
-                              context_instance=RequestContext(request))
+                              )
 
 
 def no_letters(number):

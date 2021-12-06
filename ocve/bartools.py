@@ -1,7 +1,7 @@
-import imagetools
+from . import imagetools
 
 __author__ = 'Elliot'
-from models import *
+from .models import *
 from django.utils.datastructures import MultiValueDictKeyError
 from django.conf import settings
 from django.db import connection
@@ -295,7 +295,7 @@ class BarRegionThumbnail:
 
         if self.range is not None:
             self.regionlabel = "bs " + \
-                str(self.br) + u'\u2013' + str(self.range.last())
+                str(self.br) + '\u2013' + str(self.range.last())
         else:
             self.regionlabel = "b. " + str(self.br)
             # self.URL = self.getURL()

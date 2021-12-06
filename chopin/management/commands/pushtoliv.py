@@ -33,7 +33,7 @@ class Command(BaseCommand):
             proc = subprocess.Popen(revertstat, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             err = proc.communicate()[1]
             if err:
-                print err
+                print(err)
                 logger.error('Dump from stg failed with error:' + str(err))
                 return False
             else:

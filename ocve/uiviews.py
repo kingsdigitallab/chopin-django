@@ -5,25 +5,25 @@ __author__ = 'Elliot'
 import re
 from django.core import serializers
 from ocve.serialize import serializeSource
-from django.shortcuts import render_to_response, HttpResponseRedirect
+from django.shortcuts import render, HttpResponseRedirect
 from django.template.context import RequestContext
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from bartools import *
-from uitools import *
-from dbmi.spine import getSpinesByWork, spinesToRegionThumbs
-from dbmi.sourceeditor import cleanSourceInformationHTML
+from .bartools import *
+from .uitools import *
+from .dbmi.spine import getSpinesByWork, spinesToRegionThumbs
+from .dbmi.sourceeditor import cleanSourceInformationHTML
 
 # Takes pageimageid
-from models import BarCollection
+from .models import BarCollection
 import json
 import hashlib
 from django.db import connection
-from forms import AnnotationForm
-from dbmi.datatools import convertEntities
-from imagetools import verifyImageDimensions
-from bartools import mergeBarNumbers
+from .forms import AnnotationForm
+from .dbmi.datatools import convertEntities
+from .imagetools import verifyImageDimensions
+from .bartools import mergeBarNumbers
 
 # IIP_URL = settings.IIP_URL
 IMAGE_SERVER_URL = settings.IMAGE_SERVER_URL
@@ -79,7 +79,7 @@ def shelfmarkview(request, acHash, mode="OCVE"):
                 work.id) + ',selection:' + work.label + ' type:Source,mark:' + si.shelfmark + ',id:' + str(
                 si.source.id) + ',selection:' + si.source.label + ',type:' + si.source.sourcetype.type + '}\n'
     return HttpResponse(
-        u'shelfmark found as:' +
+        'shelfmark found as:' +
         foundMark +
         "<br><br> Filters:" +
         filterString)
@@ -306,7 +306,7 @@ def browse(request, mode="OCVE", defaultFilters=None):
                     w.workinformation.relevantmanuscripts) > 0:
                 workinfos.append(w.id)
 
-    return render_to_response('frontend/browse.html',
+    return render(request, 'frontend/browse.html',
                               {'defaultFilters': defaultFilters,
                                'mode': mode,
                                'workinfos': workinfos,
@@ -418,7 +418,7 @@ def ocvePageImageview(request, id, selectedregionid=0, view='full'):
 
     request.session['page_image'] = id
 
-    return render_to_response(template, {
+    return render(request, template, {
         'workinfoexists': workinfoexists,
         'selectedregionid': selectedregionid,
         'achash': achash, 'annotationForm': annotationForm, 'notes': notes,
@@ -445,7 +445,7 @@ def cfeoImagePreview(request, id):
 
 def imagePreview(request, id, mode="OCVE"):
     pi = PageImage.objects.get(id=id)
-    return render_to_response('frontend/image-preview.html',
+    return render(request, 'frontend/image-preview.html',
                               {'mode': mode,
                                'pageimage': pi,
                                'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL})
@@ -467,7 +467,7 @@ def ocveViewInPage(request, id, barid):
         workcomponent__sourcecomponent_workcomponent__sourcecomponent__page__pageimage=pi).distinct()[0]
     zoomifyURL = pi.getZoomifyPath()
     mode = "OCVE"
-    return render_to_response('frontend/pageview.html',
+    return render(request, 'frontend/pageview.html',
                               {'work': work,
                                'source': source,
                                'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL,
@@ -495,7 +495,7 @@ def cfeoPageImageview(request, id):
     [next, prev] = getNextPrevPages(pi, pageimages)
     work = getPageImageWork(pi, source)
     seaDragonURL = pi.getZoomifyPath()
-    return render_to_response('frontend/cfeopageview.html',
+    return render(request, 'frontend/cfeopageview.html',
                               {'achash': achash,
                                'work': work,
                                'source': source,
@@ -530,7 +530,7 @@ def comparePageImageview(request, compareleft=0, compareright=0):
     except:
         pi_right = None
 
-    return render_to_response(
+    return render(request, 
         'frontend/comparepageview.html',
         {'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL, 'mode': mode,
          'pi_left': pi_left, 'pi_right': pi_right},
@@ -557,7 +557,7 @@ def sourceinformation(request, id, mode="OCVE"):
         page__sourcecomponent__source=source).order_by('page__orderno')
     work = source.getWork()
     si = cleanSourceInformationHTML(si)
-    return render_to_response('frontend/sourceinformation.html',
+    return render(request, 'frontend/sourceinformation.html',
                               {'pageimages': pageimages,
                                'mode': mode,
                                'work': work,
@@ -572,7 +572,7 @@ def sourceinformation(request, id, mode="OCVE"):
 def workinformation(request, id, mode='OCVE'):
     work = Work.objects.get(id=id)
     workinformation = work.workinformation
-    return render_to_response(
+    return render(request, 
         'frontend/workinformation.html',
         {'workinformation': workinformation, 'work': work, 'mode': mode},
         context_instance=RequestContext(request))
@@ -660,10 +660,10 @@ def barview(request):
     # Quick and dirty way of setting a test template mode
     try:
         request.GET['template']
-        return render_to_response('frontend/bar-view-html-design.html', {},
+        return render(request, 'frontend/bar-view-html-design.html', {},
                                   context_instance=RequestContext(request))
     except:
-        return render_to_response(
+        return render(request, 
             'frontend/bar-view.html', {
                 'mode': mode, 'next': next, 'range': range, 'prev': prev,
                 'opuses': opuses, 'orderno': orderno, 'bar': bar,
@@ -688,7 +688,7 @@ def ajaxInlineCollections(request):
     else:
         collections = None
 
-    return render_to_response(
+    return render(request, 
         'frontend/ajax/inline-collections.html',
         {'collections': collections, 'thumbs': thumbs,
          'IMAGE_SERVER_URL': IMAGE_SERVER_URL},
@@ -714,7 +714,7 @@ def ajaxChangeCollectionName(request):
             status = 0
     else:
         status = 0
-    return render_to_response('frontend/ajax/ajax-status.html', {"status": status, },
+    return render(request, 'frontend/ajax/ajax-status.html', {"status": status, },
                               context_instance=RequestContext(request))
 
 
@@ -734,7 +734,7 @@ def ajaxAddCollection(request):
             status = 0
     else:
         status = 0
-    return render_to_response('frontend/ajax/ajax-status.html', {"status": status, },
+    return render(request, 'frontend/ajax/ajax-status.html', {"status": status, },
                               context_instance=RequestContext(request))
 
 
@@ -746,7 +746,7 @@ def ajaxAddImageToCollectionModal(request):
     else:
         collections = None
 
-    return render_to_response('frontend/ajax/add-image-to-collection-modal.html', {
+    return render(request, 'frontend/ajax/add-image-to-collection-modal.html', {
                               "collections": collections, }, context_instance=RequestContext(request))
 
 
@@ -781,7 +781,7 @@ def ajaxAddImageToCollection(request):
     else:
         status = 0
 
-    return render_to_response('frontend/ajax/ajax-status.html', {"status": status, },
+    return render(request, 'frontend/ajax/ajax-status.html', {"status": status, },
                               context_instance=RequestContext(request))
 
 
@@ -818,7 +818,7 @@ def ajaxDeleteImageFromCollection(request):
     else:
         status = 0
 
-    return render_to_response('frontend/ajax/ajax-status.html', {"status": status, },
+    return render(request, 'frontend/ajax/ajax-status.html', {"status": status, },
                               context_instance=RequestContext(request))
 
 
@@ -838,11 +838,11 @@ def ajaxDeleteCollection(request):
             status = 0
     else:
         status = 0
-    return render_to_response('frontend/ajax/ajax-status.html', {"status": status, },
+    return render(request, 'frontend/ajax/ajax-status.html', {"status": status, },
                               context_instance=RequestContext(request))
 
 
 def iipredirect(request, path):
-    newurl = u'http://ocve3-images.dighum.kcl.ac.uk:6081/iip/' + \
+    newurl = 'http://ocve3-images.dighum.kcl.ac.uk:6081/iip/' + \
         path + '?' + request.GET.urlencode()
     return HttpResponseRedirect(newurl)

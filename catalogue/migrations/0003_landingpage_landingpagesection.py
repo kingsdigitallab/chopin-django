@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
-import wagtail.wagtailcore.fields
+import wagtail.core.fields
 import modelcluster.fields
 
 
@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             name='LandingPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('introduction', wagtail.wagtailcore.fields.RichTextField(blank=True)),
+                ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
                 'abstract': False,
@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=256)),
                 ('abbreviation', models.CharField(max_length=32)),
                 ('css_class', models.CharField(max_length=64)),
-                ('introduction', wagtail.wagtailcore.fields.RichTextField()),
+                ('introduction', wagtail.core.fields.RichTextField()),
                 ('image', models.ForeignKey(to='wagtailimages.Image')),
                 ('landing_page', modelcluster.fields.ParentalKey(related_name='sections', to='catalogue.LandingPage')),
                 ('page', models.ForeignKey(to='wagtailcore.Page')),

@@ -1,101 +1,98 @@
 __author__ = 'Elliot'
-from dbmiviews import *
-from django.conf.urls import *
+
+from django.conf.urls import url
+
 from ocve.views import *
-from sourceeditor import *
-from bareditor import *
-from datatools import correctSourceInformation
-from uploader import convertFolder, convertimage
-from spine import *
+from .bareditor import *
+from .sourceeditor import *
+from .spine import *
+from .uploader import convertFolder, convertimage
 
-urlpatterns = patterns('',  # (r'^source/(?P<id>\d+)/$', source),
-                       # Source and source information
-                       (r'^sources/$', sources),  # New source view
-                       (r'^sourceviews/(?P<m>\d+)/$', sourceView),
-                       (r'^sourceview/(?P<id>\d+)/$', uncorrectedSource),
-                       (r'^sourceeditor/(?P<id>\d+)/$', existingsourceeditor),
-                       (r'^sourceeditor/new/(?P<id>\d+)/$', newsourceeditor),
-                       (r'^sourceeditor/$', sourceeditor),
-                       (r'^saveSource/(?P<id>\d+)/$', saveSource),
-                       (r'^saveSourceInformation/(?P<id>\d+)/$',
-                        saveSourceInformation),
-                       (r'^clonesource/(?P<id>\d+)/$', clonesource),
-                       (r'^clonepage/(?P<id>\d+)/$', clonepage),
-                       (r'^generatesourcethumbnails/(?P<id>\d+)/$',
-                        generateSourceThumbnails),
+urlpatterns = [
+    # Source and source information
+    url(r'^sources/$', sources),  # New source view
+    url(r'^sourceviews/(?P<m>\d+)/$', sourceView),
+    url(r'^sourceview/(?P<id>\d+)/$', uncorrectedSource),
+    url(r'^sourceeditor/(?P<id>\d+)/$', existingsourceeditor),
+    url(r'^sourceeditor/new/(?P<id>\d+)/$', newsourceeditor),
+    url(r'^sourceeditor/$', sourceeditor),
+    url(r'^saveSource/(?P<id>\d+)/$', saveSource),
+    url(r'^saveSourceInformation/(?P<id>\d+)/$',
+     saveSourceInformation),
+    url(r'^clonesource/(?P<id>\d+)/$', clonesource),
+    url(r'^clonepage/(?P<id>\d+)/$', clonepage),
+    url(r'^generatesourcethumbnails/(?P<id>\d+)/$',
+     generateSourceThumbnails),
 
-                       # Source/work components
-                       #(r'^sourcecomp/(?P<id>\d+)/$', sourceComp),
-                       (r'^editsourcecomponent/(?P<id>\d+)/$',
-                        editexistingsourcecomponent),
-                       (r'^deletesourcecomponent/(?P<id>\d+)/$',
-                        deletesourcecomponent),
-                       (r'^savesourcecomponent/(?P<id>\d+)/$', savesourcecomponent),
-                       (r'^updatecomponentorder/$', updateComponentOrder),
-                       (r'^createsourcecomponent/(?P<sourceid>\d+)/$',
-                        createsourcecomponent),
-                       (r'^createfrontmatter/(?P<sourceid>\d+)/$', createfrontmatter),
-                       (r'^createendmatter/(?P<sourceid>\d+)/$', createendmatter),
-                       (r'^updatesc/$', updateSourceComponent),
-                       (r'^deletesource/(?P<id>\d+)/$', deletesource),
+    # Source/work components
+    # url(r'^sourcecomp/(?P<id>\d+)/$', sourceComp),
+    url(r'^editsourcecomponent/(?P<id>\d+)/$',
+     editexistingsourcecomponent),
+    url(r'^deletesourcecomponent/(?P<id>\d+)/$',
+     deletesourcecomponent),
+    url(r'^savesourcecomponent/(?P<id>\d+)/$', savesourcecomponent),
+    url(r'^updatecomponentorder/$', updateComponentOrder),
+    url(r'^createsourcecomponent/(?P<sourceid>\d+)/$',
+     createsourcecomponent),
+    url(r'^createfrontmatter/(?P<sourceid>\d+)/$', createfrontmatter),
+    url(r'^createendmatter/(?P<sourceid>\d+)/$', createendmatter),
+    url(r'^updatesc/$', updateSourceComponent),
+    url(r'^deletesource/(?P<id>\d+)/$', deletesource),
 
-                       #Pages and bars
-                       (r'^page/(?P<id>\d+)/$', loadEditPage),
-                       (r'^correctCropping/', correctCrop),
-                       url(r'^editbars/(?P<id>\d+)/$',
-                           editBars, name="edit-bars"),
-                       (r'^cropCorrect/(?P<id>\d+)/$', cropCorrectView),
-                       (r'^reorderBars/$', reorderBarNumbers),
-                       (r'^deletepage/(?P<id>\d+)/$', deletepage),
-                       (r'^savePage/$', savePage),
-                       (r'^updatePageIndex/$', updatepageindex),
-                       (r'^defaultpageorder/(?P<id>\d+)/$', defaultpageorder),
-                       (r'^updatepagetype/(?P<id>\d+)/$', updatepagetype),
-                       (r'^updatecopyright/$', updatecopyright),
+    # Pages and bars
+    url(r'^page/(?P<id>\d+)/$', loadEditPage),
+    url(r'^correctCropping/', correctCrop),
+    url(r'^editbars/(?P<id>\d+)/$',
+        editBars, name="edit-bars"),
+    url(r'^cropCorrect/(?P<id>\d+)/$', cropCorrectView),
+    url(r'^reorderBars/$', reorderBarNumbers),
+    url(r'^deletepage/(?P<id>\d+)/$', deletepage),
+    url(r'^savePage/$', savePage),
+    url(r'^updatePageIndex/$', updatepageindex),
+    url(r'^defaultpageorder/(?P<id>\d+)/$', defaultpageorder),
+    url(r'^updatepagetype/(?P<id>\d+)/$', updatepagetype),
+    url(r'^updatecopyright/$', updatecopyright),
 
+    # Misc
 
-                       # Misc
+    url(r'^fixbarrange/$', findmeta),
+    # url(r'^structure/(?P<id>\d+)/$', sourceStructureView),
+    url(r'^updateStatus/$', updateStatus),
+    url(r'^dbmi/$', dbmiView),
+    url(r'^findunverified/$', findUnverifiedImages),
+    url(r'^sourcesbywork/$', sourcesbywork),
+    url(r'^generatethumbnails/$', generateAllThumbnails),
+    url(r'^pushtoliv/$', pushtoliv),
 
-                       (r'^fixbarrange/$', findmeta),
-                       #(r'^structure/(?P<id>\d+)/$', sourceStructureView),
-                       (r'^updateStatus/$', updateStatus),
-                       (r'^dbmi/$', dbmiView),
-                       (r'^findunverified/$', findUnverifiedImages),
-                       (r'^sourcesbywork/$', sourcesbywork),
-                       (r'^generatethumbnails/$', generateAllThumbnails),
-                       (r'^pushtoliv/$', pushtoliv),
+    # upload
+    url(r'^upload/selectsource/', selectSource),
+    url(r'^upload/addsource/', addSource),
+    url(r'^upload/addpage/', addPages),
+    url(r'^upload/page/(?P<id>\d+)/$', iipPage),
+    url(r'^upload/addtosource/(?P<id>\d+)/$', addToSource),
+    url(r'^upload/modifypage/$', modifyPage),
+    url(r'^updateBarRegions/$', updateBarRegion),
+    url(r'^updateBarNumber/$', updateBarNumber),
+    url(r'^convertfolder/(?P<folderName>.*)/$', convertFolder),
+    url(r'^convertimage/$', convertimage),
 
-                       # upload
-                       (r'^upload/selectsource/', selectSource),
-                       (r'^upload/addsource/', addSource),
-                       (r'^upload/addpage/', addPages),
-                       (r'^upload/page/(?P<id>\d+)/$', iipPage),
-                       (r'^upload/addtosource/(?P<id>\d+)/$', addToSource),
-                       (r'^upload/modifypage/$', modifyPage),
-                       (r'^updateBarRegions/$', updateBarRegion),
-                       (r'^updateBarNumber/$', updateBarNumber),
-                       (r'^convertfolder/(?P<folderName>.*)/$', convertFolder),
-                       (r'^convertimage/$', convertimage),
+    # Spine URLS
+    # List of works
+    url(r'^spines/$', worksforspine),
+    # Spines for a single work
+    url(r'^editspine/(?P<id>\d+)/$', workspine),
+    url(r'^posthumousspine/$', posthumousSpines),
+    # A single part of a spine
+    url(r'^spine$', spine),
+    url(r'^importspine/$', importXLS),
+    # Export/import in CSV for editing
+    url(r'^exportspine/(?P<id>\d+)/$', exportXLS),
+    url(r'^deletesourcespines/(?P<id>\d+)/$', deleteSourceSpines),
+    # url(r'^work/(?P<id>\d+)/$', work),
+    url(r'^workadmin/(?P<id>\d+)/$', workadmin),
+    url(r'^savework/(?P<id>\d+)/$', savework),
+    url(r'^saveworkinformation/(?P<id>\d+)/$', saveworkinformation),
+    url(r'^saveworkcomponents/(?P<id>\d+)/$', saveworkcomponents),
+    url(r'^works/', works),
 
-
-                       # Spine URLS
-                       # List of works
-                       (r'^spines/$', worksforspine),
-                       # Spines for a single work
-                       (r'^editspine/(?P<id>\d+)/$', workspine),
-                       (r'^posthumousspine/$', posthumousSpines),
-                       # A single part of a spine
-                       (r'^spine$', spine),
-                       (r'^importspine/$', importXLS),
-                       # Export/import in CSV for editing
-                       (r'^exportspine/(?P<id>\d+)/$', exportXLS),
-                       (r'^deletesourcespines/(?P<id>\d+)/$', deleteSourceSpines),
-                       # (r'^work/(?P<id>\d+)/$', work),
-                       (r'^workadmin/(?P<id>\d+)/$', workadmin),
-                       (r'^savework/(?P<id>\d+)/$', savework),
-                       (r'^saveworkinformation/(?P<id>\d+)/$', saveworkinformation),
-                       (r'^saveworkcomponents/(?P<id>\d+)/$', saveworkcomponents),
-                       (r'^works/', works),
-
-
-                       )
+]

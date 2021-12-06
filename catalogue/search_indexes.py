@@ -1,7 +1,7 @@
 from django.contrib.contenttypes.models import ContentType
 from haystack import indexes
-from models import Impression, Library, Publisher, Work
-from wagtail.wagtailcore.models import Page
+from .models import Impression, Library, Publisher, Work
+from wagtail.core.models import Page
 
 
 class ImpressionIndex(indexes.SearchIndex, indexes.Indexable):
@@ -19,7 +19,7 @@ class ImpressionIndex(indexes.SearchIndex, indexes.Indexable):
         return self.get_model().objects.filter(live=True)
 
     def prepare_title(self, impression):
-        return u'{0}: {1}'.format(impression.get_parent().title,
+        return '{0}: {1}'.format(impression.get_parent().title,
                                   impression.title)
 
     def prepare_sort_order(self, impression):

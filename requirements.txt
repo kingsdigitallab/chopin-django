@@ -1,20 +1,20 @@
-django<1.8
+Django>=3.0.14
 -r ddhldap/requirements.txt
-django-compressor==1.6
+django-compressor
 django-grappelli
-django-haystack==2.4.1
+django-haystack==3.1.1
 django-libsass
-django-modelcluster==1.1
+django-modelcluster
 django-model-utils
-django-redis<4
-django-taggit==0.21.3
-elasticsearch==2.2.0
-html5lib==0.9999999
+django-taggit
+elasticsearch>=7.15.2
+html5lib
 lxml
 -r ocve/requirements.txt
 parsley
---allow-unverified git+ssh://git@github.com/euske/pdfminer.git
-psycopg2
+# --allow-unverified git+ssh://git@github.com/euske/pdfminer.git
+pdfminer.six
 pyparsing
-wagtail==1.3.1
+psycopg2==2.9.1
+wagtail>=2.9,<3 # https://github.com/wagtail/wagtail
 celery<4

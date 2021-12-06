@@ -4,7 +4,7 @@ from django.core.management.base import NoArgsCommand
 
 from unicodedata import normalize as _n
 
-from wagtail.wagtailcore.models import Page
+from wagtail.core.models import Page
 
 
 class Command(NoArgsCommand):

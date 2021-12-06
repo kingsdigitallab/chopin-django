@@ -10,7 +10,7 @@ class TestPDFToText(TestCase):
     def setUp(self):
         file_path = 'catalogue/tests/docs/Opus 1/1–1-BRZ.v.1.pdf'
         self.parser = PDFParser(file_path)
-        self._expected_code = u'1–1-BRZ'
+        self._expected_code = '1–1-BRZ'
 
     def test_get_text_content(self):
         content = self.parser.get_text_content()
@@ -54,8 +54,8 @@ PL-Wnifc   D/508 – 243 x 323 mm. TP: stamp ‘a Leopol [illegible]’. Reducti
     def test_get_copies(self):
         copies = self.parser.get_copies()
         expected_copies = {
-            u'D-Dl': u'Mus. 5565-T-530 – 274 x 342 mm.',
-            u'PL-Wn': u'Mus.III.127.998 Cim.  237 x 324 mm (v). TP: signature ‘Helena Turno1830’.',
-            u'PL-Wnifc': u'D/508 – 243 x 323 mm. TP: stamp ‘a Leopol [illegible]’. Reduction in size resulted in loss of pagination on pp. 2, 5, 6, 10, 11.'
+            'D-Dl': 'Mus. 5565-T-530 – 274 x 342 mm.',
+            'PL-Wn': 'Mus.III.127.998 Cim.  237 x 324 mm (v). TP: signature ‘Helena Turno1830’.',
+            'PL-Wnifc': 'D/508 – 243 x 323 mm. TP: stamp ‘a Leopol [illegible]’. Reduction in size resulted in loss of pagination on pp. 2, 5, 6, 10, 11.'
         }
         self.assertEqual(copies, expected_copies)

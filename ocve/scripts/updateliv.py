@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand, NoArgsCommand
+from django.core.management.base import BaseCommand as NoArgsCommand
 import logging
 import subprocess
 from optparse import make_option
@@ -11,7 +11,7 @@ logger = logging.getLogger('chopin')
 
 def cpscript(script, source, dest):
     cpcmd = ['cp', source + script, dest + script]
-    print 'Copying' + ' '.join(cpcmd)
+    print('Copying' + ' '.join(cpcmd))
     subprocess.Popen(cpcmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     # Copy rebuilt stg JSON to live.
@@ -66,13 +66,13 @@ def updateliv(revert):
                                     shell=True)
             err = proc.communicate()[1]
             if err:
-                print str(err)
+                print(str(err))
                 logger.error('Dump from liv failed with error:' + str(err))
                 return False
             else:
                 # Push stg mysql to live
                 pushstat = ['mysql', '-u', 'root', mysql_liv_db, '<', '/vol/ocve3/dumps/mysql_stg_dump.sql']
-                print ' '.join(pushstat)
+                print(' '.join(pushstat))
                 os.system(' '.join(pushstat))
                 #proc = subprocess.Popen(' '.join(pushstat), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             err = None  # proc.communicate()[1]

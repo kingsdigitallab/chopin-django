@@ -12,7 +12,6 @@ import logging
 import os
 
 import django.utils.text
-from celery.schedules import crontab
 from ddhldap.settings import *  # noqa
 from django.conf import global_settings
 
@@ -44,18 +43,19 @@ ALLOWED_HOSTS = []
 # https://docs.djangoproject.com/en/dev/topics/cache/
 # http://redis.io/topics/lru-cache
 # http://niwibe.github.io/django-redis/
-CACHE_REDIS_DATABASE = '0'
 
-CACHES = {
-    'default': {
-        'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': '127.0.0.1:6379:' + CACHE_REDIS_DATABASE,
-        'OPTIONS': {
-            'CLIENT_CLASS': 'redis_cache.client.DefaultClient',
-            'IGNORE_EXCEPTIONS': True
-        }
-    }
-}
+# CACHE_REDIS_DATABASE = '0'
+#
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'redis_cache.cache.RedisCache',
+#         'LOCATION': '127.0.0.1:6379:' + CACHE_REDIS_DATABASE,
+#         'OPTIONS': {
+#             'CLIENT_CLASS': 'redis_cache.client.DefaultClient',
+#             'IGNORE_EXCEPTIONS': True
+#         }
+#     }
+# }
 
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 DATABASES = {
@@ -74,22 +74,21 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'compressor',
     'haystack',
     'modelcluster',
     'taggit',
     'tinymce',
     'registration',
-
-    'wagtail.wagtailcore',
-    'wagtail.wagtailadmin',
-    'wagtail.wagtaildocs',
-    'wagtail.wagtailsnippets',
-    'wagtail.wagtailusers',
-    'wagtail.wagtailimages',
-    'wagtail.wagtailembeds',
-    'wagtail.wagtailredirects',
+    'wagtail.core',
+    'wagtail.admin',
+    'wagtail.documents',
+    'wagtail.snippets',
+    'wagtail.search',
+    'wagtail.users',
+    'wagtail.images',
+    'wagtail.embeds',
+    'wagtail.contrib.redirects',
 )
 
 INSTALLED_APPS += (
@@ -162,35 +161,46 @@ LOGGING = {
 }
 
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    'wagtail.wagtailcore.middleware.SiteMiddleware',
-    'wagtail.wagtailredirects.middleware.RedirectMiddleware',
-)
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware'
+]
 
 ROOT_URLCONF = PROJECT_NAME + '.urls'
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ''
 
-TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
-    'django.core.context_processors.request',
-    'catalogue.context_processors.settings',
-    'ocve.context_processors.ocve_constants',
-)
+# TEMPLATE_LOADERS = (
+#     'django.template.loaders.filesystem.Loader',
+#     'django.template.loaders.app_directories.Loader',
+# )
 
-TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'), )
-
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.debug",
+                "django.template.context_processors.media",
+                "django.template.context_processors.request",
+                "django.template.context_processors.static",
+                'catalogue.context_processors.settings',
+                'ocve.context_processors.ocve_constants',
+                "django.contrib.messages.context_processors.messages",
+            ],
+            "debug": False,
+        },
+    },
+]
 
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 LANGUAGE_CODE = 'en-gb'
@@ -232,7 +242,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-MEDIA_URL = STATIC_URL + 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL.strip('/'))
 
 if not os.path.exists(MEDIA_ROOT):
@@ -265,21 +275,19 @@ ALL_WORKS_WITHOUT_OPUS = WORKS_WITHOUT_OPUS + POSTHUMOUS_WORKS_WITHOUT_OPUS
 # http://docs.celeryproject.org/en/latest/
 # -----------------------------------------------------------------------------
 
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/' + CACHE_REDIS_DATABASE
-BROKER_URL = 'redis://127.0.0.1:6379/' + CACHE_REDIS_DATABASE
+# CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/' + CACHE_REDIS_DATABASE
+# BROKER_URL = 'redis://127.0.0.1:6379/' + CACHE_REDIS_DATABASE
+#
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
 
-# Only add pickle to this list if your broker is secured
-# from unwanted access (see userguide/security.html)
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-
-CELERYBEAT_SCHEDULE = {
-    'haystack-update-index-every-day': {
-        'task': 'catalogue.tasks.haystack_update_index',
-        'schedule': crontab(minute=0, hour=2),
-    },
-}
+# CELERYBEAT_SCHEDULE = {
+#     'haystack-update-index-every-day': {
+#         'task': 'catalogue.tasks.haystack_update_index',
+#         'schedule': crontab(minute=0, hour=2),
+#     },
+# }
 
 # -----------------------------------------------------------------------------
 # CMS
@@ -313,7 +321,7 @@ GRAPPELLI_ADMIN_TITLE = PROJECT_TITLE
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE':
-        'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        "haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine",
         'URL': 'http://127.0.0.1:9200/',
         'INDEX_NAME': PROJECT_NAME,
         'TIMEOUT': 60 * 5,
@@ -393,6 +401,20 @@ TINYMCE_DEFAULT_CONFIG = {
 
 WAGTAIL_SITE_NAME = PROJECT_TITLE
 
+WAGTAILSEARCH_RESULTS_TEMPLATE = "search_results.html"
+
+WAGTAILSEARCH_INDEX = PROJECT_NAME
+
+WAGTAILSEARCH_BACKENDS = {
+    "default": {
+        "BACKEND": "wagtail.search.backends.elasticsearch7",
+        "URLS": ["http://127.0.0.1:9200"],
+        "INDEX": WAGTAILSEARCH_INDEX,
+        "TIMEOUT": 5,
+        "FORCE_NEW": False,
+    }
+}
+
 
 # Allow all manner of non-alphanumeric characters in filenames, since
 # the PDF files for Works/Impressions use them meaningfully.
@@ -401,3 +423,5 @@ def get_valid_filename(s):
     return force_text(s).strip().replace(' ', '_')
 
 django.utils.text.get_valid_filename = get_valid_filename
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

@@ -1,10 +1,10 @@
 from collections import OrderedDict
-import cPickle
+import pickle
 import logging
 
 from django.core.management.base import BaseCommand, CommandError
 
-from wagtail.wagtailcore.models import Page
+from wagtail.core.models import Page
 
 from catalogue import models
 
@@ -69,7 +69,7 @@ class Command (BaseCommand):
                     page_data[key]['kwargs']['introduction'] = page.introduction
                 except AttributeError:
                     pass
-        page_data = OrderedDict(sorted(page_data.items(),
+        page_data = OrderedDict(sorted(list(page_data.items()),
                                        key=lambda t: t[1]['kwargs']['path']))
         with open(output_filename, 'w') as fh:
-            cPickle.dump(page_data, fh)
+            pickle.dump(page_data, fh)

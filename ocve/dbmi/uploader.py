@@ -3,7 +3,7 @@ import os
 import logging
 
 from django.template.context import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from ocve.bartools import *
 from django.conf import settings
@@ -54,7 +54,7 @@ def newsourcefiles(request):
             uploadFolder[str(u)] = None
     sources = Source.objects.filter(sourceinformation__accode_id__gt=1).order_by(
         'sourceinformation__accode__accode').all()
-    return render_to_response('dbmi/uploadfolders.html',
+    return render(request, 'dbmi/uploadfolders.html',
                               {'uploadFolder': uploadFolder,
                                'log': logtail,
                                'free': free,
@@ -228,6 +228,6 @@ def posth(request):
                 label='Score',
                 work=p,
                 opus=nonumber).save()
-    return render_to_response('dbmi/posth.html',
+    return render(request, 'dbmi/posth.html',
                               {'posths': posths},
                               context_instance=RequestContext(request))

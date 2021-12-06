@@ -2,8 +2,8 @@
 # this file can be edit,
 # make sure it is renamed into "admin_custom.py" (without the underscore
 # at the beginning)
-from models import *
-from admin_generic import *
+from .models import *
+from .admin_generic import *
 from django.contrib import admin
 
 

@@ -36,7 +36,7 @@ class TestModels(TestCase):
         work=Work.objects.get(id=6337)
         self.assertEqual(1, work.getSources().count())
         first=work.getSources()[0]
-        self.assertEqual(u"GFE: first impression (G)",first.label)
+        self.assertEqual("GFE: first impression (G)",first.label)
 
     #BarRegion
     def test_barregion_getHighestBarNumber(self):
@@ -57,22 +57,22 @@ class TestModels(TestCase):
     def test_source_getWork(self):
         source_gfe38=Source.objects.get(id=17890)
         self.assertNotEqual(None,source_gfe38.getWork())
-        self.assertEqual(u"Ballade Op. 38",source_gfe38.getWork().label)
+        self.assertEqual("Ballade Op. 38",source_gfe38.getWork().label)
 
 
     #w.label+" "+self.label
     def test_source_getOpusLabel(self):
         source=Source.objects.get(id=17890)
-        self.assertEqual(u"Ballade Op. 38 GFE: first impression (G)",source.getOpusLabel())
+        self.assertEqual("Ballade Op. 38 GFE: first impression (G)",source.getOpusLabel())
 
     def test_source_getAcCode(self):
         source=Source.objects.get(id=17890)
-        self.assertEqual(u"38–1-B&H",source.getAcCode())
+        self.assertEqual("38–1-B&H",source.getAcCode())
 
 
     def test_source_getAcCodeObject(self):
         source=Source.objects.get(id=17890)
-        self.assertEqual(u"38–1-B&H",source.getAcCodeObject().accode)
+        self.assertEqual("38–1-B&H",source.getAcCodeObject().accode)
 
 
     def test_source_getSourceComponents(self):
@@ -84,13 +84,13 @@ class TestModels(TestCase):
 
     def test_source_getSourceInformation(self):
         source=Source.objects.get(id=17890)
-        self.assertEqual(u"Ballade pour le Piano, Oeuvr. 38",source.getSourceInformation().publicationtitle)
+        self.assertEqual("Ballade pour le Piano, Oeuvr. 38",source.getSourceInformation().publicationtitle)
 
     def test_source_getPrimaryPageImages(self):
         source=Source.objects.get(id=17890)
         self.assertEqual(3,source.getPrimaryPageImages().count())
         first=source.getPrimaryPageImages()[0]
-        self.assertEqual(u"p. 9 Music,  bs 156\u2013171",first.textlabel)
+        self.assertEqual("p. 9 Music,  bs 156\u2013171",first.textlabel)
 
 
     def test_source_getPages(self):
@@ -121,9 +121,9 @@ class TestModels(TestCase):
 
     def test_page_getPrimaryPageImage(self):
         default_page=Page.objects.get(id=61539)
-        self.assertEqual(u"p. 9 Music,  bs 156\u2013171",default_page.getPrimaryPageImage().textlabel)
+        self.assertEqual("p. 9 Music,  bs 156\u2013171",default_page.getPrimaryPageImage().textlabel)
 
 
     def test_page_getWorkComponent(self):
         default_page=Page.objects.get(id=61533)
-        self.assertEqual(u"Music",default_page.getWorkComponent().label)
+        self.assertEqual("Music",default_page.getWorkComponent().label)

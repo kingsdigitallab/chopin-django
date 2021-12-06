@@ -17,13 +17,13 @@ class Command(NoArgsCommand):
     def handle_noargs(self, **options):
         for page in IndexPage.objects.all():
             if page.introduction:
-                self.logger.debug(u'Cleaning {0}'.format(page.title))
+                self.logger.debug('Cleaning {0}'.format(page.title))
                 page.introduction = self._add_footnote_ids(page.introduction)
                 page.save()
 
         for page in RichTextPage.objects.all():
             if page.content:
-                self.logger.debug(u'Cleaning {0}'.format(page.title))
+                self.logger.debug('Cleaning {0}'.format(page.title))
                 page.content = self._add_footnote_ids(page.content)
                 page.save()
 

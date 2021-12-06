@@ -1,7 +1,7 @@
 """Command to populate an empty database with data imported from
 various sources."""
 
-import cPickle
+import pickle
 import logging
 import os.path
 
@@ -10,13 +10,13 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.files import File
 from django.core.management.base import BaseCommand, CommandError
 
-from wagtail.wagtailcore.models import GroupPagePermission, Page, Site
-from wagtail.wagtaildocs.models import Document
+from wagtail.core.models import GroupPagePermission, Page, Site
+from wagtail.documents.models import Document
 
 from catalogue.models import Abbreviation, Advert, Catalogue, City, Copy, \
     Country, HomePage, Library, LibraryIndexPage, PublisherIndexPage, STP
-from page_data import abbreviation_data, bad_library_codes, document_data
-from pdf_import_utils import import_adverts, import_libraries, import_stps, \
+from .page_data import abbreviation_data, bad_library_codes, document_data
+from .pdf_import_utils import import_adverts, import_libraries, import_stps, \
     import_works
 
 
@@ -56,14 +56,14 @@ class Command (BaseCommand):
             editors.permissions.add(*list(permissions))
 
     def _import_abbreviations (self):
-        for abbreviation, description in abbreviation_data.items():
+        for abbreviation, description in list(abbreviation_data.items()):
             abb = Abbreviation(abbreviation=abbreviation,
                                description=description)
             abb.save()
 
     def _import_documents (self, pdf_dir):
         doc_dir = os.path.join(pdf_dir, 'documents')
-        for data in document_data.values():
+        for data in list(document_data.values()):
             title = data['title']
             filename = data['file']
             self.logger.debug('Creating document {}'.format(
@@ -79,8 +79,8 @@ class Command (BaseCommand):
         for page in Page.objects.all():
             page.delete()
         with open(exported_page_data, 'r') as fh:
-            page_data = cPickle.load(fh)
-        for page_name, info in page_data.items():
+            page_data = pickle.load(fh)
+        for page_name, info in list(page_data.items()):
             self.logger.debug('Creating page {}'.format(page_name))
             page = info['class'](**info['kwargs'])
             page.save()
@@ -116,4 +116,4 @@ class Command (BaseCommand):
                 library = Library.objects.get(title=library_code)
                 library.delete()
             except Library.DoesNotExist:
-                self.logger.error(u'Whoah, missing expected bad library "{}"'.format(library_code))
+                self.logger.error('Whoah, missing expected bad library "{}"'.format(library_code))

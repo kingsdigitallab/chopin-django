@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from django import template
 
@@ -18,7 +18,7 @@ def clean_si(html):
     return html
 
 
-@register.assignment_tag()
+@register.simple_tag()
 def has_printing_method(source_information):
     for pm in source_information.printingmethod.all():
         if pm and pm.method and pm.method.lower() != 'unspecified':
@@ -44,7 +44,7 @@ def index_by(a_list, attribute):
                                       'b': {'id': 2, 'value': 'b'}}
 
     """
-    return dict([(unicode(getattr(i, attribute)), i) for i in a_list])
+    return dict([(str(getattr(i, attribute)), i) for i in a_list])
 
 
 @register.filter

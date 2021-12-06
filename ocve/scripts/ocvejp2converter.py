@@ -15,7 +15,7 @@ Refactored by EH for use as a specialsed upload converter/archiver only for tiff
 
 """
 
-import copy_reg
+import copyreg
 import logging
 import multiprocessing
 import os
@@ -253,7 +253,7 @@ class ArchiveJP2Converter(object):
             logger.info('Deleting TIFF file [%s]' % tiff_file)
             try:
                 os.remove(tiff_file)
-            except (IOError, OSError), e:
+            except (IOError, OSError) as e:
                 logger.warn('Error removing TIFF [%s], Reason: %s' % (tiff_file, e))
         logger.info('Conversion complete: [%s]' % in_file)
         return True
@@ -269,9 +269,9 @@ class ArchiveJP2Converter(object):
 # code. Code taken from
 # http://bytes.com/topic/python/answers/552476-why-cant-you-pickle-instancemethods#edit2155350
 def _pickle_method(method):
-    func_name = method.im_func.__name__
-    obj = method.im_self
-    cls = method.im_class
+    func_name = method.__func__.__name__
+    obj = method.__self__
+    cls = method.__self__.__class__
     return _unpickle_method, (func_name, obj, cls)
 
 
@@ -286,7 +286,7 @@ def _unpickle_method(func_name, obj, cls):
     return func.__get__(obj, cls)
 
 
-copy_reg.pickle(types.MethodType, _pickle_method, _unpickle_method)
+copyreg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
 if __name__ == "__main__":
     logger.info('Starting image conversion run')

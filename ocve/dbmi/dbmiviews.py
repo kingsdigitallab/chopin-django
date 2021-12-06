@@ -6,9 +6,9 @@ __author__ = 'Elliott Hall'
 # All view functions for editing bar information
 from ocve.imagetools import verifyImagesViaIIP
 from django.contrib.auth.decorators import login_required
-from bareditor import editBarsURL
+from .bareditor import editBarsURL
 from django.db.models import *
-from sourceeditor import *
+from .sourceeditor import *
 from ocve.uitools import generateThumbnails
 import shutil
 import os
@@ -30,7 +30,7 @@ STATIC_URL = settings.STATIC_URL
 
 
 def dbmiView(request):
-    return render_to_response(
+    return render(request,
         'dbmi/editindex.html',
         context_instance=RequestContext(request))
 
@@ -51,7 +51,7 @@ def selectSource(request):
             convert(c) for c in re.split(
                 '([0-9]+)',
                 a.sourcecode)])
-    return render_to_response('dbmi/selectsource.html',
+    return render(request, 'dbmi/selectsource.html',
                               {'newSourceForm': sForm,
                                'newSources': newSources},
                               context_instance=RequestContext(request))
@@ -72,11 +72,11 @@ def addSource(request):
                 errormsg = 'Source Code already exists'
             else:
                 newS = s.save()
-                return render_to_response('uploadPage.html', {'source': newS})
+                return render(request, 'uploadPage.html', {'source': newS})
     except MultiValueDictKeyError:
         errormsg = 'Please provide a source code'
     newSources = NewSource.objects.all()
-    return render_to_response('dbmi/selectsource.html',
+    return render(request, 'dbmi/selectsource.html',
                               {'errormsg': errormsg,
                                'newSourceForm': s,
                                'newSources': newSources},
@@ -142,7 +142,7 @@ def addToSource(request, id):
     sources = NewSource.objects.all()
     oldSources = Source.objects.all()
 
-    return render_to_response('uploadPage.html',
+    return render(request, 'uploadPage.html',
                               {'source': newS,
                                'newPages': newPages,
                                'sources': sources,
@@ -186,7 +186,7 @@ def updateStatus(request):
                     pl.editstatus = status
                     pl.save()
         except ObjectDoesNotExist:
-            print 'Bad source ' + str(id)
+            print('Bad source ' + str(id))
             # TODO: Use reverse() for sustainability when it works
         # return uncorrectedSource(request,sourceid)
         return HttpResponseRedirect('/ocve/sourceview/' + str(sourceid) + '/')
@@ -198,7 +198,7 @@ def updateStatus(request):
             pl.editstatus = status
             pl.save()
         except ObjectDoesNotExist:
-            print 'Bad page ' + str(id)
+            print('Bad page ' + str(id))
             # TODO: Use reverse() for sustainability when it works
         return HttpResponseRedirect(editBarsURL + str(pageid) + '/')
 
@@ -285,7 +285,7 @@ def uncorrectedSource(request, id):
     pages = PageImage.objects.filter(
         page__sourcecomponent__source=source).order_by('page__orderno')
     sourceStatuses = EditStatus.objects.all()
-    return render_to_response('dbmi/correctview.html',
+    return render(request, 'dbmi/correctview.html',
                               {'source': source,
                                'pages': pages,
                                'statuses': sourceStatuses},
@@ -367,7 +367,7 @@ def sourceView(request, m):
             #            sourcecounts[s.getEditStatus()] += 1
             #            x += 1
 
-    return render_to_response('dbmi/correctview.html',
+    return render(request, 'dbmi/correctview.html',
                               {'title': title,
                                'sources': sources,
                                'sourcecounts': sourcecounts,
@@ -390,7 +390,7 @@ def loadEditPage(request, id):
         # geos=toGeos(regions)
     # TODO:  How are we limiting bar number choices?
     # availBars=Bar.objects.filter(barnumber__range=(77,9fe9))
-    return render_to_response('annotation.html',
+    return render(request, 'annotation.html',
                               {'page': page,
                                'regionThumbs': regionThumbs,
                                'legacy': l},
@@ -477,7 +477,7 @@ def iipPage(request, id):
         source = Source.objects.filter(
             sourcecomponent__page__pageimage__id=id)[0]
         jp2Path = np.getJP2Path()
-    return render_to_response('dbmi/newpage.html',
+    return render(request, 'dbmi/newpage.html',
                               {'np': np,
                                'source': source,
                                'jp2Path': jp2Path,
@@ -487,7 +487,7 @@ def iipPage(request, id):
 
 def sourcesbywork(request):
     works = Work.objects.all()
-    return render_to_response('dbmi/sourcesbywork.html',
+    return render(request, 'dbmi/sourcesbywork.html',
                               {'works': works,
                                'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL,
                                },
@@ -515,7 +515,7 @@ def sources(request):
         sources = Source.objects.filter(cfeo=True).order_by(order)
     else:
         sources = Source.objects.all().order_by(order)
-    return render_to_response(
+    return render(request,
         'dbmi/sources.html', {'sources': sources, 'order': order, 'filter': filter})
 
 
@@ -523,7 +523,7 @@ def sources(request):
 @csrf_exempt
 def works(request):
     works = Work.objects.all()
-    return render_to_response('dbmi/works.html', {'works': works})
+    return render(request, 'dbmi/works.html', {'works': works})
 
 # A custom admin view to show the relevant objects for a single opus
 # and a quick list of the sources attached to it
@@ -538,7 +538,7 @@ def workadmin(request, id):
     comps = WorkComponent.objects.filter(work=w)
     compFormset = WorkComponentFormset(queryset=comps)
     sources = w.getSources()
-    return render_to_response('dbmi/workadmin.html',
+    return render(request, 'dbmi/workadmin.html',
                               {'work': w,
                                'compFormset': compFormset,
                                'workform': wform,

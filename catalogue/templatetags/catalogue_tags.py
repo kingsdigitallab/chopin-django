@@ -5,9 +5,9 @@ from catalogue.models import Impression
 from django import template
 from django.utils.safestring import mark_safe
 
-from wagtail.wagtailcore.models import Page
-from wagtail.wagtailcore.templatetags.wagtailcore_tags import pageurl
-from wagtail.wagtaildocs.models import Document
+from wagtail.core.models import Page
+from wagtail.core.templatetags.wagtailcore_tags import pageurl
+from wagtail.documents.models import Document
 
 from ..models import HomePage
 
@@ -41,11 +41,11 @@ def clean(text):
 def get_item(dictionary, key):
     return dictionary[key]
 
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def get_site_root(context):
     """Returns the site root Page, not the implementation-specific model used.
 
-    :rtype: `wagtail.wagtailcore.models.Page`
+    :rtype: `wagtail.core.models.Page`
     """
     if 'BASE_URL' in context:
         return Page.objects.filter(slug=context['BASE_URL']).first()
@@ -106,7 +106,7 @@ def pdfdisplay(html):
     that includes them and rendering it.
 
     """
-    soup = BeautifulSoup(u'<div>{}</div>'.format(html))
+    soup = BeautifulSoup('<div>{}</div>'.format(html))
     links = soup(linktype='document')
     keys = []
 
@@ -129,7 +129,7 @@ def pdfdisplay(html):
         script_include = '{{% include "catalogue/includes/pdf_script.html" with canvas_id="{}" pdf_url="{}" %}}'.format(canvas_id, pdf_url)
         soup.div.append(script_include)
 
-    html = unicode(soup.div)
+    html = str(soup.div)
     html = re.sub(r'><\/embed>', ' />', html)
 
     return template.Template(html).render(template.Context())
@@ -156,7 +156,7 @@ def add_special_characters(html):
 def _format_code(match):
     try:
         code_as_class = match.group('code')
-        code = unichr(int(code_as_class))
+        code = chr(int(code_as_class))
     except ValueError:
         code_as_class = match.group('code') or ''
         code = code_as_class
@@ -169,7 +169,7 @@ def _format_code(match):
         'class': match.group('class').lower(),
     }
 
-    repl = u'<span class="{class} c{code_as_class}">{start_tag}{code}{end_tag}</span>'.format(
+    repl = '<span class="{class} c{code_as_class}">{start_tag}{code}{end_tag}</span>'.format(
         **parts)
 
     return repl.encode('utf-8')
@@ -191,7 +191,7 @@ def truncate_comments(value):
 
     return truncated
 
-@register.assignment_tag()
+@register.simple_tag()
 def get_impression_exists(code_hash):
     """Returns true if the impression with the give ac code hash exists in the
     ACO Online."""

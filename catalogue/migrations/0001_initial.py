@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import models, migrations
-import wagtail.wagtailcore.fields
+import wagtail.core.fields
 import model_utils.fields
-import wagtail.contrib.wagtailroutablepage.models
+import wagtail.contrib.routable_page.models
 import django.utils.timezone
 import modelcluster.fields
 import django.db.models.deletion
@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
                 ('abbreviation', models.CharField(unique=True, max_length=32)),
-                ('description', wagtail.wagtailcore.fields.RichTextField()),
+                ('description', wagtail.core.fields.RichTextField()),
                 ('slug', models.CharField(max_length=256, editable=False)),
             ],
             options={
@@ -37,12 +37,12 @@ class Migration(migrations.Migration):
             name='AbbreviationIndexPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('introduction', wagtail.wagtailcore.fields.RichTextField(blank=True)),
+                ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
                 'abstract': False,
             },
-            bases=(wagtail.contrib.wagtailroutablepage.models.RoutablePageMixin, 'wagtailcore.page', models.Model),
+            bases=(wagtail.contrib.routable_page.models.RoutablePageMixin, 'wagtailcore.page', models.Model),
         ),
         migrations.CreateModel(
             name='Advert',
@@ -65,23 +65,23 @@ class Migration(migrations.Migration):
             name='AdvertIndexPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('introduction', wagtail.wagtailcore.fields.RichTextField(blank=True)),
+                ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
                 'verbose_name': "Publishers' Advertisements Index Page",
             },
-            bases=(wagtail.contrib.wagtailroutablepage.models.RoutablePageMixin, 'wagtailcore.page', models.Model),
+            bases=(wagtail.contrib.routable_page.models.RoutablePageMixin, 'wagtailcore.page', models.Model),
         ),
         migrations.CreateModel(
             name='Catalogue',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('introduction', wagtail.wagtailcore.fields.RichTextField(blank=True)),
+                ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
                 'verbose_name': 'Catalogue',
             },
-            bases=(wagtail.contrib.wagtailroutablepage.models.RoutablePageMixin, 'wagtailcore.page', models.Model),
+            bases=(wagtail.contrib.routable_page.models.RoutablePageMixin, 'wagtailcore.page', models.Model),
         ),
         migrations.CreateModel(
             name='City',
@@ -128,12 +128,12 @@ class Migration(migrations.Migration):
             name='GlossaryIndexPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('introduction', wagtail.wagtailcore.fields.RichTextField(blank=True)),
+                ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
                 'abstract': False,
             },
-            bases=(wagtail.contrib.wagtailroutablepage.models.RoutablePageMixin, 'wagtailcore.page', models.Model),
+            bases=(wagtail.contrib.routable_page.models.RoutablePageMixin, 'wagtailcore.page', models.Model),
         ),
         migrations.CreateModel(
             name='GlossaryItem',
@@ -142,7 +142,7 @@ class Migration(migrations.Migration):
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
                 ('title', models.CharField(unique=True, max_length=32)),
-                ('description', wagtail.wagtailcore.fields.RichTextField()),
+                ('description', wagtail.core.fields.RichTextField()),
                 ('slug', models.CharField(max_length=256, editable=False)),
             ],
             options={
@@ -154,7 +154,7 @@ class Migration(migrations.Migration):
             name='HomePage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('content', wagtail.wagtailcore.fields.RichTextField()),
+                ('content', wagtail.core.fields.RichTextField()),
             ],
             options={
                 'verbose_name': 'homepage',
@@ -196,7 +196,7 @@ class Migration(migrations.Migration):
             name='IndexPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('introduction', wagtail.wagtailcore.fields.RichTextField(blank=True)),
+                ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
                 'abstract': False,
@@ -222,18 +222,18 @@ class Migration(migrations.Migration):
             name='LibraryIndexPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('introduction', wagtail.wagtailcore.fields.RichTextField(blank=True)),
+                ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
                 'verbose_name': 'Library Index Page',
             },
-            bases=(wagtail.contrib.wagtailroutablepage.models.RoutablePageMixin, 'wagtailcore.page', models.Model),
+            bases=(wagtail.contrib.routable_page.models.RoutablePageMixin, 'wagtailcore.page', models.Model),
         ),
         migrations.CreateModel(
             name='Publisher',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('name', wagtail.wagtailcore.fields.RichTextField(null=True, blank=True)),
+                ('name', wagtail.core.fields.RichTextField(null=True, blank=True)),
                 ('abbreviation', models.CharField(max_length=256, null=True, blank=True)),
                 ('city', models.ForeignKey(related_name='publishers', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='catalogue.City', null=True)),
             ],
@@ -246,18 +246,18 @@ class Migration(migrations.Migration):
             name='PublisherIndexPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('introduction', wagtail.wagtailcore.fields.RichTextField(blank=True)),
+                ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
                 'abstract': False,
             },
-            bases=(wagtail.contrib.wagtailroutablepage.models.RoutablePageMixin, 'wagtailcore.page', models.Model),
+            bases=(wagtail.contrib.routable_page.models.RoutablePageMixin, 'wagtailcore.page', models.Model),
         ),
         migrations.CreateModel(
             name='RichTextPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('content', wagtail.wagtailcore.fields.RichTextField()),
+                ('content', wagtail.core.fields.RichTextField()),
             ],
             options={
                 'abstract': False,
@@ -287,12 +287,12 @@ class Migration(migrations.Migration):
             name='STPIndexPage',
             fields=[
                 ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('introduction', wagtail.wagtailcore.fields.RichTextField(blank=True)),
+                ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
                 'verbose_name': 'Series Title Page Index Page',
             },
-            bases=(wagtail.contrib.wagtailroutablepage.models.RoutablePageMixin, 'wagtailcore.page'),
+            bases=(wagtail.contrib.routable_page.models.RoutablePageMixin, 'wagtailcore.page'),
         ),
         migrations.CreateModel(
             name='Work',

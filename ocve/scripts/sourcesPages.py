@@ -11,10 +11,10 @@ def run():
             #print "%s" % (src.id,)
             counter = counter+1
         else:
-            print "%s" % (src.id,)
+            print("%s" % (src.id,))
             noImageCounter = noImageCounter +1
 
-    print counter
-    print noImageCounter
+    print(counter)
+    print(noImageCounter)
 
 

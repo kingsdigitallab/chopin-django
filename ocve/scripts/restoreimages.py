@@ -21,7 +21,7 @@ def main():
                 source = '/vol/iproc/ocve2/cfeotif' + path+'/'+ filename + '.tif'
                 target = '/vol/ocve2/images/jp2/ocvejp2-proc'+ path+'/'+ filename + '.jp2'
                 kdu_command = 'kdu_compress -i "' + source + '" -o "' + target + '" ' + kdu_options
-                print kdu_command
+                print(kdu_command)
                 os.system(kdu_command)
                 #Verify jp2 size is no longer zero
                 size = os.path.getsize(target)

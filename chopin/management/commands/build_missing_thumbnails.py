@@ -24,7 +24,7 @@ class Command(BaseCommand):
             if not os.path.isfile(fname):
                 #Missing, write
                 #log.info('Writing thumbnail '+fname)
-                print('Writing thumbnail '+fname)
+                print(('Writing thumbnail '+fname))
                 x+=1
                 generateThumbnail(pageimage)
-        print('Total:'+str(x))
+        print(('Total:'+str(x)))

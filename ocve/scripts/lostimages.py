@@ -7,8 +7,8 @@ def list_filenames():
     """ list the source and the related image filenames of NewPageImage objects"""
     newpageimages = NewPageImage.objects.all()
     for npi in newpageimages:
-        output = u"%s:%s" % ( npi.source, npi.filename )
-        print encoding.smart_str(output, encoding='utf-8', errors='ignore')
+        output = "%s:%s" % ( npi.source, npi.filename )
+        print(encoding.smart_str(output, encoding='utf-8', errors='ignore'))
 
 def list_images_by_editstatus(editstatus):
     pls = PageLegacy.objects.filter(editstatus=editstatus)
@@ -43,17 +43,17 @@ def list_images_by_editstatus(editstatus):
                         #pl.pageimage.width = image_width
                         #pl.pageimage.height = image_height
                         #pl.save()
-                print u"%s;%s;%s;%s;%s;db height: %s; db width: %s; actual size: " % (pl.pageimage.id, pl.cfeoKey, pl.ocveKey, pl.jp2, file_size, pl.pageimage.height, pl.pageimage.width )
+                print("%s;%s;%s;%s;%s;db height: %s; db width: %s; actual size: " % (pl.pageimage.id, pl.cfeoKey, pl.ocveKey, pl.jp2, file_size, pl.pageimage.height, pl.pageimage.width ))
         else:
-            print u"%s;%s;%s;%s;%s" % (pl.pageimage.id, pl.cfeoKey, pl.ocveKey, pl.jp2,'path differs')
+            print("%s;%s;%s;%s;%s" % (pl.pageimage.id, pl.cfeoKey, pl.ocveKey, pl.jp2,'path differs'))
 
-    print "Number of files: %s" % len(pls)
-    print "Empty files: %s" % len(empty_files,)
-    print "No dimensions: %s" % len(no_dimensions,)
+    print("Number of files: %s" % len(pls))
+    print("Empty files: %s" % len(empty_files,))
+    print("No dimensions: %s" % len(no_dimensions,))
 
 def run():
     """ run lostimages"""
-    print "missing images"
-    list_images_by_editstatus(3L)
+    print("missing images")
+    list_images_by_editstatus(3)
     #print "\n\ncorrupted images\n\n"
     #list_images_by_editstatus(4L)

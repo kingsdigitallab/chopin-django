@@ -6,7 +6,7 @@ from django.core.files import File
 from django.db import transaction
 from django.utils.text import slugify
 
-from wagtail.wagtaildocs.models import Document
+from wagtail.documents.models import Document
 
 from catalogue.models import Advert, City, Country, Library, STP
 from catalogue.pdf_parser import PDFParser
@@ -23,7 +23,7 @@ def _clean_rubric (rubric):
 
 def _clean_publisher_name (publisher_name, fragment):
     publisher_name = publisher_name.decode('utf-8')
-    return unicode(os.path.basename(publisher_name).split(fragment)[0])
+    return str(os.path.basename(publisher_name).split(fragment)[0])
 
 @transaction.atomic
 def import_adverts (advert_dir):
@@ -34,7 +34,7 @@ def import_adverts (advert_dir):
         for filename in files:
             if filename.endswith('.pdf'):
                 rubric = _clean_rubric(filename)
-                document = Document(title=u'{}; {}'.format(
+                document = Document(title='{}; {}'.format(
                     publisher_name, rubric))
                 with open(os.path.join(root, filename), 'rb') as fh:
                     pdf_file = File(fh)
@@ -91,7 +91,7 @@ def import_library (file_path, index_page):
         # otherwise the library name comes after the city
         name = ','. join(metadata_parts[2:]).strip()
 
-    logger.debug(u'{0} {1} {2} {3}'.format(code, country_name, city_name, name))
+    logger.debug('{0} {1} {2} {3}'.format(code, country_name, city_name, name))
 
     # gets the country
     country = Country.objects.filter(name=country_name).first()
@@ -147,7 +147,7 @@ def import_stps (stps_dir):
         for filename in files:
             if filename.endswith('.pdf'):
                 rubric = _clean_rubric(filename)
-                document = Document(title=u'{}; {}'.format(
+                document = Document(title='{}; {}'.format(
                     publisher_name, rubric))
                 with open(os.path.join(root, filename), 'rb') as fh:
                     pdf_file = File(fh)
@@ -165,7 +165,7 @@ def import_works (works_dir, works_page, publishers_page):
         work_dir = os.path.join(works_dir, work_dir)
         try:
             import_work(work_dir, works_page, publishers_page)
-        except Exception, err:
+        except Exception as err:
             try:
                 logger.error('Failed to import {}: {}'.format(work_dir, err))
             except:

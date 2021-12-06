@@ -1,8 +1,13 @@
 # Create your views here.
 
+from django.conf import settings
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.shortcuts import render
+from wagtail.core.models import Page
+from wagtail.search.models import Query
 
-from dbmi.dbmiviews import *
-from uiviews import *
+from .dbmi.dbmiviews import *
+from .uiviews import *
 
 IIP_URL = settings.IIP_URL
 IMAGE_SERVER_URL = settings.IMAGE_SERVER_URL
@@ -16,14 +21,14 @@ errorPage = 'error.html'
 
 
 def uploadOCVE(request):
-    #log = upload(request)
+    # log = upload(request)
     return HttpResponse(log)
 
 
 @csrf_exempt
 def getBarRegions(request, id):
     geos = getGeoJSON(id, "OL3")
-    return render_to_response(
+    return render(
         'geojson.html', {
             'geoRegions': geos, 'grouped': 0})
 
@@ -31,22 +36,22 @@ def getBarRegions(request, id):
 @csrf_exempt
 def getOL2BarRegions(request, id):
     geos = getGeoJSON(id, "OL2")
-    return render_to_response(
+    return render(
         'geojson.html', {
             'geoRegions': geos, 'grouped': 0})
 
 
 def getViewInPageRegions(request, id, barid):
     geos = getViewInPageJSON(id, barid)
-    return render_to_response(
+    return render(
         'geojson.html', {
             'geoRegions': geos, 'grouped': 0})
 
 
 @csrf_exempt
 def getGroupedBarRegions(request, id):
-    geos = getGeoJSON(id,"OL2")
-    return render_to_response(
+    geos = getGeoJSON(id, "OL2")
+    return render(
         'geojson.html', {
             'geoRegions': geos, 'grouped': 1})
 
@@ -63,16 +68,55 @@ def updateSourceComponent(request):
 
 
 def login_page(request):
-    return render_to_response(
+    return render(
+        request,
         'registration/login-page.html',
         {},
-        context_instance=RequestContext(request))
+    )
 
 
 def user_profile(request):
     if request.user and request.user.id:
         annotations = Annotation.objects.filter(user_id=request.user.id)
 
-    return render_to_response("registration/user_profile.html",
-                              {'annotations': annotations},
-                              context_instance=RequestContext(request))
+    return render(
+        request,
+        "registration/user_profile.html",
+        {'annotations': annotations},
+    )
+
+
+def _paginate(request, items):
+    # Pagination
+    page_number = request.GET.get('page', 1)
+    paginator = Paginator(items, settings.ITEMS_PER_PAGE)
+
+    try:
+        page = paginator.page(page_number)
+    except EmptyPage:
+        page = paginator.page(paginator.num_pages)
+    except PageNotAnInteger:
+        page = paginator.page(1)
+
+    return page
+
+
+def search(request):
+    # Search
+    search_query = request.GET.get('q', None)
+
+    if search_query:
+        queryset = Page.objects.live().search(search_query)
+
+        # logs the query so Wagtail can suggest promoted results
+        Query.get(search_query).add_hit()
+    else:
+        queryset = Page.objects.none()
+
+    search_results = _paginate(request, queryset)
+
+    # Render template
+    return render(request, 'search/search.html', {
+        'search_query': search_query,
+        'search_results': search_results,
+    })

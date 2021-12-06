@@ -9,18 +9,10 @@ from django.db import connection, transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from ocve.imagetools import verifyImageDimensions
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand as NoArgsCommand
 
 from unicodedata import normalize as _n
 
-
-# INSERT INTO ocve_country (country,countryabbrev) SELECT country,countryAbbrev FROM country
-# INSERT INTO ocve_city VALUES (1,'unspecified');
-# INSERT INTO ocve_city VALUES (2,'none');
-# Page_Image.page_imageKey,Page_Image.instrumentKey,Page_Image.witnessKey,Page_Image.filename,Page_Image.pageID,Page_Image.notes,Page_Image.orderNo,Page_Image.CFEOeditionKey,Page_Image.storageStructure,Page_Image.pageNumber,Page_Image.startBar,Page_Image.startBarExt,Page_Image.endBar,Page_Image.endBarExt,Page_Image.sourceHeight,Page_Image.sourceWidth
-# PIQ.setFromString("WitnessPage_intersection,BarRegion");
-#PIQ.setWhereString("Page_Image.page_imageKey=BarRegion.page_imageKey and WitnessPage_intersection.pageImageKey=Page_Image.page_imageKey and WitnessPage_intersection.witnessKey="+getWitnessKey());
-# PIQ.setOrderString("orderNo");
 
 log = '<html><head><title>Upload Log</title></head><body>'
 
@@ -445,7 +437,7 @@ def buildBarDict():
 def importPublisher():
     cursor = connection.cursor()
     global publishers
-    cursor.text_factory = lambda x: unicode(x, "utf-8", "ignore")
+    cursor.text_factory = lambda x: str(x, "utf-8", "ignore")
     cursor.execute(
         "SELECT publisherKey,publisherAbbrev,publisherName from publisheral ")
     for row in cursor.fetchall():
@@ -847,7 +839,7 @@ def convertEntities(chunk):
     while m is not None:
         entity = m.group(1)
         code = m.group(2)
-        newChar = unichr(int(code))
+        newChar = chr(int(code))
         chunk = chunk.replace(entity, newChar)
         m = re.search(entPattern, chunk, re.IGNORECASE | re.MULTILINE)
     return chunk
@@ -980,7 +972,7 @@ def importCFEOPages(comp, compKey, editionKey):
             storageStructure='',
             pageimage=pi).save()
         logmsg = " <br/> Page " + label + ":" + str(row[0]) + " uploaded"
-        print "\n" + logmsg
+        print("\n" + logmsg)
         log = log + logmsg
     transaction.commit_unless_managed()
 

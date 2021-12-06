@@ -93,7 +93,7 @@ def vagrant():
     env.key_filename = result['IdentityFile']
     env.user = result['User']
 
-    print(env.key_filename, env.hosts, env.user)
+    print((env.key_filename, env.hosts, env.user))
 
 
 @task
@@ -116,11 +116,11 @@ def create_virtualenv():
     with quiet():
         env_vpath = os.path.join(env.envs_path, 'chopin_' + env.srvr)
         if run('ls {}'.format(env_vpath)).succeeded:
-            print(
-                green('virtual environment at [{}] exists'.format(env_vpath)))
+            print((
+                green('virtual environment at [{}] exists'.format(env_vpath))))
             return
 
-    print(yellow('setting up virtual environment in [{}]'.format(env_vpath)))
+    print((yellow('setting up virtual environment in [{}]'.format(env_vpath))))
     run('virtualenv {}'.format(env_vpath))
 
 
@@ -129,11 +129,11 @@ def clone_repo():
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
     with quiet():
         if run('ls {}'.format(os.path.join(env.path, '.hg'))).succeeded:
-            print(green(('repository at'
-                         ' [{}] exists').format(env.path)))
+            print((green(('repository at'
+                         ' [{}] exists').format(env.path))))
             return
 
-    print(yellow('cloning repository to [{}]'.format(env.path)))
+    print((yellow('cloning repository to [{}]'.format(env.path))))
     run('hg clone {} {}'.format(REPOSITORY, env.path))
 
 
@@ -157,9 +157,9 @@ def deploy(branch=None):
     try:
         add_supervisor_conf()
     except:
-        print(yellow('adding supervisor configuration may have failed'))
-        print(yellow('check the server'))
-        print(red(sys.exec_info()))
+        print((yellow('adding supervisor configuration may have failed')))
+        print((yellow('check the server')))
+        print((red(sys.exec_info())))
 
     touch_wsgi()
 
@@ -188,7 +188,7 @@ def makemigrations(app=None):
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 
     if env.srvr in ['dev', 'stg', 'liv']:
-        print(yellow('Do not run makemigrations on the servers'))
+        print((yellow('Do not run makemigrations on the servers')))
         return
 
     with cd(env.path), prefix(env.within_virtualenv):
@@ -224,7 +224,7 @@ def collect_static(process=False):
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 
     if env.srvr in ['local', 'vagrant']:
-        print(yellow('Do not run collect_static on local servers'))
+        print((yellow('Do not run collect_static on local servers')))
         return
 
     with cd(env.path), prefix(env.within_virtualenv):
@@ -262,7 +262,7 @@ def own_django_log():
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 
     if env.srvr in ['local', 'vagrant']:
-        print(yellow('Do not change ownership of django log on local servers'))
+        print((yellow('Do not change ownership of django log on local servers')))
         return
     sudo(
         'chown www-data:www-data {}'.format(
@@ -304,7 +304,7 @@ def runserver(port='8000'):
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 
     if env.srvr not in ['local', 'vagrant']:
-        print(yellow('this server only runs for development purposes'))
+        print((yellow('this server only runs for development purposes')))
         return
 
     with cd(env.path), prefix(env.within_virtualenv):

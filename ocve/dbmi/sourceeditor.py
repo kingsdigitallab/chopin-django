@@ -1,19 +1,18 @@
 __author__ = 'Elliott Hall'
+
 # Functions and views for the specialised OCVE Source editor
 
-from django.http import HttpResponseRedirect
-from django.template.context import RequestContext
-from django.shortcuts import render_to_response
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.safestring import mark_safe
-from django.template.defaultfilters import register
-from ocve.forms import *
-from ocve.bartools import *
-from datatools import *
-from ocve.uitools import generateThumbnails
 from django.forms import model_to_dict
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.template.defaultfilters import register
+from django.utils.safestring import mark_safe
+from django.views.decorators.csrf import csrf_exempt
 
-import os
+from ocve.bartools import *
+from ocve.forms import *
+from ocve.uitools import generateThumbnails
+from .datatools import *
 
 
 @register.filter()
@@ -52,7 +51,7 @@ def newsourceeditor(request, id=0):
             needsBarLines=1)
         sourcelegacy.save()
         sourceInformation = SourceInformation(source=source)
-        #sourceInformation.sourcecode = newS.sourcecode
+        # sourceInformation.sourcecode = newS.sourcecode
         newS.sourcecreated = source.id
         newS.save()
 
@@ -73,6 +72,7 @@ def newsourceeditor(request, id=0):
         sourceInformation.save()
     return sourceeditor(request, source, sourceInformation, newpages, wComps)
 
+
 # Link the new source to the relevant work, and generate source compoennts
 # if work has things like movements
 
@@ -82,7 +82,8 @@ def createDefaultComponents(source, w):
     if wComps.count() == 0:
         # Create default work component for new empty work
         WorkComponent(
-            work=w, orderno=1, label="Score", music=1, keymode=keyMode.objects.get(
+            work=w, orderno=1, label="Score", music=1,
+            keymode=keyMode.objects.get(
                 id=1), keypitch=keyPitch.objects.get(
                 id=1), opus=Opus.objects.get(
                 id=1)).save()
@@ -111,7 +112,8 @@ def createDefaultComponents(source, w):
             newsourcecomponent = sc
         else:
             newsourcecomponent = SourceComponent.objects.filter(
-                sourcecomponent_workcomponent__workcomponent=wc, source=source)[0]
+                sourcecomponent_workcomponent__workcomponent=wc,
+                source=source)[0]
     return newsourcecomponent
 
 
@@ -120,9 +122,11 @@ def existingsourceeditor(request, id):
     try:
         source = Source.objects.get(id=id)
         sourceInformation = SourceInformation.objects.get(source=source)
-        #pages = PageImage.objects.filter(page__sourcecomponent__source=source).order_by('page__orderno')
+        # pages = PageImage.objects.filter(
+        # page__sourcecomponent__source=source).order_by('page__orderno')
         workcomponents = WorkComponent.objects.filter(
-            sourcecomponent_workcomponent__sourcecomponent__source=source).distinct()
+            sourcecomponent_workcomponent__sourcecomponent__source=source
+        ).distinct()
         # Added in case new pages have been uploaded to this existing source
         try:
             newpageimages = NewPageImage.objects.filter(
@@ -140,6 +144,7 @@ def existingsourceeditor(request, id):
         # standard error page?
         return HttpResponse("ERROR in existingsourceeditor")
 
+
 # Reset the orderno field in page using its label.
 
 
@@ -151,6 +156,7 @@ def reorderPagesByDefault(pageimages):
             p.save()
         except ValueError:
             pass
+
 
 # Reorder the pages in a source based on the label.  Very crude but good
 # to correct earlier errors
@@ -198,6 +204,7 @@ def updatepagetype(request, id):
         result = "ERROR in pagetype update"
     return HttpResponse(result)
 
+
 # The DBMi editor view for altering source structure
 # This view is used for new and existing sources
 
@@ -219,21 +226,22 @@ def sourceeditor(
     works = Work.objects.all()
     opus = source.getOpusLabel()
     pagetypes = PageType.objects.all()
-    return render_to_response('dbmi/sourceeditor.html',
-                              {'works': works,
-                               'pagetypes': pagetypes,
-                               'instruments': instruments,
-                               'scForm': scForm,
-                               'pageimages': pageimages,
-                               'newpageimages': newpageimages,
-                               'workcomponents': workcomponents,
-                               'sourcecomponents': sourcecomponents,
-                               'sourceForm': sourceForm,
-                               'sourceInformationForm': sourceInformationForm,
-                               'opus': opus,
-                               'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL,
-                               },
-                              context_instance=RequestContext(request))
+    return render(request, ('dbmi/sourceeditor.html',
+                            {'works': works,
+                             'pagetypes': pagetypes,
+                             'instruments': instruments,
+                             'scForm': scForm,
+                             'pageimages': pageimages,
+                             'newpageimages': newpageimages,
+                             'workcomponents': workcomponents,
+                             'sourcecomponents': sourcecomponents,
+                             'sourceForm': sourceForm,
+                             'sourceInformationForm': sourceInformationForm,
+                             'opus': opus,
+                             'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL,
+                             },
+                            )
+                  )
 
 
 @csrf_exempt
@@ -304,17 +312,16 @@ def editsourcecomponent(request, sc):
     instruments = Instrument.objects.filter()
     # If changed
     # return existingsourceeditor(request, id)
-    return render_to_response('dbmi/sourcecomponent.html',
-                              {'sc': sc,
-                               'scf': scf,
-                               'workcomponents': workcomponents,
-                               'currentwc': currentwc,
-                               'instruments': instruments,
-                               'curinstrument': curinstrument},
-                              context_instance=RequestContext(request))
+    return render(request, 'dbmi/sourcecomponent.html',
+                            {'sc': sc,
+                             'scf': scf,
+                             'workcomponents': workcomponents,
+                             'currentwc': currentwc,
+                             'instruments': instruments,
+                             'curinstrument': curinstrument},
+                            )
 
-
-@csrf_exempt
+@ csrf_exempt
 def deletesourcecomponent(request, id):
     sc = SourceComponent.objects.get(id=id)
     sourceid = sc.source.id
@@ -367,7 +374,7 @@ def cleanHTML(label):
         '').replace(
         '<span>',
         '').replace(
-            '</span>',
+        '</span>',
         '')
     label = label.replace('</p>', '').replace('\r', '').replace('\n', '')
     label = label.replace(
@@ -375,9 +382,9 @@ def cleanHTML(label):
         '').replace(
         '</div>',
         '').replace(
-            '<br />',
-            '').replace(
-                "<p class=\"BodyAA\">",
+        '<br />',
+        '').replace(
+        "<p class=\"BodyAA\">",
         "")
     return label
 
@@ -421,7 +428,9 @@ def saveSource(request, id):
                         sp.save()
                 # Delete old components
                 oldcomponents = SourceComponent.objects.filter(
-                    source=source, sourcecomponent_workcomponent__workcomponent__work=oldWork).delete()
+                    source=source,
+                    sourcecomponent_workcomponent__workcomponent__work
+                    =oldWork).delete()
 
     except MultiValueDictKeyError:
         pass
@@ -437,6 +446,7 @@ def saveSource(request, id):
             str(id) +
             '/#sourceMetadata')
 
+
 # Remove unneeded HTML elements added by TinyMCE from souce information fields
 
 
@@ -449,6 +459,7 @@ def cleanSourceInformationHTML(si):
     if si.publicationtitle is not None:
         si.publicationtitle = cleanHTML(si.publicationtitle)
     return si
+
 
 # New source information
 
@@ -477,7 +488,8 @@ def saveSourceInformation(request, id):
                             sourceinformation=sourceInformation).delete()
                     for m in methods:
                         SourceInformation_PrintingMethod(
-                            sourceinformation=sourceInformation, printingmethod=m).save()
+                            sourceinformation=sourceInformation,
+                            printingmethod=m).save()
         except MultiValueDictKeyError:
             pass
         # Check if new authority list variables have been filled in, create and
@@ -522,7 +534,8 @@ def saveSourceInformation(request, id):
                 if altDT == 2:
                     # Alternate
                     altDedicatee = Dedicatee(
-                        dedicatee=altD, alternateOf=sourceInformation.dedicatee)
+                        dedicatee=altD,
+                        alternateOf=sourceInformation.dedicatee)
                     altDedicatee.save()
                     sourceInformation.dedicatee = altDedicatee
                     sourceInformation.save()
@@ -579,7 +592,7 @@ def savePage(request):
     is_textlabel = str(request.POST['is_textlabel'])
     if is_textlabel == 'true':
         # Update the text label for a page
-        msg = msg.replace(u'-', u'\u2013')
+        msg = msg.replace('-', '\u2013')
         spageimage = PageImage.objects.get(id=int(request.POST['id']))
         spageimage.textlabel = msg
         spageimage.save()
@@ -590,15 +603,15 @@ def savePage(request):
     if scorderno > 0:
         sc.orderno = scorderno
         sc.save()
-    #list2 = re.split(r'\W+', msg)
+    # list2 = re.split(r'\W+', msg)
     list2 = re.findall(r"[\w\[\]]+", msg)
     pagenum = 0
     startbar = 0
     endbar = 0
     if re.match('p\.*\s*(\S+)', msg):
         pagenum = re.search('p\.*\s*(\S+)', msg).group(1)
-    if re.match(u'.*bs\s*(\d+)[-|\u2013](\d+).*', msg):
-        numbers = re.search(u'.*bs\s*(\d+)[-|\u2013](\d+).*', msg)
+    if re.match('.*bs\s*(\d+)[-|\u2013](\d+).*', msg):
+        numbers = re.search('.*bs\s*(\d+)[-|\u2013](\d+).*', msg)
         startbar = numbers.group(1)
         endbar = numbers.group(2)
     if is_newpage == 'true':
@@ -606,7 +619,7 @@ def savePage(request):
         jp = 'newjp2/' + str(np.id) + '.jp2'
         if np.linked > 0:  # the new page was already saved
             spageimage = PageImage.objects.get(id=np.linked)
-            #saveBars(msg, spageimage)
+            # saveBars(msg, spageimage)
             if startbar > 0:
                 spageimage.startbar = startbar
             if endbar > 0:
@@ -640,13 +653,13 @@ def savePage(request):
                                     cropCorrected=1)
             pagelegacy.save()
         np.linked = spageimage.id
-        #saveBars(msg, np)
+        # saveBars(msg, np)
         np.startbar = startbar
         np.endbar = endbar
         np.save()
     else:
         spageimage = PageImage.objects.get(id=int(request.POST['id']))
-        #saveBars(msg, spageimage)
+        # saveBars(msg, spageimage)
         if startbar > 0:
             spageimage.startbar = startbar
         if endbar > 0:
@@ -695,7 +708,8 @@ def updatepageindex(request):
                 spageimage.save()
                 pagelegacy = PageLegacy(pageimage=spageimage,
                                         jp2='newjp2/' + str(np.id) + '.jp2',
-                                        editstatus=EditStatus.objects.get(id=2),
+                                        editstatus=EditStatus.objects.get(
+                                            id=2),
                                         cropCorrected=1)
                 pagelegacy.save()
             np.linked = spageimage.id
@@ -734,11 +748,13 @@ def deletesource(request, id):
     log = ''
     # delete any attached jp2s
     # Temporarily disabled because of source cloning
-    # for pi in PageImage.objects.filter(page__sourcecomponent__source=s,versionnumber=1).order_by("page"):
+    # for pi in PageImage.objects.filter(page__sourcecomponent__source=s,
+    # versionnumber=1).order_by("page"):
     # jp2=pi.getJP2Path()
     # if re.search('UNVERIFIED',jp2) is None:
     #    try:
-    #        log+='<br/> Attempting to delete jp2 '+str(settings.IMAGEFOLDER+jp2)
+    #        log+='<br/> Attempting to delete jp2 '+str(
+    #        settings.IMAGEFOLDER+jp2)
     #        os.remove(settings.IMAGEFOLDER+jp2)
     #    except (IOError, OSError), e:
     #         log+=('<br/> Error removing TIFF [%s], Reason: %s' % (jp2, e))
@@ -746,13 +762,14 @@ def deletesource(request, id):
     #    log+='<br/> Unverified image skipped'
     s.delete()
     # 28-1-W_USCu_b1_p20_no14
-   # return HttpResponseRedirect('/ocve/dbmi/')
-    return render_to_response('dbmi/sourcedelete.html', {'log': log})
+    # return HttpResponseRedirect('/ocve/dbmi/')
+    return render(request, ('dbmi/sourcedelete.html', {'log': log}))
 
+                  # Clone a page, usually for pages that span source components
+                  # NOTE: Clones page,pageimage,pagelegacy ONLY, not bar
+                  # informtation
 
-# Clone a page, usually for pages that span source components
-# NOTE: Clones page,pageimage,pagelegacy ONLY, not bar informtation
-@csrf_exempt
+@ csrf_exempt
 def clonepage(request, id):
     try:
         # Get pageimage to clone
@@ -790,6 +807,7 @@ def clonepage(request, id):
 
     except ObjectDoesNotExist:
         return HttpResponse("PAGEIMAGE DOES NOT EXIST")
+
 
 # Clone a source
 
@@ -837,7 +855,8 @@ def clonesource(request, id):
                         sourcecomponent_id=cid)
                     for link in scwc:
                         SourceComponent_WorkComponent(
-                            sourcecomponent=c, workcomponent=link.workcomponent).save()
+                            sourcecomponent=c,
+                            workcomponent=link.workcomponent).save()
                     comp = c
             # clone pages
             p.pk = None

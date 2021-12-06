@@ -2,12 +2,12 @@ __author__ = 'Elliot'
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 
-from bartools import toGeos
+from .bartools import toGeos
 from ocve.forms import AnnotationForm
 from ocve.models import Annotation, Annotation_BarRegion, Bar, BarRegion
 from ocve.models import AnnotationType
@@ -134,7 +134,7 @@ def getAnnotations(request, id):
     notes = Annotation.objects.filter(
         annotation_barregion__barregion_id=id, type_id__gt=1)
 
-    return render_to_response('frontend/ajax/annotations.html',
+    return render(request, 'frontend/ajax/annotations.html',
                               {'notes': notes})
 
 
@@ -161,5 +161,5 @@ def getAnnotationRegions(request, id, noteType=2):
     for n in notes:
         annotations.append(noteGeos(n))
 
-    return render_to_response('geojson.html',
+    return render(request, 'geojson.html',
                               {'annotations': annotations, 'grouped': 0})

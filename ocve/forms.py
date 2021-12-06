@@ -1,7 +1,7 @@
 __author__ = 'Elliot'
 from django.forms import HiddenInput, ModelForm, Select, modelformset_factory
 from django import forms
-from models import *
+from .models import *
 from tinymce.widgets import TinyMCE
 
 
