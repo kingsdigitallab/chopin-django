@@ -396,7 +396,7 @@ class Impression(Page):
     impression_title = models.TextField()
     ocve_ac_code = models.CharField(max_length=128, blank=True, null=True,
                                     verbose_name='AC Code in CFEO/OCVE')
-    publisher = models.ForeignKey(Publisher, blank=True, null=True,
+    impression_publisher = models.ForeignKey(Publisher, blank=True, null=True,
                                   on_delete=models.PROTECT,
                                   related_name='impressions')
     comments = models.TextField()
@@ -435,7 +435,7 @@ Impression.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('impression_title', classname='full title'),
     FieldPanel('ocve_ac_code', classname='full title'),
-    PageChooserPanel('publisher', Publisher),
+    PageChooserPanel('impression_publisher', Publisher),
     # FieldPanel('content', classname='full'),
     FieldPanel('comments', classname='full'),
     FieldPanel('sort_order'),

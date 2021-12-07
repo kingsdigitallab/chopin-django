@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AbbreviationIndexPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page', on_delete=models.CASCADE)),
                 ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
@@ -64,7 +64,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AdvertIndexPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page', on_delete=models.CASCADE)),
                 ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
@@ -75,7 +75,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Catalogue',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page', on_delete=models.CASCADE)),
                 ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
@@ -127,7 +127,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='GlossaryIndexPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page', on_delete=models.CASCADE)),
                 ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
@@ -153,7 +153,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HomePage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page', on_delete=models.CASCADE)),
                 ('content', wagtail.core.fields.RichTextField()),
             ],
             options={
@@ -164,7 +164,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Impression',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, on_delete=models.CASCADE, primary_key=True, serialize=False, to='wagtailcore.Page')),
                 ('code_hash', models.CharField(max_length=32, editable=False)),
                 ('impression_title', models.TextField()),
                 ('comments', models.TextField()),
@@ -184,7 +184,7 @@ class Migration(migrations.Migration):
                 ('sort_order', models.IntegerField(null=True, editable=False, blank=True)),
                 ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
-                ('copy', models.ForeignKey(to='catalogue.Copy')),
+                ('copy', models.ForeignKey(to='catalogue.Copy', on_delete=models.CASCADE)),
                 ('impression', modelcluster.fields.ParentalKey(related_name='copies', to='catalogue.Impression')),
             ],
             options={
@@ -195,7 +195,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IndexPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, on_delete=models.CASCADE, primary_key=True, serialize=False, to='wagtailcore.Page')),
                 ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
@@ -206,7 +206,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Library',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, on_delete=models.CASCADE, primary_key=True, serialize=False, to='wagtailcore.Page')),
                 ('name', models.CharField(max_length=256)),
                 ('library_url', models.URLField(null=True, blank=True)),
                 ('city', models.ForeignKey(related_name='libraries', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='catalogue.City', null=True)),
@@ -221,7 +221,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LibraryIndexPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, on_delete=models.CASCADE, primary_key=True, serialize=False, to='wagtailcore.Page')),
                 ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
@@ -232,7 +232,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Publisher',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
                 ('name', wagtail.core.fields.RichTextField(null=True, blank=True)),
                 ('abbreviation', models.CharField(max_length=256, null=True, blank=True)),
                 ('city', models.ForeignKey(related_name='publishers', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='catalogue.City', null=True)),
@@ -245,7 +245,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='PublisherIndexPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
                 ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
@@ -256,7 +256,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='RichTextPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
                 ('content', wagtail.core.fields.RichTextField()),
             ],
             options={
@@ -275,7 +275,7 @@ class Migration(migrations.Migration):
                 ('rubric', models.CharField(max_length=256)),
                 ('rubric_slug', models.CharField(max_length=256, editable=False)),
                 ('pdf', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='wagtaildocs.Document', null=True)),
-                ('publisher', models.ForeignKey(related_name='stps', blank=True, to='catalogue.Publisher', null=True)),
+                ('publisher', models.ForeignKey(related_name='stps', blank=True, to='catalogue.Publisher', null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['publisher_name', 'rubric'],
@@ -286,7 +286,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='STPIndexPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
                 ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
@@ -297,7 +297,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Work',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
                 ('code', models.CharField(max_length=32)),
                 ('heading', models.TextField()),
                 ('has_opus', models.BooleanField(default=False)),
@@ -324,13 +324,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='copy',
             name='library',
-            field=models.ForeignKey(to='catalogue.Library'),
+            field=models.ForeignKey(to='catalogue.Library', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='city',
             name='country',
-            field=models.ForeignKey(related_name='cities', to='catalogue.Country'),
+            field=models.ForeignKey(related_name='cities', to='catalogue.Country', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -340,7 +340,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='advert',
             name='publisher',
-            field=models.ForeignKey(related_name='adverts', blank=True, to='catalogue.Publisher', null=True),
+            field=models.ForeignKey(related_name='adverts', blank=True, to='catalogue.Publisher', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

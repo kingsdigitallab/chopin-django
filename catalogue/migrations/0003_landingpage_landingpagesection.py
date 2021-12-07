@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LandingPage',
             fields=[
-                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
+                ('page_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, on_delete=models.CASCADE, serialize=False, to='wagtailcore.Page')),
                 ('introduction', wagtail.core.fields.RichTextField(blank=True)),
             ],
             options={
@@ -35,9 +35,9 @@ class Migration(migrations.Migration):
                 ('abbreviation', models.CharField(max_length=32)),
                 ('css_class', models.CharField(max_length=64)),
                 ('introduction', wagtail.core.fields.RichTextField()),
-                ('image', models.ForeignKey(to='wagtailimages.Image')),
+                ('image', models.ForeignKey(to='wagtailimages.Image', on_delete=models.CASCADE,)),
                 ('landing_page', modelcluster.fields.ParentalKey(related_name='sections', to='catalogue.LandingPage')),
-                ('page', models.ForeignKey(to='wagtailcore.Page')),
+                ('page', models.ForeignKey(to='wagtailcore.Page', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['sort_order'],
