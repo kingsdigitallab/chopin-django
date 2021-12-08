@@ -136,7 +136,7 @@ def pdfdisplay(html):
 
 @register.filter
 def add_special_characters(html):
-    html = html.encode('utf-8')
+    #html = html.encode('utf-8')
 
     patterns = {
         'start_tag': r'(?P<start_tag><[^>]*>)',
@@ -172,7 +172,7 @@ def _format_code(match):
     repl = '<span class="{class} c{code_as_class}">{start_tag}{code}{end_tag}</span>'.format(
         **parts)
 
-    return repl.encode('utf-8')
+    return repl #.encode('utf-8')
 
 @register.filter
 def truncate_comments(value):

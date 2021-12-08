@@ -1,25 +1,26 @@
-from django.utils.datastructures import MultiValueDictKeyError
-
 __author__ = 'Elliott Hall'
+
+import gzip
+import json
+import os
+import re
+import urllib.error
+import urllib.parse
+import urllib.request
+from unicodedata import normalize as _n
+
+from django.conf import settings
+from django.db import connection
+from django.db.models import Q
+
+from catalogue.templatetags.catalogue_tags import get_impression_exists, \
+    add_special_characters
 # Various queries and reusable functions that will be employed in the ui.
 # Kept here for the sake of hygiene, and hopefully resuability
 from .models import *
-import json
-import os
-from unicodedata import normalize as _n
-from django.conf import settings
-from django.db import connection
-from catalogue.templatetags.catalogue_tags import get_impression_exists, add_special_characters
-import urllib.request, urllib.parse, urllib.error
-import re
-from django.db import connection
-
-import hashlib
-
-import gzip
-from django.db.models import Q
 
 norm = 'NFKC'
+
 
 # All instruments in a single opus
 
@@ -37,7 +38,8 @@ def getBarBySource(bar, source):
 def getSourcesByBar(bar, opus):
     return Source.objects.filter(
         sourcecomponent__page__pageimage__barregion__bar=bar,
-        sourcecomponent__sourcecomponent_workcomponent__workcomponent__opus=opus).distinct()
+        sourcecomponent__sourcecomponent_workcomponent__workcomponent__opus
+        =opus).distinct()
 
 
 def getRegionsByBarOpus(bar, opus):
@@ -76,7 +78,8 @@ def setPageImageTextLabel(source):
         textlabel = "p. " + pi.page.label
         if pi.page.sourcecomponent.label != 'Score':
             workcomps = WorkComponent.objects.filter(
-                sourcecomponent_workcomponent__sourcecomponent=pi.page.sourcecomponent)
+                sourcecomponent_workcomponent__sourcecomponent=pi.page
+                    .sourcecomponent)
             if workcomps.count() > 0:
                 wc = workcomps[0]
                 if wc.label != 'Score':
@@ -97,13 +100,16 @@ class SourceComponentItem:
         self.label = sourcecomponent.label
         instruments = []
         for i in Instrument.objects.filter(
-                sourcecomponent_instrument__sourcecomponent=sourcecomponent).distinct():
+                sourcecomponent_instrument__sourcecomponent=sourcecomponent
+        ).distinct():
             instruments.append(int(i.id))
         self.instruments = instruments
         self.source_id = sourcecomponent.source_id
         self.orderno = sourcecomponent.orderno
         # May not be needed
-        # w=Work.objects.filter(workcomponent__workcomponent_sourcecomponent__sourcecomponent=sourcecomponent)
+        # w=Work.objects.filter(
+        # workcomponent__workcomponent_sourcecomponent__sourcecomponent
+        # =sourcecomponent)
         # if w.count() > 0:
         #    self.work=w.id
         # else:
@@ -112,9 +118,9 @@ class SourceComponentItem:
 
     def toJson(self):
         scjson = "{'id': " + str(self.id) + ", 'label': " + \
-            json.dumps(self.label) + ", "
+                 json.dumps(self.label) + ", "
         scjson += "'orderno': " + json.dumps(self.orderno) + ", "
-        #scjson += "'work_id': " + json.dumps(self.work) + ", "
+        # scjson += "'work_id': " + json.dumps(self.work) + ", "
         scjson += "'source_id':" + json.dumps(self.source_id) + ','
         scjson += "'instruments':" + json.dumps(self.instruments)
         scjson += "}"
@@ -131,6 +137,7 @@ class SourceSearchItem:
         self.mode = mode
         self.accode = _n(norm, row[9])
         self.accode = add_special_characters(self.accode)
+
         if mode == 'OCVE':
             self.label = row[2]
         else:
@@ -164,8 +171,8 @@ class SourceSearchItem:
         self.publisher = row[6]
         self.platenumber = add_special_characters(row[7])
         for y in Year.objects.filter(
-            sourceinformation_year__sourceinformation_id=int(
-                row[10])):
+                sourceinformation_year__sourceinformation_id=int(
+                    row[10])):
             years.append(y.year)
         # else:
         #    self.dedicatee = ''
@@ -174,6 +181,7 @@ class SourceSearchItem:
         self.years = years
 
     def toJson(self):
+
         sourcejson = "{'id': " + str(self.id) + ", 'label': " + json.dumps(
             self.label) + ", " + " 'achash': " + json.dumps(self.achash) + ", "
         sourcejson += "'accode': " + json.dumps(self.accode) + ", "
@@ -202,7 +210,7 @@ class SourceSearchItem:
                 sourcejson += ','
         sourcejson += "],"
         sourcejson += "'Dedicatee': " + \
-            str(self.dedicatee) + ", 'Work':" + str(self.work)
+                      str(self.dedicatee) + ", 'Work':" + str(self.work)
         sourcejson += ",'Year': " + json.dumps(self.years) + ", "
         sourcejson += "'Publisher': " + str(self.publisher) + ","
         sourcejson += "'Type': " + str(self.type) + ","
@@ -212,10 +220,10 @@ class SourceSearchItem:
             # Filter out non-musical pages like blanks, title pages etc.
             # musicpage=PageType.objects.get(type='music')
             blank = PageType.objects.get(type='blank')
-            #tp=PageType.objects.get(type='title page')
+            # tp=PageType.objects.get(type='title page')
             # nonmusic=SourceComponentType.objects.get(type="Non-music")
-            #.exclude(page__sourcecomponent__sourcecomponenttype=blank)
-            #.exclude(page__sourcecomponent__sourcecomponenttype=nonmusic)
+            # .exclude(page__sourcecomponent__sourcecomponenttype=blank)
+            # .exclude(page__sourcecomponent__sourcecomponenttype=nonmusic)
 
             pages = PageImage.objects.filter(
                 page__sourcecomponent__source_id=self.id).exclude(
@@ -240,10 +248,11 @@ class SourceSearchItem:
         sourcejson += "]"
         sourcejson += ", 'orderno':" + json.dumps(self.orderno)
         sourcejson += "}"
+
         return sourcejson
 
 
-#(page no with bar range)
+# (page no with bar range)
 class PageSearchItem:
 
     def __init__(self, source, work, pageimage, dedicatee, publisher, years):
@@ -287,14 +296,15 @@ class PageSearchItem:
         pagejson = "{'id': " + str(self.id) + ", 'label': " + json.dumps(
             self.label) + ", 'source_id':" + json.dumps(self.source_id) + ','
         pagejson += "'sourcecomponent_id': " + \
-            json.dumps(self.sourcecomponent_id) + ", "
+                    json.dumps(self.sourcecomponent_id) + ", "
         pagejson += "'sourcecomponent_orderno': " + \
-            json.dumps(self.sourcecomponent_orderno) + ", "
+                    json.dumps(self.sourcecomponent_orderno) + ", "
         pagejson += "'Genre': " + json.dumps(self.genres) + ", "
         pagejson += "'Year': " + json.dumps(self.years) + ", "
         pagejson += "'annotation': " + json.dumps(self.annotation) + ", "
         pagejson += "'Dedicatee': " + \
-            json.dumps(self.dedicatee) + ", 'Work':" + json.dumps(self.work)
+                    json.dumps(self.dedicatee) + ", 'Work':" + json.dumps(
+            self.work)
         pagejson += ", 'Publisher': " + json.dumps(self.publisher)
         pagejson += ", 'thumbnail_url':" + json.dumps(self.thumbnail_url)
         pagejson += ", 'width':" + json.dumps(self.width)
@@ -331,9 +341,11 @@ def serializeCFEOSourceJson():
 
 
 def serializeSourceJson(sourcecomponents, filename, mode):
-    # sources=Source.objects.filter(sourcelegacy__witnessKey__gt=0).order_by('sourcecomponent__sourcecomponent_workcomponent__workcomponent__work__orderno','label').distinct()
+    # sources=Source.objects.filter(
+    # sourcelegacy__witnessKey__gt=0).order_by(
+    # 'sourcecomponent__sourcecomponent_workcomponent__workcomponent__work__orderno','label').distinct()
     # all sources with bar info
-    destination = open(settings.SOURCEJSONPATH + '/' + filename + '.js', 'w')
+    destination = open(settings.SOURCEJSONPATH + '/' + filename + '.js', 'w', encoding='utf8')
     destination.write('var sourcecomponents = [')
     for idx, sc in enumerate(sourcecomponents):
         if idx != 0:
@@ -351,9 +363,18 @@ def serializeSourceJson(sourcecomponents, filename, mode):
         modeSQL += " and s.live=True"
 
     cursor = connection.cursor()
-    sql = "select distinct s.id,s.sourcetype_id,s.label,s.cfeolabel,w.id,si.dedicatee_id,si.publisher_id,si.platenumber,si.sourcecode,ac.accode,si.id,ac.accode_hash,s.orderno,w.orderno"
-    sql += " from ocve_source as s,ocve_accode as ac,ocve_sourceinformation as si,ocve_sourcecomponent as sc,ocve_sourcecomponent_workcomponent as scwc, ocve_workcomponent as wc, ocve_work as w"
-    sql += " where " + modeSQL + " and si.accode_id=ac.id and s.id=sc.source_id and s.id=si.source_id and sc.id=scwc.sourcecomponent_id and scwc.workcomponent_id = wc.id and wc.work_id=w.id"
+    sql = "select distinct s.id,s.sourcetype_id,s.label,s.cfeolabel,w.id," \
+          "si.dedicatee_id,si.publisher_id,si.platenumber,si.sourcecode," \
+          "ac.accode,si.id,ac.accode_hash,s.orderno,w.orderno"
+    sql += " from ocve_source as s,ocve_accode as ac,ocve_sourceinformation " \
+           "as si,ocve_sourcecomponent as sc," \
+           "ocve_sourcecomponent_workcomponent as scwc, ocve_workcomponent " \
+           "as wc, ocve_work as w"
+    sql += " where " + modeSQL + " and si.accode_id=ac.id and " \
+                                 "s.id=sc.source_id and s.id=si.source_id " \
+                                 "and sc.id=scwc.sourcecomponent_id and " \
+                                 "scwc.workcomponent_id = wc.id and " \
+                                 "wc.work_id=w.id"
     sql += " order by w.orderno,s.orderno"
     cursor.execute(sql)
     for row in cursor.fetchall():
@@ -379,17 +400,20 @@ def serializeSourceJson(sourcecomponents, filename, mode):
 #
 def serializeAcCodeConnector():
     sources = Source.objects.filter(Q(ocve=1) | Q(cfeo=1))
-    destination = open(settings.SOURCEJSONPATH + '/accodeJSON.js', 'wb')
+    destination = open(settings.SOURCEJSONPATH + '/accodeJSON.js', 'w')
     destination.write('var sources = [')
     first = 0
     for s in sources:
-        if s.getSourceInformation() is not None and s.getSourceInformation().accode is not None:
+        if s.getSourceInformation() is not None and s.getSourceInformation(
+
+        ).accode is not None:
             if s.cfeo or s.ocve:
                 if first > 0:
                     destination.write(',\n')
                 accode = s.getSourceInformation().accode.accode
                 acHash = s.getSourceInformation().accode.accode_hash
-                acjson = "{'accode':" + json.dumps(accode) + ",'achash':" + json.dumps(
+                acjson = "{'accode':" + json.dumps(
+                    accode) + ",'achash':" + json.dumps(
                     acHash) + ",'id':" + json.dumps(s.id)
                 if s.cfeo:
                     acjson += ",'cfeo':1"
@@ -402,15 +426,19 @@ def serializeAcCodeConnector():
     destination.close()
 
 
-# Get the pageimages from a source, filtered to include only music pages and the title page
+# Get the pageimages from a source, filtered to include only music pages and
+# the title page
 # filter(Q(page__pagetype=musicpage)|Q(page__pagetype=tp)).
-def getOCVEPageImages(source):
+def getOCVEPageImages(source, exclude_nonmusic=True):
     try:
         blank = PageType.objects.get(type='blank')
         pi = PageImage.objects.filter(
-            page__sourcecomponent__source=source).exclude(
-            page__pagetype_id__lt=2).exclude(
-            page__pagetype=blank).order_by('page__orderno')
+            page__sourcecomponent__source=source
+        )
+        if exclude_nonmusic:
+            pi = pi.exclude(
+                page__pagetype_id__lt=2).exclude(page__pagetype=blank)
+        pi = pi.order_by('page__orderno')
         return pi
     except IndexError:
         return []
@@ -434,7 +462,8 @@ def generateThumbnail(pageimage):
     path = pageimage.getJP2Path()
     if len(path) > 0:
         # Query iip server for deepzoom
-        path = settings.IMAGE_SERVER_URL + '?DeepZoom=' + path + '_files/0/0_0.jpg'
+        path = settings.IMAGE_SERVER_URL + '?DeepZoom=' + path + \
+               '_files/0/0_0.jpg'
         # Save in thumbnial using pageimage id
         thumb = os.path.join(
             settings.THUMBNAIL_DIR, str(

@@ -3,6 +3,7 @@ __author__ = 'Elliott Hall'
 from haystack import indexes
 
 from .models import Work, Source, Genre
+from haystack.fields import FacetMultiValueField
 
 
 class WorkIndex(indexes.SearchIndex, indexes.Indexable):
@@ -15,7 +16,7 @@ class WorkIndex(indexes.SearchIndex, indexes.Indexable):
     ocve = indexes.BooleanField()
     cfeo = indexes.BooleanField()
     live = indexes.BooleanField()
-    resource = indexes.FacetMultiValueField()
+    resource = FacetMultiValueField()
     title = indexes.CharField()
 
     def prepare_title(self, obj):
@@ -67,7 +68,7 @@ class SourceIndex(indexes.SearchIndex, indexes.Indexable):
     ocve = indexes.BooleanField(default=False, model_attr="ocve")
     cfeo = indexes.BooleanField(default=False, model_attr="cfeo")
     live = indexes.BooleanField(default=False, model_attr="live")
-    resource = indexes.FacetMultiValueField()
+    resource = FacetMultiValueField()
     orderno = indexes.IntegerField(model_attr="orderno")
     url = indexes.CharField(indexed=False, null=True)
     title = indexes.CharField()

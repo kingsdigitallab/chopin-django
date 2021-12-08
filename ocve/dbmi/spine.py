@@ -338,13 +338,13 @@ def spine(request):
                                'next': next,
                                'regions': regions,
                                'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL},
-                              context_instance=RequestContext(request))
+                              )
 
 
 def worksforspine(request):
     works = Work.objects.all()
     return render(request, 'dbmi/workspines.html', {'works': works},
-                              context_instance=RequestContext(request))
+                              )
 
 
 def workspine(request, id):
@@ -437,7 +437,7 @@ def spineeditor(request, work, sources):
             break
     return render(request, 'dbmi/editspine.html',
                               {'work': work, 'sources': sources, 'tbody': tbody},
-                              context_instance=RequestContext(request))
+                              )
 
 
 # Special view for posthumous spines

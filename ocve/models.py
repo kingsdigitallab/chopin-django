@@ -76,6 +76,9 @@ class Work(models.Model):
     def getSpecialLabel(self):
         return add_special_characters(self.label)
 
+    def __str__(self):
+        return self.getSpecialLabel()
+
 
 #
 
@@ -288,6 +291,9 @@ class Genre(models.Model):
 
     table_group = ''
 
+    def __str__(self):
+        return self.genre
+
 
 #
 class keyPitch(models.Model):
@@ -328,6 +334,9 @@ class Instrument(models.Model):
         verbose_name_plural = 'Instruments'
 
     table_group = ''
+
+    def __str__(self):
+        return self.instrument
 
 
 #
@@ -391,14 +400,16 @@ class Publisher(models.Model):
     publisherAbbrev = models.CharField(
         max_length=45, null=False, default="", blank=True)
 
-
-class Meta:
-    ordering = ['publisher']
-    verbose_name = 'Publisher'
-    verbose_name_plural = 'Publishers'
+    class Meta:
+        ordering = ['publisher']
+        verbose_name = 'Publisher'
+        verbose_name_plural = 'Publishers'
 
     def __unicode__(self):
         return '%s' % (self.publisher)
+
+    def __str__(self):
+        return self.__unicode__()
 
 
 table_group = ''
@@ -618,6 +629,9 @@ class PageImage(models.Model):
 
     table_group = ''
 
+    def __str__(self):
+        return self.textlabel
+
 
 #
 
@@ -704,6 +718,9 @@ class Page(models.Model):
 
     table_group = ''
 
+    def __str__(self):
+        return self.label
+
 
 #
 class Archive(models.Model):
@@ -749,6 +766,9 @@ class City(models.Model):
 
     def __unicode__(self):
         return '%s' % (self.city)
+
+    def __str__(self):
+        return self.__unicode__()
 
     table_group = ''
 
@@ -803,6 +823,9 @@ class Year(models.Model):
         verbose_name_plural = 'Years'
 
     table_group = ''
+
+    def __str__(self):
+        return str(self.year)
 
 
 #
@@ -930,6 +953,9 @@ class AcCode(models.Model):
 
     def __unicode__(self):
         return self.accode
+
+    def __str__(self):
+        return self.__unicode__()
 
 
 # Many To Many Tables

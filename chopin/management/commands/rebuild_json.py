@@ -1,6 +1,6 @@
 #Rebuild the Json data for the web front end
 __author__ = 'elliotthall'
-from django.core.management.base import BaseCommand, NoArgsCommand
+from django.core.management.base import BaseCommand
 import logging
 import subprocess
 from optparse import make_option
@@ -14,8 +14,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logger.info('rebuild OCVE JSON')
         serializeOCVESourceJson()
-        logger.info('rebuild CFEO JSON')
-        serializeCFEOSourceJson()
-        logger.info('rebuild AC JSON')
-        serializeAcCodeConnector()
+        # logger.info('rebuild CFEO JSON')
+        # serializeCFEOSourceJson()
+        # logger.info('rebuild AC JSON')
+        # serializeAcCodeConnector()
 

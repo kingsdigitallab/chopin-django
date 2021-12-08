@@ -317,7 +317,7 @@ def browse(request, mode="OCVE", defaultFilters=None):
                                'genres': genres,
                                'works': works,
                                'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL},
-                              context_instance=RequestContext(request))
+                              )
 
 
 # Optimised for OCVE
@@ -334,14 +334,17 @@ def getNextPrevPages(pi, pageimages):
     next = None
     prev = None
     lpi = list(pageimages)
-    idx = lpi.index(pi)
-    if idx > 0:
-        p = idx - 1
-        prev = lpi[p]
-    if idx + 1 < len(lpi):
-        n = idx + 1
-        next = lpi[n]
-    return [next, prev]
+    try:
+        idx = lpi.index(pi)
+        if idx > 0:
+            p = idx - 1
+            prev = lpi[p]
+        if idx + 1 < len(lpi):
+            n = idx + 1
+            next = lpi[n]
+        return [next, prev]
+    except ValueError:
+        return [None, None]
 
 
 # Get relevant work for a pageimage object
@@ -389,7 +392,7 @@ def ocvePageImageview(request, id, selectedregionid=0, view='full'):
     if accode:
         achash = accode.accode_hash
 
-    pageimages = getOCVEPageImages(source)
+    pageimages = getOCVEPageImages(source, False)
 
     cursor = connection.cursor()
 
@@ -428,7 +431,7 @@ def ocvePageImageview(request, id, selectedregionid=0, view='full'):
         'pageimages': pageimages, 'mode': mode, 'zoomifyURL': zoomifyURL,
         'regionURL': regionURL, 'noteURL': noteURL, 'commentURL': commentURL, 'page': p,
         'pageimage': pi, 'view': view},
-        context_instance=RequestContext(request))
+        )
 
 
 def addImageDimensions(pi):
@@ -478,7 +481,7 @@ def ocveViewInPage(request, id, barid):
                                'regionURL': regionURL,
                                'page': p,
                                'pageimage': pi},
-                              context_instance=RequestContext(request))
+                              )
 
 
 def cfeoPageImageview(request, id):
@@ -507,7 +510,7 @@ def cfeoPageImageview(request, id):
                                'seaDragonURL': seaDragonURL,
                                'page': p,
                                'pageimage': pi},
-                              context_instance=RequestContext(request))
+                              )
 
 
 @csrf_exempt
@@ -534,7 +537,7 @@ def comparePageImageview(request, compareleft=0, compareright=0):
         'frontend/comparepageview.html',
         {'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL, 'mode': mode,
          'pi_left': pi_left, 'pi_right': pi_right},
-        context_instance=RequestContext(request))
+        )
 
 
 @csrf_exempt
@@ -565,7 +568,7 @@ def sourceinformation(request, id, mode="OCVE"):
                                'si': si,
                                'IMAGE_SERVER_URL': IMAGE_SERVER_URL,
                                },
-                              context_instance=RequestContext(request))
+                              )
 
 
 @csrf_exempt
@@ -575,7 +578,7 @@ def workinformation(request, id, mode='OCVE'):
     return render(request, 
         'frontend/workinformation.html',
         {'workinformation': workinformation, 'work': work, 'mode': mode},
-        context_instance=RequestContext(request))
+        )
 
 
 @csrf_exempt
@@ -661,7 +664,7 @@ def barview(request):
     try:
         request.GET['template']
         return render(request, 'frontend/bar-view-html-design.html', {},
-                                  context_instance=RequestContext(request))
+                                  )
     except:
         return render(request, 
             'frontend/bar-view.html', {
@@ -670,7 +673,7 @@ def barview(request):
                 'barregions': regionThumbs, 'sources': sources, 'work': work,
                 'pageimageid': pageimageid,
                 'IMAGE_SERVER_URL': IMAGE_SERVER_URL
-            }, context_instance=RequestContext(request))
+            }, )
 
 
 # Ajax call for inline collections display
@@ -692,7 +695,7 @@ def ajaxInlineCollections(request):
         'frontend/ajax/inline-collections.html',
         {'collections': collections, 'thumbs': thumbs,
          'IMAGE_SERVER_URL': IMAGE_SERVER_URL},
-        context_instance=RequestContext(request))
+        )
 
 
 @csrf_exempt
@@ -715,7 +718,7 @@ def ajaxChangeCollectionName(request):
     else:
         status = 0
     return render(request, 'frontend/ajax/ajax-status.html', {"status": status, },
-                              context_instance=RequestContext(request))
+                              )
 
 
 @csrf_exempt
@@ -735,7 +738,7 @@ def ajaxAddCollection(request):
     else:
         status = 0
     return render(request, 'frontend/ajax/ajax-status.html', {"status": status, },
-                              context_instance=RequestContext(request))
+                              )
 
 
 # Ajax call for inline collections display
@@ -747,7 +750,7 @@ def ajaxAddImageToCollectionModal(request):
         collections = None
 
     return render(request, 'frontend/ajax/add-image-to-collection-modal.html', {
-                              "collections": collections, }, context_instance=RequestContext(request))
+                              "collections": collections, }, )
 
 
 # Ajax call for adding image to collection
@@ -782,7 +785,7 @@ def ajaxAddImageToCollection(request):
         status = 0
 
     return render(request, 'frontend/ajax/ajax-status.html', {"status": status, },
-                              context_instance=RequestContext(request))
+                              )
 
 
 # Ajax call for deleting an image from a collection
@@ -819,7 +822,7 @@ def ajaxDeleteImageFromCollection(request):
         status = 0
 
     return render(request, 'frontend/ajax/ajax-status.html', {"status": status, },
-                              context_instance=RequestContext(request))
+                              )
 
 
 @csrf_exempt
@@ -839,7 +842,7 @@ def ajaxDeleteCollection(request):
     else:
         status = 0
     return render(request, 'frontend/ajax/ajax-status.html', {"status": status, },
-                              context_instance=RequestContext(request))
+                              )
 
 
 def iipredirect(request, path):

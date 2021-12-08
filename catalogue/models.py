@@ -148,6 +148,9 @@ class Country(TimeStampedModel):
     def __unicode__(self):
         return self.name
 
+    def __str__(self):
+        return self.__unicode__()
+
     @property
     def libraries(self):
         return Library.objects.filter(city__country=self)
@@ -179,6 +182,9 @@ class City(TimeStampedModel):
     def __unicode__(self):
         return '{0}'.format(self.name)
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 register_snippet(City)
 
@@ -198,6 +204,9 @@ class Library(Page):
 
     def __unicode__(self):
         return '{0}: {1}'.format(self.title, self.name)
+
+    def __str__(self):
+        return self.__unicode__()
 
     @property
     def impressions(self):
@@ -278,6 +287,9 @@ class Publisher(Page):
             return '{0}: {1}'.format(self.title, self.name)
         else:
             return self.title
+
+    def __str__(self):
+        return self.__unicode__()
 
     @property
     def sorted_impressions(self):
@@ -370,6 +382,9 @@ class Copy(TimeStampedModel):
     def __unicode__(self):
         return str(self.library)
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 register_snippet(Copy)
 
@@ -388,6 +403,9 @@ class ImpressionCopy(Orderable, TimeStampedModel):
 
     def __unicode__(self):
         return '{0}: {1}'.format(self.impression, self.copy)
+
+    def __str__(self):
+        return self.__unicode__()
 
 
 class Impression(Page):
@@ -416,6 +434,9 @@ class Impression(Page):
 
     def __unicode__(self):
         return self.title
+
+    def __str__(self):
+        return self.__unicode__()
 
     def save(self, *args, **kwargs):
         ac_code = self.title
@@ -465,6 +486,9 @@ class Work(Page):
 
     def __unicode__(self):
         return self.title
+
+    def __str__(self):
+        return self.__unicode__()
 
     @property
     def impressions(self):
@@ -581,6 +605,9 @@ class STP(TimeStampedModel):
     def __unicode__(self):
         return '{0}: {1}'.format(self.publisher_name, self.rubric)
 
+    def __str__(self):
+        return self.__unicode__()
+
     @property
     def url(self):
         index_page = Page.objects.filter(slug='i').first()
@@ -665,6 +692,9 @@ class Advert(TimeStampedModel):
     def __unicode__(self):
         return '{0}: {1}'.format(self.publisher_name, self.rubric)
 
+    def __str__(self):
+        return self.__unicode__()
+
     @property
     def url(self):
         index_page = Page.objects.filter(slug='ii').first()
@@ -738,6 +768,9 @@ class Abbreviation(TimeStampedModel):
 
     def __unicode__(self):
         return '{0}: {1}'.format(self.abbreviation, self.description)
+
+    def __str__(self):
+        return self.__unicode__()
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.abbreviation)

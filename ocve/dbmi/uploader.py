@@ -59,7 +59,7 @@ def newsourcefiles(request):
                                'log': logtail,
                                'free': free,
                                'sources': sources},
-                              context_instance=RequestContext(request))
+                              )
 
 # Convert an entire folder in the new upload area to a new source, then
 # pass to the editor
@@ -230,4 +230,4 @@ def posth(request):
                 opus=nonumber).save()
     return render(request, 'dbmi/posth.html',
                               {'posths': posths},
-                              context_instance=RequestContext(request))
+                              )

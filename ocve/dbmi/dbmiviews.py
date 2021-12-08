@@ -32,7 +32,7 @@ STATIC_URL = settings.STATIC_URL
 def dbmiView(request):
     return render(request,
         'dbmi/editindex.html',
-        context_instance=RequestContext(request))
+        )
 
 
 def fixrangeview(request):
@@ -54,7 +54,7 @@ def selectSource(request):
     return render(request, 'dbmi/selectsource.html',
                               {'newSourceForm': sForm,
                                'newSources': newSources},
-                              context_instance=RequestContext(request))
+                              )
 
 
 @login_required
@@ -80,7 +80,7 @@ def addSource(request):
                               {'errormsg': errormsg,
                                'newSourceForm': s,
                                'newSources': newSources},
-                              context_instance=RequestContext(request))
+                              )
 
 
 @csrf_exempt
@@ -148,7 +148,7 @@ def addToSource(request, id):
                                'sources': sources,
                                'oldSources': oldSources,
                                'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL},
-                              context_instance=RequestContext(request))
+                              )
 
 
 # Mark the current editing status of a page/source
@@ -289,7 +289,7 @@ def uncorrectedSource(request, id):
                               {'source': source,
                                'pages': pages,
                                'statuses': sourceStatuses},
-                              context_instance=RequestContext(request))
+                              )
 
 
 # OCVE sources that have yet to be corrected for Sarah
@@ -373,7 +373,7 @@ def sourceView(request, m):
                                'sourcecounts': sourcecounts,
                                'ordermode': ordermode,
                                'filterComplete': filterComplete},
-                              context_instance=RequestContext(request))
+                              )
 
 
 def loadEditPage(request, id):
@@ -394,7 +394,7 @@ def loadEditPage(request, id):
                               {'page': page,
                                'regionThumbs': regionThumbs,
                                'legacy': l},
-                              context_instance=RequestContext(request))
+                              )
 
 
 def findUnverifiedImages(request):
@@ -482,7 +482,7 @@ def iipPage(request, id):
                                'source': source,
                                'jp2Path': jp2Path,
                                'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL},
-                              context_instance=RequestContext(request))
+                              )
 
 
 def sourcesbywork(request):
@@ -491,7 +491,7 @@ def sourcesbywork(request):
                               {'works': works,
                                'IMAGE_SERVER_URL': settings.IMAGE_SERVER_URL,
                                },
-                              context_instance=RequestContext(request))
+                              )
 
 # New sources view for quick edits and management
 
@@ -545,7 +545,7 @@ def workadmin(request, id):
                                'workinformationform': winfoform,
                                'workcomponents': comps,
                                'sources': sources},
-                              context_instance=RequestContext(request))
+                              )
 
 
 @csrf_exempt
