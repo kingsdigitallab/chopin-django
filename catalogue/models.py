@@ -64,7 +64,7 @@ def safe_slugify(text, model):
 
 class HomePage(Page):
     content = RichTextField()
-    # search_fields = Page.search_fields + [index.SearchField('content'),]
+    search_fields = Page.search_fields + [index.SearchField('content'),]
     search_name = 'Home Page'
     subpage_types = ['IndexPage', 'RichTextPage']
 
@@ -78,6 +78,7 @@ HomePage.content_panels = [
 ]
 
 
+
 class IndexPage(Page, Introducable):
     search_name = 'Index Page'
     search_fields = Page.search_fields + [index.SearchField('introduction'),]
@@ -89,6 +90,7 @@ IndexPage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('introduction', classname='full'),
 ]
+
 
 
 class LandingPageSection(Orderable):
@@ -123,12 +125,16 @@ LandingPage.content_panels = [
 ]
 
 
+
+
+
 class RichTextPage(Page):
     content = RichTextField()
 
     search_fields = Page.search_fields + [index.SearchField('content'),]
     search_name = 'Rich Text Page'
     subpage_types = []
+
 
 
 # RichTextPage.content_panels += [FieldPanel('content', classname='full')]
@@ -270,6 +276,8 @@ LibraryIndexPage.content_panels = [
     FieldPanel('title', classname='full title'),
     FieldPanel('introduction', classname='full'),
 ]
+
+
 
 
 class Publisher(Page):
@@ -423,7 +431,7 @@ class Impression(Page):
                             on_delete=models.PROTECT, related_name='+')
 
     search_fields = (
-        index.SearchField('title', boost=10),
+        # index.SearchField('title', boost=10),
         index.SearchField('impression_title', partial_match=True, boost=10),
         #index.SearchField('content', partial_match=True)
     )
