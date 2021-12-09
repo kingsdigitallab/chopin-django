@@ -350,7 +350,7 @@ IMAGEFOLDER = '/vol/ocve3/images/'
 # OCVE
 # -----------------------------------------------------------------------------
 
-SOURCEJSONPATH = os.path.join(STATIC_ROOT, 'javascripts')
+SOURCEJSONPATH = os.path.join('assets', 'javascripts')
 
 # Build JSON with the live flag
 BUILD_LIVE_ONLY = False
