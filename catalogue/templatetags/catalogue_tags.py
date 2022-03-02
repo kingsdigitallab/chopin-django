@@ -9,7 +9,7 @@ from wagtail.core.models import Page
 from wagtail.core.templatetags.wagtailcore_tags import pageurl
 from wagtail.documents.models import Document
 
-from ..models import HomePage
+from ..models import HomePage, IndexPage
 
 import re
 
@@ -23,11 +23,14 @@ def breadcrumbs(context, root, current_page, extra=None):
     """Returns the pages that are part of the breadcrumb trail of the current
     page, up to the root page."""
     print("breadcrumb {}\n".format(current_page))
+    pages = IndexPage.objects.none()
     try:
         pages = current_page.get_ancestors(
             inclusive=True).descendant_of(root).filter(live=True)
     except AttributeError:
-        Page.objects.filter(slug=current_page).first()
+        current_page = Page.objects.filter(slug=current_page).first()
+        pages = current_page.get_ancestors(
+            inclusive=True).descendant_of(root).filter(live=True)
         root = get_site_root(context)
 
 
