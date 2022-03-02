@@ -22,8 +22,14 @@ register = template.Library()
 def breadcrumbs(context, root, current_page, extra=None):
     """Returns the pages that are part of the breadcrumb trail of the current
     page, up to the root page."""
-    pages = current_page.get_ancestors(
-        inclusive=True).descendant_of(root).filter(live=True)
+    print("breadcrumb {}\n".format(current_page))
+    try:
+        pages = current_page.get_ancestors(
+            inclusive=True).descendant_of(root).filter(live=True)
+    except AttributeError:
+        Page.objects.filter(slug=current_page).first()
+        root = get_site_root(context)
+
 
     return {'request': context['request'], 'root': root,
             'current_page': current_page, 'pages': pages, 'extra': extra}
