@@ -38,7 +38,7 @@ def editBars(request, id):
         # editor
         if pl.cropCorrected == 0:
             return cropCorrectView(request, id)
-        if pl.cfeoKey > 0:
+        if pl is not None and pl.cfeoKey is not None and pl.cfeoKey > 0:
             path = re.search("(.*?)_(.*)", pl.filename)
             oldPath = "jp2/cfeojp2-proc/" + \
                 path.group(1) + "/" + path.group(1) + "_" + path.group(2) + ".jp2"
