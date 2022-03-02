@@ -22,7 +22,7 @@
 {% if self.impressions %}
 <h2>Impressions</h2>
 <ul class="impressions search-results">
-    {% for work, impressions in self.impressions.iteritems %}
+    {% for work, impressions in self.impressions.items %}
     <li>
         <a href="{% pageurl work %}">{{ work.title|add_special_characters }}</a>:
         {% for impression in impressions %}
