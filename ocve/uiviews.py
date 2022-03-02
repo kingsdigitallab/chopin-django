@@ -622,6 +622,8 @@ def barview(request):
                 sourcecomponent__page__pageimage=pageimage, bar=bar)
         if spine.count() > 0:
             orderno = spine[0].orderno
+        else:
+            pass
 
     if orderno > 0:
         barSpines = getSpinesByWork(work, orderno, range)
