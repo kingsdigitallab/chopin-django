@@ -1220,7 +1220,7 @@ def bar_unicode(self):
 
 
 # class Bar(Bar):
-
+Bar.__str__ = bar_unicode
 Bar.__unicode__ = bar_unicode
 Bar._meta.ordering = ["barnumber", "barlabel"]
 

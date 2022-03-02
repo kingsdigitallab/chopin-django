@@ -63,3 +63,4 @@ target/
 playbook.retry
 static/
 .envs/*
+assets/javascripts/CFEOsourceJSON.js

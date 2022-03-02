@@ -1,9 +1,9 @@
 from django.contrib.contenttypes.models import ContentType
 from haystack import indexes
-from .models import Impression, Library, Publisher, Work
-from wagtail.core.models import Page
 from haystack.fields import FacetMultiValueField
+from wagtail.core.models import Page
 
+from .models import Impression, Library, Publisher, Work
 
 
 class ImpressionIndex(indexes.SearchIndex, indexes.Indexable):
@@ -22,7 +22,7 @@ class ImpressionIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_title(self, impression):
         return '{0}: {1}'.format(impression.get_parent().title,
-                                  impression.title)
+                                 impression.title)
 
     def prepare_sort_order(self, impression):
         work_sort_order = impression.get_parent().work.sort_order
