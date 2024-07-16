@@ -1,8 +1,8 @@
-version: '3'
+name: 'chopin_variorum'
 
 volumes:
   local_postgres_data: { }
-  local_elasticsearch_data: { }
+
 
 services:
 
@@ -11,7 +11,7 @@ services:
       context: .
       dockerfile: ./compose/local/postgres/Dockerfile
     volumes:
-      - local_postgres_data:/var/lib/postgresql/data
+      - local_postgres_data:/var/lib/postgresql/data:Z
     env_file:
       - ./.envs/.local/.postgres
     ports:
@@ -20,8 +20,6 @@ services:
 
   elasticsearch:
     image: elasticsearch:7.10.1
-    volumes:
-      - local_elasticsearch_data:/usr/share/elasticsearch/data
     env_file:
       - ./.envs/.local/.elasticsearch
     ports:
@@ -29,10 +27,7 @@ services:
       - '9300:9300'
     restart: unless-stopped
 
-  # Remember to copy the schema! (Not automatic at present)
-  # To build:
-  # docker-compose -f local.yml run --rm web python manage.py build_solr_schema --configure-directory=/app/solr_config/mkcheur/conf
-  # then docker cp results to solr folder above
+
   web:
     build:
       context: .
