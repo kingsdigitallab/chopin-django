@@ -2,12 +2,12 @@ Django>=3.0.14
 -r ddhldap/requirements.txt
 django-compressor
 django-grappelli
-django-haystack==3.1.1
+django-haystack==3.2.1
 django-libsass
 django-modelcluster
 django-model-utils
 django-taggit
-elasticsearch>=7.15.2
+elasticsearch==7.10.1
 html5lib
 lxml
 -r ocve/requirements.txt
@@ -18,3 +18,4 @@ pyparsing
 psycopg2==2.9.1
 wagtail>=2.9,<3 # https://github.com/wagtail/wagtail
 celery<4
+django-environ==0.4.5

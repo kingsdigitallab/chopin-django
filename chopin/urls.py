@@ -41,7 +41,7 @@ urlpatterns += [
     url(r'^aco/', include('catalogue.urls')),
     url(r'^ocve/', include('ocve.urls')),
     url(r'^cfeo/', include('ocve.cfeourls')),
-    url(r'^iip/(?P<path>.*$)', iipredirect),
+    #url(r'^iip/(?P<path>.*$)', iipredirect),
     url(r'^tinymce/', include('tinymce.urls')),
 
     url(r'^frontend/search/', search),

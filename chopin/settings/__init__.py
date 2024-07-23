@@ -1,9 +1,5 @@
 #------------------------------------------------------------------------------
-# Import the settings here according to the environment. Options are dev, stg,
-# and liv.
+# Import the settings here according to the environment.
 #
-# If a local settings file is present (local.py), it will override the settings
-# imported here. Use it for settings specific to the installation and do not
-# commit to version control.
 #------------------------------------------------------------------------------
-from .dev import *  # noqa
+from .production import  *  # noqa

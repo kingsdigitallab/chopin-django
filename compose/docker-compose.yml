@@ -1,0 +1,88 @@
+name: 'chopin_variorum'
+
+services:
+  # Required - Nginx Ingress
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  nginx:
+    build:
+      context: ..
+      dockerfile: ./compose/nginx/Dockerfile
+    restart: unless-stopped
+    expose:
+      - "8001"
+    volumes:
+      - ../volumes/django/static:/usr/share/nginx/static:ro
+    environment:
+      VIRTUAL_HOST: ${DJANGO_ALLOWED_HOSTS}
+      VIRTUAL_PATH: "~^/(static/|redist/|robots.txt)"
+      VIRTUAL_PROTO: http
+      VIRTUAL_PORT: 8001
+
+  db:
+    image: postgres:9.6
+    volumes:
+      - ../volumes/local_postgres_data:/var/lib/postgresql/data:Z
+      - ../volumes/postgres_data_backups:/backups
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DATABASE}'" ]
+      timeout: 10s
+      interval: 5s
+      retries: 10
+
+  elasticsearch:
+    image: elasticsearch:7.10.1
+    env_file:
+      - .env
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    restart: unless-stopped
+
+  django:
+    build:
+      context: ../
+      dockerfile: ./compose/django/Dockerfile
+    command: /start
+    volumes:
+      - ../volumes/django/static:/app/static
+    depends_on:
+      - db
+      - elasticsearch
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      VIRTUAL_HOST: ${DJANGO_ALLOWED_HOSTS}
+      VIRTUAL_PATH: "/"
+      VIRTUAL_PROTO: http
+      VIRTUAL_PORT: 8000
+
+
+  iipsrv:
+    image: iipsrv/iipsrv
+    volumes:
+        - ../volumes/images:/images:ro
+    ports:
+        - "8080:80"
+        - "9000:9000"
+    environment:
+      VIRTUAL_HOST: ${DJANGO_ALLOWED_HOSTS}
+      VIRTUAL_PATH: "/iipsrv/"
+      VIRTUAL_DEST: "/"
+      VIRTUAL_PROTO: http
+      VIRTUAL_PORT: 80
+
