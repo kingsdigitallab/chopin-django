@@ -64,3 +64,5 @@ playbook.retry
 static/
 .envs/*
 assets/javascripts/CFEOsourceJSON.js
+chopin/settings/local.py
+compose/.env
