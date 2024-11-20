@@ -19,9 +19,10 @@ services:
       - "8001"
     volumes:
       - ../volumes/django/static:/usr/share/nginx/static:ro
+      - ../volumes/django/media:/usr/share/nginx/media:ro
     environment:
       VIRTUAL_HOST: ${DJANGO_ALLOWED_HOSTS}
-      VIRTUAL_PATH: "~^/(static/|redist/|robots.txt)"
+      VIRTUAL_PATH: "~^/(media/|static/|redist/|robots.txt)"
       VIRTUAL_PROTO: http
       VIRTUAL_PORT: 8001
 
@@ -30,7 +31,7 @@ services:
     volumes:
       - ../volumes/local_postgres_data:/var/lib/postgresql/data:Z
       - ../volumes/postgres_data_backups:/backups
-    ports:
+    expose:
       - "5432:5432"
     restart: unless-stopped
     env_file:
@@ -57,6 +58,7 @@ services:
     command: /start
     volumes:
       - ../volumes/django/static:/app/static
+      - ../volumes/django/media:/app/media
     depends_on:
       - db
       - elasticsearch
