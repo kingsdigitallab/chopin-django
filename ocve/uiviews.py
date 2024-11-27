@@ -208,7 +208,7 @@ def browse_work(request, id):
     filters = []
     mode = "OCVE"
     works = Work.objects.filter(id=id)
-    if works.count > 0:
+    if works.count() > 0:
         work = works[0]
         filters.append(
             {'type': 'Work', 'id': work.id, 'selection': work.label})
