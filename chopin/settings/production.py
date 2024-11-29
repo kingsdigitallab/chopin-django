@@ -16,7 +16,7 @@ IMAGE_SERVER_URL = ''
 # This should be changed to a physical file location if you plan to use the uploader
 IMAGEFOLDER = ''
 
-DEBUG = True
+DEBUG = False
 
 # GENERAL
 # ------------------------------------------------------------------------------
