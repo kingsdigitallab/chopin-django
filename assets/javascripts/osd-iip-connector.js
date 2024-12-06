@@ -67,8 +67,8 @@ function imgToOSD()
 
 		// Remove the img element
 		$(this).remove();
-        var ts=getURLBeforeParams(src) + "?DeepZoom=" + params['FIF'] + ".dzi"
-        console.log(ts);
+        var ts=getURLBeforeParams(src) + "?DeepZoom=" + params['FIF'] + ".dzi";
+        console.log('dzi ' + ts);
 		OpenSeadragon({
 			id: $(this).attr("id"),
 			prefixUrl: tilesource,

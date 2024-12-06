@@ -1,6 +1,7 @@
 #Rebuild the Json data for the web front end
 __author__ = 'elliotthall'
-from django.core.management.base import BaseCommand, NoArgsCommand
+from django.core.management.base import BaseCommand
+from django.conf import settings
 import logging
 import subprocess
 from optparse import make_option

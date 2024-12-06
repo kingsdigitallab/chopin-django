@@ -11,10 +11,14 @@ DEBUG = False
 # folder slashes should be escaped as above
 # '/iiif/3/?zoomify=jp2/ocvejp2-proc/38/81/05/Image05.jp2/'
 IIP_URL = '/iipsrv/fcgi-bin/iipsrv.fcgi'
-IMAGE_SERVER_URL = ''
+IMAGE_SERVER_URL = 'https://chopinonline.ac.uk/iipsrv/fcgi-bin/iipsrv.fcgi'
 # Absolute server path to physical repository of jp2 images
 # This should be changed to a physical file location if you plan to use the uploader
 IMAGEFOLDER = ''
+
+# Folder where thumbnails generated from iip reside
+THUMBNAIL_DIR = '/app/ocve/static/thumbnails/'
+
 
 DEBUG = False
 

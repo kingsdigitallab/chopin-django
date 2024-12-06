@@ -457,6 +457,7 @@ def generateThumbnails(sources):
 
 
 def generateThumbnail(pageimage):
+    #import pdb; pdb.set_trace()
     result = ""
     # Get page legacy for jp2 path
     path = pageimage.getJP2Path()
@@ -468,9 +469,15 @@ def generateThumbnail(pageimage):
         thumb = os.path.join(
             settings.THUMBNAIL_DIR, str(
                 pageimage.id) + ".jpg")
+        print("URL: "+path)
         result = "Saving " + path + " at " + thumb
         try:
             urllib.request.urlretrieve(path, thumb)
+
+        except OSError as OSE:
+            print(OSE)
         except IOError:
             result = IOError.message
+        except ValueError:
+            print ("URL not well formed "+thumb)
     return result

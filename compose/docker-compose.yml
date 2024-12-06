@@ -3,12 +3,16 @@ name: 'chopin_variorum'
 services:
   # Required - Nginx Ingress
   nginx-proxy:
-    image: nginxproxy/nginx-proxy
+    build:
+      context: ..
+      dockerfile: ./compose/nginx-proxy/Dockerfile
+
     restart: unless-stopped
     ports:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+
 
   nginx:
     build:
