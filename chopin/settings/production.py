@@ -18,7 +18,7 @@ IMAGEFOLDER = ''
 
 # Folder where thumbnails generated from iip reside
 THUMBNAIL_DIR = '/app/ocve/static/thumbnails/'
-
+BUILD_LIVE_ONLY = True
 
 DEBUG = False
 

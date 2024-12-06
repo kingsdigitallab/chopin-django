@@ -14,8 +14,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logger.info('rebuild OCVE JSON')
         serializeOCVESourceJson()
-        # logger.info('rebuild CFEO JSON')
-        # serializeCFEOSourceJson()
-        # logger.info('rebuild AC JSON')
-        # serializeAcCodeConnector()
+        logger.info('rebuild CFEO JSON')
+        serializeCFEOSourceJson()
+        logger.info('rebuild AC JSON')
+        serializeAcCodeConnector()
 
