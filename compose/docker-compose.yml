@@ -63,6 +63,7 @@ services:
     volumes:
       - ../volumes/django/static:/app/static
       - ../volumes/django/media:/app/media
+      - ../volumes/images/thumbnails:/app/ocve/static/thumbnails:Z
     depends_on:
       - db
       - elasticsearch

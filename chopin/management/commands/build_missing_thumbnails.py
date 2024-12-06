@@ -18,6 +18,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         #Get all pageimages that are to be shown (in stg or live)
         pages=PageImage.objects.filter(Q(page__sourcecomponent__source__ocve=1) | Q(page__sourcecomponent__source__cfeo=1))
+        pages=pages.filter(page__sourcecomponent__source__live=True)
         #Check for file
         x=0
         for pageimage in pages:

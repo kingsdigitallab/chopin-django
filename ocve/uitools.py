@@ -7,6 +7,7 @@ import re
 import urllib.error
 import urllib.parse
 import urllib.request
+from http.client import InvalidURL
 from unicodedata import normalize as _n
 
 from django.conf import settings
@@ -473,11 +474,14 @@ def generateThumbnail(pageimage):
         result = "Saving " + path + " at " + thumb
         try:
             urllib.request.urlretrieve(path, thumb)
-
+        except InvalidURL:
+            print("invalid URL " + path)
         except OSError as OSE:
             print(OSE)
         except IOError:
             result = IOError.message
         except ValueError:
             print ("URL not well formed "+thumb)
+        except Exception:
+            print("general failure to load " + path)
     return result
