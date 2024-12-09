@@ -234,6 +234,7 @@ class SourceSearchItem:
                 "page")
 
         else:
+            # todo finding dead pageimage
             pages = PageImage.objects.filter(
                 page__sourcecomponent__source_id=self.id).order_by(
                 "page__sourcecomponent", "page")

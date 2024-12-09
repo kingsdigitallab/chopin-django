@@ -486,6 +486,7 @@ def ocveViewInPage(request, id, barid):
 
 def cfeoPageImageview(request, id):
     mode = "CFEO"
+    #serializeCFEOSourceJson()
     pi = PageImage.objects.get(id=id)
     p = pi.page
     if pi.width == 0:
