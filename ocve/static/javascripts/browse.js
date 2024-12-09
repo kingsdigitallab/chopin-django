@@ -276,8 +276,8 @@
             output = output.concat(["<a class=\"pageView th\" data-sourcekey=\"", sourcePages[x].id, "\"",
                 " href=\"", options.pageviewURL, "/", sourcePages[x].id, "/\">",
                 // /iipsrv/fcgi-bin/iipsrv.fcgi?DeepZoom=jp2/cfeojp2-proc/48-1-Sm/48-1-Sm_FPn_b1_p05_no1.jp2_files/0/0_0.jpg
-                //"<img", " class=\"lazy\" data-original=\"", options.thumbnails_url, sourcePages[x].id, ".jpg\" />",
-                "<img", " class=\"lazy\" data-original=\"/iipsrv/fcgi-bin/iipsrv.fcgi?DeepZoom=jp2/cfeojp2-proc/48-1-Sm/48-1-Sm_FPn_b1_p05_no1.jp2_files/0/0_0.jpg\" />",
+                "<img", " class=\"lazy\" data-original=\"", options.thumbnails_url, sourcePages[x].id, ".jpg\" />",
+                //"<img", " class=\"lazy\" data-original=\"/iipsrv/fcgi-bin/iipsrv.fcgi?DeepZoom=jp2/cfeojp2-proc/48-1-Sm/48-1-Sm_FPn_b1_p05_no1.jp2_files/0/0_0.jpg\" />",
                 "</a>",
                 // Preview bigger image in lightbox
                 "<a class=\"zoom-preview\" href=\"image-preview/", sourcePages[x].id, "\" data-reveal-id=\"show-zoom\"",
