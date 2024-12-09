@@ -7,6 +7,7 @@ import re
 import urllib.error
 import urllib.parse
 import urllib.request
+import urllib
 from http.client import InvalidURL
 from unicodedata import normalize as _n
 
@@ -474,7 +475,7 @@ def generateThumbnail(pageimage):
         print("URL: "+path)
         result = "Saving " + path + " at " + thumb
         try:
-            urllib.request.urlretrieve(path, thumb)
+            urllib.request.urlretrieve(urllib.parse.quote(path,safe='/:?=&_'), thumb)
         except InvalidURL:
             print("invalid URL " + path)
         except OSError as OSE:
