@@ -9,6 +9,7 @@ from ocve.uitools import generateThumbnail
 from ocve.models import PageImage
 from django.db.models import Q
 import os
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,7 @@ class Command(BaseCommand):
             if not os.path.isfile(fname):
                 #Missing, write
                 #log.info('Writing thumbnail '+fname)
+                time.sleep(1)
                 print(('Writing thumbnail '+fname))
                 x+=1
                 generateThumbnail(pageimage)
