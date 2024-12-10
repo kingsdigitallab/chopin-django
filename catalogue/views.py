@@ -5,6 +5,11 @@ import haystack.views
 
 class FacetedSearchView(haystack.views.FacetedSearchView):
 
+    # def extra_context(self):
+    #     extra = super().extra_context()
+    #
+    #     return extra
+
     def build_page(self):
         # Override Haystack's pagination logic so that invoking a
         # facet that reduces the number of pages of results below the

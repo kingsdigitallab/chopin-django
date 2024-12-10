@@ -46,8 +46,17 @@ HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE':
             'haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine',
-        'URL': 'http://elasticsearch:9200/',
+        'URL': 'elasticsearch:9200',
         'INDEX_NAME': PROJECT_NAME,
     },
 }
 
+WAGTAILSEARCH_BACKENDS = {
+    "default": {
+        "BACKEND": "wagtail.search.backends.elasticsearch7",
+        "URLS": ["elasticsearch:9200"],
+        "INDEX": WAGTAILSEARCH_INDEX,
+        "TIMEOUT": 5,
+        "FORCE_NEW": False,
+    }
+}

@@ -142,7 +142,7 @@ def fixsourceinformation(request):
         if len(si.locationsimilarcopies) == 0:
             si.locationsimilarcopies = similarcopies
 
-        if PrintingMethod.objects.filter(sourceinformation=si).count == 0:
+        if PrintingMethod.objects.filter(sourceinformation=si).count() == 0:
             methods = PrintingMethod.objects.filter(method=printingmethod)
             if methods.count() > 0:
                 pm = methods[0]
@@ -192,7 +192,7 @@ def browse_source(request, id):
     filters = []
     mode = "OCVE"
     sources = Source.objects.filter(id=id)
-    if sources.count > 0:
+    if sources.count() > 0:
         source = sources[0]
         work = source.getWork()
         if source.cfeo:

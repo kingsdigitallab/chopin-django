@@ -8,9 +8,10 @@ from catalogue.views import FacetedSearchView
 from .views import *
 
 # URLS for the CFEO skin of the UI
-sqs = SearchQuerySet().filter(
-    SQ(document='Source') | SQ(document='Opus')).filter(
-    cfeo=True).filter(live=True).order_by('orderno').facet('document')
+# sqs = SearchQuerySet().filter(
+#     SQ(document='Source') | SQ(document='Opus')).filter(
+#     cfeo=True).filter(live=True).order_by('orderno').facet('document')
+sqs = SearchQuerySet().order_by('orderno').facet('resource').facet('document')
 
 urlpatterns = [
     url(r'^browse/$',
