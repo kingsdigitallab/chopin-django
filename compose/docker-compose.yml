@@ -81,6 +81,7 @@ services:
 
   iipsrv:
     image: iipsrv/iipsrv
+    restart: unless-stopped
     volumes:
         - ../volumes/images:/images:ro
     ports:
